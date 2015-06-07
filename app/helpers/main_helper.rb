@@ -505,6 +505,9 @@ module MainHelper
         first_element.css('.text_blue').each do |title|
           html_link = title['href']
         end
+        first_element.css('.text_yellow').each do |title|
+          html_link = title['href']
+        end
         times = first_element.css('.gamelist_tidbit')
         if times && times.size>0
           main_story = 0
@@ -528,6 +531,8 @@ module MainHelper
           Game.update(game.id,:hltb => html_link, 
             :MainStory => main_story, :MainExtra => main_extra, 
             :Completion => completion, :Combined => combined)
+        else
+          Game.update(game.id,:hltb => html_link)
         end
       end
     end
@@ -547,6 +552,9 @@ module MainHelper
         first_element = page.css('li')[0]
         html_link = ""
         first_element.css('.text_blue').each do |title|
+          html_link = title['href']
+        end
+        first_element.css('.text_yellow').each do |title|
           html_link = title['href']
         end
         times = first_element.css('.gamelist_tidbit')
@@ -572,7 +580,58 @@ module MainHelper
           Dlc.update(game.id,:hltb => html_link, 
             :MainStory => main_story, :MainExtra => main_extra, 
             :Completion => completion, :Combined => combined)
+        else
+          Dlc.update(game.id,:hltb => html_link)
         end
+      end
+    end
+  end
+
+  #Precondition: str is a string
+  #PostCondition: returns a string that is a simplified
+  #version of str for searching subreddit
+  #NOTE: WILL NEED TO BE REFINED
+  def refine_reddit_string(str)
+    str = str.to_s
+    cleaned = ""
+    str.each_char do |x|
+      if x.ord >127 && x.ord != 8217
+        break
+      else cleaned << x
+      end
+    end
+    cleaned.gsub!(/\s+/, ' ')
+    if cleaned
+      cleaned = cleaned.split(':')[0]
+      if cleaned
+        cleaned = cleaned.split("-")[0]
+        if cleaned
+          cleaned = cleaned.split("&")[0]
+          if cleaned
+            cleaned = cleaned.split("(")[0]
+              if cleaned
+                cleaned.delete!('\'')
+                if cleaned
+                  cleaned.gsub!(/\s+/, '')
+               end
+             end
+          end
+        end
+      end
+    end
+    if cleaned
+     cleaned.delete!('^a-zA-Z')
+    end
+    return cleaned
+  end
+
+  #Will set the subreddit name for all games using 
+  #refine_reddit_string on the name
+  def set_subreddit_for_games()
+    Game.all.each do |game|
+      if game.subreddit == nil
+        Game.update(game.id,:subreddit => 
+          refine_reddit_string(game.name))
       end
     end
   end

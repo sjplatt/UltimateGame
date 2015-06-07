@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150606034502) do
+ActiveRecord::Schema.define(version: 20150607213356) do
 
   create_table "dlcs", force: :cascade do |t|
     t.string   "name"
@@ -62,6 +62,9 @@ ActiveRecord::Schema.define(version: 20150606034502) do
     t.text     "headerimg"
     t.integer  "recommendations"
     t.text     "legal"
+    t.text     "subreddit"
+    t.text     "wikipedia"
+    t.integer  "steampercent"
   end
 
   create_table "packages", force: :cascade do |t|
