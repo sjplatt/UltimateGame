@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: 
+  steamid: 
+  game_id: 
+
+two:
+  name: 
+  steamid: 
+  game_id: 
