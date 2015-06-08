@@ -255,7 +255,7 @@ module MainHelper
   def get_small_capsules(cap)
     return cap["featured_win"]
   end
-  
+
   #Use to update database of games
   #DO NOT USE AT RUNTIME
   #Opens up actual browser to scrape data
@@ -544,6 +544,15 @@ module MainHelper
     str.each_byte { |x|  cleaned << x unless x > 127   }
     cleaned.tr!(':&-','')
     cleaned.gsub!(/\s+/, ' ')
+    return cleaned
+  end
+
+  #Stronger version of above
+  def clean_string_stronger(str)
+    cleaned = ""
+    str.each_byte { |x|  cleaned << x unless x > 127   }
+    cleaned.gsub!(/[^a-zA-Z0-9\s]/,'')
+    cleaned.gsub!(/\s+/, " ")
     return cleaned
   end
 
