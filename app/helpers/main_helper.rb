@@ -1,5 +1,9 @@
+require 'open-uri'
+require 'watir'
+require 'json'
+
 module MainHelper
-  
+   
   def has_dlc?(hash,id)
     if hash && hash[id.to_s] && hash[id.to_s]["data"] && hash[id.to_s]["data"]["dlc"]
       return true
@@ -219,6 +223,39 @@ module MainHelper
     return hash[id.to_s]["data"]["small_logo"]
   end
 
+  def has_large_capsules?(hash)
+    if hash && hash["large_capsules"]
+      return true
+    end
+    return false
+  end
+
+  def get_large_capsules(hash)
+    return hash["large_capsules"]
+  end
+
+  def has_id?(cap)
+    if cap && cap["id"]
+      return true
+    end
+    return false
+  end
+
+  def get_id(cap)
+    return cap["id"]
+  end
+
+  def has_small_capsules?(hash)
+    if hash && hash["featured_win"]
+      return true
+    end
+    return false
+  end
+
+  def get_small_capsules(cap)
+    return cap["featured_win"]
+  end
+  
   #Use to update database of games
   #DO NOT USE AT RUNTIME
   #Opens up actual browser to scrape data
@@ -254,6 +291,11 @@ module MainHelper
   end
  
   #Forces refresh of page until success
+  #Precondition: uri is the site to refresh
+  #Precondition: max_time is how long to force refresh
+  #Precondition: id is the dlc/game id to record if it fails
+  #Precondition: is_dlc_id is true if the the id is for a dlc
+  #Precondition: @failures exists before this method is called
   def page_refresh(uri,max_time,id,is_dlc_id)
     time = Time.now+max_time.seconds
     resp = Net::HTTP.get_response(uri)
@@ -262,6 +304,22 @@ module MainHelper
     end
     if resp.body == "null" || resp.class == Net::HTTPBadRequest
       @failures<<id if !is_dlc_id
+      return nil
+    end
+    if !valid_json?(resp.body)
+      return page_refresh(uri,max_time,id,is_dlc_id)
+    end
+    return resp.body
+  end
+
+  #Similar to above. Used when getting url for non game/dlc
+  def page_refresh_no_id(uri,max_time)
+    time = Time.now+max_time.seconds
+    resp = Net::HTTP.get_response(uri)
+    while Time.now<time && resp.body == "null" do 
+      resp = Net::HTTP.get_response(uri)
+    end
+    if resp.body == "null" || resp.class == Net::HTTPBadRequest
       return nil
     end
     if !valid_json?(resp.body)

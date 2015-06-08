@@ -1,7 +1,5 @@
-require 'open-uri'
-require 'watir'
-require 'json'
 require 'fuzzystringmatch'
+
 class MainController < ApplicationController
   
   #Precondition: id is a id of a game. ID MUST BE VALID
@@ -63,9 +61,43 @@ class MainController < ApplicationController
   #Precondition: tag = "reviews" or tag = "gameplay"
   #Postcondition: IN PROGRESS
   #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  #def youtube_info(name,tag)
+  def youtube_info(name,tag)
     
-  #end
+  end
+
+  #Postcondition: creates instance variable @large_capsules which contains
+  #the ids of the apps for the large banner
+  #Postcondition: creates instance variable @small_capsules which contains
+  #the ids of the apps for the small banner
+  def get_frontpage_deals()
+    @large_capsules = []
+    @small_capsules = []
+    base_url = "http://store.steampowered.com/api/featured/"
+    uri = URI(base_url)
+    #get the body of the text
+    body = page_refresh_no_id(uri,1)
+    if valid_json?(body)
+      hash = JSON(body)
+      if has_large_capsules?(hash)
+        large_cap = get_large_capsules(hash)
+        large_cap.each do |cap|
+          if has_id?(cap)
+            @large_capsules << get_id(cap)
+          end
+        end
+      end
+      if has_small_capsules?(hash)
+        small_cap = get_small_capsules(hash)
+        small_cap.each do |cap|
+          if has_id?(cap)
+            @small_capsules << get_id(cap)
+          end
+        end
+      end
+    else
+      puts "ERROR: PLEASE RELOAD WEBSITE"
+    end
+  end
 
   #NOTES:
   #ORDER TO UPDATE DATABASE
@@ -78,6 +110,6 @@ class MainController < ApplicationController
   
   def index
     #google_info("Witcher 3")
-    #youtube_info("Witcher 3", "reviews")
+    #get_frontpage_deals
   end
 end
