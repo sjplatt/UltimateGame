@@ -112,29 +112,27 @@ class MainController < ApplicationController
   end
 
   #Precondition: name is the search term
-  #Postcondition: @top is a list of names in order of closest match
-  #Postcondition: @top_scores is the corresponding list of closeness 
-  #scores
-  #YOU WILL WANT TO TAKE THE first ~5 from @top
+  #Postcondition: @top_ids is a list of STEAMIDS in order of 
+  #closest match
   def fuzzy_string_analysis_initial(name)
     name = clean_string_stronger(name)
     puts name
-    @top = []
-    @top_scores = []
+    @top_ids = []
+    top_scores = []
     jarow = FuzzyStringMatch::JaroWinkler.create(:pure)
     Game.all.each do |game|
       if clean_string_stronger(game.name.downcase).include?(name.downcase)
-        @top << game.name
-        @top_scores<<jarow.getDistance(name,game.name)+0.5
+        @top_ids << game.steamid
+        top_scores<<jarow.getDistance(name,game.name)+0.5
       end
     end
     Dlc.all.each do |dlc|
       if clean_string_stronger(dlc.name.downcase).include?(name.downcase)
-        @top << dlc.name
-        @top_scores<<jarow.getDistance(name,dlc.name)
+        @top_ids << dlc.steamid
+        top_scores<<jarow.getDistance(name,dlc.name)
       end
     end
-    @top_scores,@top = @top_scores.zip(@top).sort_by(&:first).transpose
+    top_scores,@top_ids = top_scores.zip(@top_ids).sort_by(&:first).transpose
   end
 
   #NOTES:s
@@ -145,12 +143,21 @@ class MainController < ApplicationController
   #4) how_long_to_beat()
   #5) how_long_to_beat_dlc()
   #6) set_subreddit_for_games
-  
+  def update_db()
+    update_steam_game_list
+    fail = update_steam_dlc
+    update_steam_dlc_failures(fail)
+    how_long_to_beat
+    how_long_to_beat_dlc
+    set_subreddit_for_games
+  end
+
   def index
     #get_reddit_info(292030)
     #google_info("Witcher 3")
     #google_image_info("Witcher 3: Wild Hunt")
     #get_frontpage_deals
     #fuzzy_string_analysis_initial("fallout new vegas")
+    #puts @top_ids
   end
 end
