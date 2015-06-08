@@ -57,6 +57,18 @@ class MainController < ApplicationController
     end
   end
 
+  #Precondition: name is the name of a game.
+  #Postcondition: creates instance variable @google_image_links for
+  #the links for the images of the game
+  def google_image_info(name)
+    @google_image_links = []
+    Google::Search::Image.new(:query => (name+"imgur")).each do |image|
+      if image.uri.include?("imgur")
+        @google_image_links<< image.uri
+      end
+    end
+  end
+
   #Precondition: name is the name of a game
   #Precondition: tag = "reviews" or tag = "gameplay"
   #Postcondition: IN PROGRESS
@@ -125,7 +137,7 @@ class MainController < ApplicationController
     @top_scores,@top = @top_scores.zip(@top).sort_by(&:first).transpose
   end
 
-  #NOTES:
+  #NOTES:s
   #ORDER TO UPDATE DATABASE
   #1) update_steam_game_list() to get new games. WILL OPEN BROWSER
   #2) fail = update_steam_dlc()
@@ -135,7 +147,9 @@ class MainController < ApplicationController
   #6) set_subreddit_for_games
   
   def index
+    #get_reddit_info(292030)
     #google_info("Witcher 3")
+    #google_image_info("Witcher 3: Wild Hunt")
     #get_frontpage_deals
     #fuzzy_string_analysis_initial("fallout new vegas")
   end
