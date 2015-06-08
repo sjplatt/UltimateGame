@@ -44,13 +44,28 @@ class MainController < ApplicationController
     end
   end
 
+  #Precondition: name is the name of a game.
+  #Postcondition: creates instance variable @google_links for the
+  #top 10 links for the google search of name "reviews"
   def google_info(name)
-
+    @google_links = []
+    count = 0
+    Google::Search::Web.new(:query => (name + "reviews")).each do |web|
+      if !web.uri.include?("reddit") && !web.uri.include?("wikipedia") && 
+        !web.uri.include?("youtube") && count<10
+        @google_links << web.uri
+        count+=1
+      end
+    end
   end
 
-  def youtube_info(name)
-
-  end
+  #Precondition: name is the name of a game
+  #Precondition: tag = "reviews" or tag = "gameplay"
+  #Postcondition: IN PROGRESS
+  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  #def youtube_info(name,tag)
+    
+  #end
 
   #NOTES:
   #ORDER TO UPDATE DATABASE
@@ -62,6 +77,7 @@ class MainController < ApplicationController
   #6) set_subreddit_for_games
   
   def index
-  
+    #google_info("Witcher 3")
+    #youtube_info("Witcher 3", "reviews")
   end
 end

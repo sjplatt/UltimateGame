@@ -6,6 +6,7 @@ gem 'rails', '4.2.0'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 gem 'watir'
+gem 'google-search'
 gem 'fuzzy-string-match'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
