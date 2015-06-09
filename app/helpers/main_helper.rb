@@ -704,4 +704,13 @@ module MainHelper
     end
   end
 
+  def strip_nonalphanumeric(str)
+    str.downcase.gsub(/[^\w\s\d]/, "")
+  end
+
+  # Gets the game's string at the end of the url
+  def get_game_string(url)
+    start_index = url.index("plain=") + "plain=".length()
+    return url[start_index..-1]
+  end
 end

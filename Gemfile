@@ -8,6 +8,7 @@ gem 'sqlite3'
 gem 'watir'
 gem 'google-search'
 gem 'fuzzy-string-match'
+gem 'fuzzy_match'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
