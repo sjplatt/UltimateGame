@@ -409,6 +409,6 @@ class MainController < ApplicationController
   end
 
   def index
-    get_price_information("Bioshock Infinite: Burial at Sea 2",true)
+    get_price_information("Witcher 3: Wild Hunt",false)
   end
 end
