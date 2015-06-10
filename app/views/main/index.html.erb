@@ -1,2 +1,21 @@
-<h1>Main#index</h1>
-<p>Find me in app/views/main/index.html.erb</p>
+<h1>Home Page</h1>
+  <%= form_for(:search_term,:url => 'get_game') do |f| %>
+  <%= f.label :steamid ,"Input game name"%>
+  <%= f.text_field :steamid %>
+  <%= submit_tag("Search") %>
+  <% end %>
+
+  <% if @large_capsules != [] %>
+  <% @large_capsules.each do |capsule| %>
+  <% if Game.find_by(steamid:capsule) %>
+  <%=Game.find_by(steamid:capsule).name %>
+  <%end%>
+  <%end%>
+  <%end%>
+  <% if @small_capsules != [] %>
+  <% @small_capsules.each do |capsule| %>
+  <% if Game.find_by(steamid:capsule) %>
+  <%=Game.find_by(steamid:capsule).name %>
+  <%end%>
+  <%end%>
+  <%end%>

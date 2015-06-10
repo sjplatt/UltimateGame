@@ -132,7 +132,7 @@ class MainController < ApplicationController
         top_scores<<jarow.getDistance(name,dlc.name)
       end
     end
-    top_scores,@top_ids = top_scores.zip(@top_ids).sort_by(&:first).transpose
+    top_scores,@top_ids = top_scores.zip(@top_ids).sort_by(&:last).transpose
   end
 
   #NOTES:s
@@ -288,12 +288,12 @@ class MainController < ApplicationController
 
       # Splitting each hash list into deals on DLCs and nondeals on DLCs
 
-      puts "Deals hash @@@@@@@@@@@@@@@@@@@@@@"
-      puts deals_hashlist
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      puts "Nondeals hash @@@@@@@@@@@@@@@@@@@"
-      puts nondeals_hashlist
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      #puts "Deals hash @@@@@@@@@@@@@@@@@@@@@@"
+      #puts deals_hashlist
+      #puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      #puts "Nondeals hash @@@@@@@@@@@@@@@@@@@"
+      #puts nondeals_hashlist
+      #puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 
       deals_hashlist_DLC = []
       nondeals_hashlist_DLC = []
@@ -356,7 +356,7 @@ class MainController < ApplicationController
       if !game_needed
         puts "[CRITICAL] See above; could not find the game_needed"
       else
-        puts game_needed
+        #puts game_needed
         formatted_game_name = get_game_string(game_needed[:url])
         begin
           detailed_deals = Nokogiri::HTML(open("http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"))
@@ -418,35 +418,23 @@ class MainController < ApplicationController
       end
     end
 
-    puts @metascore
-    puts @metacritic_link 
-    puts @steam_percentage
-    puts @wiki_link
-    puts @prices
+    #puts @metascore
+    #puts @metacritic_link 
+    #puts @steam_percentage
+    #puts @wiki_link
+    #puts @prices
   end
 
   def index
-    # Test cases:
+    get_frontpage_deals
+  end
 
-    # Mix of everything
-    # Witcher 3 Wild Hunt, Bioshock Infinite...
-
-    # Some deals and no nondeals
-    # Bioshock Infinite Burial at Sea 2, false
-
-    # No deals and some nondeals
-    # Call of Duty World at War, false
-
-    # Valid input, improper DLCness
-    # Monaco, true
-
-    # Garbage
-    # asdfasdjlf, true/false
-
-    get_price_information("Witcher 3: Wild Hunt",false)
-    #get_price_information("Bioshock Infinite Burial at Sea 2",false)
-    #get_price_information("Call of Duty World at War",false)
-    #get_price_information("Monaco",true)
-    #get_price_information("asdfadjsflk",true)
+  def get_game
+    input = params[:search_term][:steamid].downcase
+    fuzzy_string_analysis_initial(input)
+    puts @top_ids[0]
+    if @top_ids != []
+      @game = Game.find_by(steamid:@top_ids[0])
+    end
   end
 end
