@@ -14,70 +14,70 @@
 ActiveRecord::Schema.define(version: 20150607213356) do
 
   create_table "dlcs", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "steamid"
-    t.integer  "game_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.integer  "metascore"
-    t.text     "metaurl"
-    t.text     "hltb"
-    t.integer  "MainStory"
-    t.integer  "MainExtra"
-    t.integer  "Completion"
-    t.integer  "Combined"
-    t.text     "description"
-    t.text     "website"
-    t.text     "review"
-    t.text     "minreq"
-    t.text     "recreq"
-    t.text     "releasedate"
-    t.text     "developer"
-    t.text     "headerimg"
-    t.integer  "recommendations"
-    t.text     "legal"
+    t.string   "name",            limit: 255
+    t.integer  "steamid",         limit: 4
+    t.integer  "game_id",         limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "metascore",       limit: 4
+    t.text     "metaurl",         limit: 65535
+    t.text     "hltb",            limit: 65535
+    t.integer  "MainStory",       limit: 4
+    t.integer  "MainExtra",       limit: 4
+    t.integer  "Completion",      limit: 4
+    t.integer  "Combined",        limit: 4
+    t.text     "description",     limit: 65535
+    t.text     "website",         limit: 65535
+    t.text     "review",          limit: 65535
+    t.text     "minreq",          limit: 65535
+    t.text     "recreq",          limit: 65535
+    t.text     "releasedate",     limit: 65535
+    t.text     "developer",       limit: 65535
+    t.text     "headerimg",       limit: 65535
+    t.integer  "recommendations", limit: 4
+    t.text     "legal",           limit: 65535
   end
 
-  add_index "dlcs", ["game_id"], name: "index_dlcs_on_game_id"
+  add_index "dlcs", ["game_id"], name: "index_dlcs_on_game_id", using: :btree
 
   create_table "games", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "steamid"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.integer  "metascore"
-    t.text     "metaurl"
-    t.text     "hltb"
-    t.integer  "MainStory"
-    t.integer  "MainExtra"
-    t.integer  "Completion"
-    t.integer  "Combined"
-    t.text     "description"
-    t.text     "website"
-    t.text     "review"
-    t.text     "minreq"
-    t.text     "recreq"
-    t.text     "releasedate"
-    t.text     "developer"
-    t.text     "headerimg"
-    t.integer  "recommendations"
-    t.text     "legal"
-    t.text     "subreddit"
-    t.text     "wikipedia"
-    t.integer  "steampercent"
+    t.string   "name",            limit: 255
+    t.integer  "steamid",         limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "metascore",       limit: 4
+    t.text     "metaurl",         limit: 65535
+    t.text     "hltb",            limit: 65535
+    t.integer  "MainStory",       limit: 4
+    t.integer  "MainExtra",       limit: 4
+    t.integer  "Completion",      limit: 4
+    t.integer  "Combined",        limit: 4
+    t.text     "description",     limit: 65535
+    t.text     "website",         limit: 65535
+    t.text     "review",          limit: 65535
+    t.text     "minreq",          limit: 65535
+    t.text     "recreq",          limit: 65535
+    t.text     "releasedate",     limit: 65535
+    t.text     "developer",       limit: 65535
+    t.text     "headerimg",       limit: 65535
+    t.integer  "recommendations", limit: 4
+    t.text     "legal",           limit: 65535
+    t.text     "subreddit",       limit: 65535
+    t.text     "wikipedia",       limit: 65535
+    t.integer  "steampercent",    limit: 4
   end
 
   create_table "packages", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "game_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.text     "releasedate"
-    t.text     "headerimg"
-    t.integer  "packageid"
-    t.text     "apps"
+    t.string   "name",        limit: 255
+    t.integer  "game_id",     limit: 4
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.text     "releasedate", limit: 65535
+    t.text     "headerimg",   limit: 65535
+    t.integer  "packageid",   limit: 4
+    t.text     "apps",        limit: 65535
   end
 
-  add_index "packages", ["game_id"], name: "index_packages_on_game_id"
+  add_index "packages", ["game_id"], name: "index_packages_on_game_id", using: :btree
 
 end
