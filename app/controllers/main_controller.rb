@@ -432,7 +432,7 @@ class MainController < ApplicationController
   def get_game
     input = params[:search_term][:steamid].downcase
     fuzzy_string_analysis_initial(input)
-    puts @top_ids[0]
+
     if @top_ids != []
       @game = Game.find_by(steamid:@top_ids[0])
     end
