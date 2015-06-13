@@ -189,7 +189,7 @@ class MainController < ApplicationController
     @steam_percentage = "Unknown"
     @wiki_link = "Unknown"
     @prices = []
-    
+
     raw_game_name = strip_nonalphanumeric(game_name)
     filterArg = URI.encode("/search:#{raw_game_name};/scroll:#gamelist;")
     now = get_timestamp
@@ -214,7 +214,6 @@ class MainController < ApplicationController
     rescue Exception => e
       puts "Nokogiri HTML error: #{e}"
     end
-
     if nondeals.nil? || deals.nil?
       puts "[CRITICAL] One or more Nokogiri calls failed"
     else
@@ -426,15 +425,22 @@ class MainController < ApplicationController
   end
 
   def index
-    get_frontpage_deals
+    #get_price_information("Bioshock Infinite",false)
+    #get_frontpage_deals
   end
 
   def get_game
-    input = params[:search_term][:steamid].downcase
-    fuzzy_string_analysis_initial(input)
+    @top_ids = Game.search(params[:query]).map(&:steamid)
 
-    if @top_ids != []
+    if @top_ids && @top_ids != []
       @game = Game.find_by(steamid:@top_ids[0])
     end
+
+    # input = params[:search_term][:steamid].downcase
+    # fuzzy_string_analysis_initial(input)
+
+    # if @top_ids != [] && @top_ids
+    #   @game = Game.find_by(steamid:@top_ids[0])
+    # end
   end
 end

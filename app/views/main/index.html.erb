@@ -5,17 +5,11 @@
   <%= submit_tag("Search") %>
   <% end %>
 
-  <% if @large_capsules != [] %>
-  <% @large_capsules.each do |capsule| %>
-  <% if Game.find_by(steamid:capsule) %>
-  <%=Game.find_by(steamid:capsule).name %>
-  <%end%>
-  <%end%>
-  <%end%>
-  <% if @small_capsules != [] %>
-  <% @small_capsules.each do |capsule| %>
-  <% if Game.find_by(steamid:capsule) %>
-  <%=Game.find_by(steamid:capsule).name %>
-  <%end%>
-  <%end%>
-  <%end%>
+  <%= form_tag "/get_game", class: "form_inline", method: :get do %>
+  <div class="form-group">
+    <%= text_field_tag :query, params[:query], class: "form-control" %>
+  <%= submit_tag "Search", class: "btn btn-primary" %>
+  <% if params[:query].present? %>
+    <%= link_to "clear", "/" %>
+  <% end %>
+  <% end %>
