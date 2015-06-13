@@ -12,7 +12,7 @@ class Fixdb < ActiveRecord::Migration
     remove_column :packages, :Combined
     remove_column :packages, :minreq
     remove_column :packages, :recreq
-    remove_column :packages, :recommendation
+    remove_column :packages, :recommendations
     add_column :packages, :packageid, :integer
   end
 end
