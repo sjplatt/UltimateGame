@@ -2,7 +2,14 @@ Rails.application.routes.draw do
   root 'main#index'
   #post 'get_game' => 'main#get_game'
   get 'get_game' => 'main#get_game'
-  
+
+  resources :games, only: :index do
+    collection do
+      post :import
+      get :autocomplete
+    end
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

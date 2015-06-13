@@ -1,4 +1,4 @@
 class Dlc < ActiveRecord::Base
-  searchkick
+  searchkick autocomplete: ["name"]
   belongs_to :game
 end

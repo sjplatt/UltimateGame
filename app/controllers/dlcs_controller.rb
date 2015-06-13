@@ -6,4 +6,8 @@ class DlcsController < ApplicationController
       @search_results = Dlc.all.page params[:page]
     end
   end
+
+  def autocomplete
+    render json: Dlc.search(params[:query], autocomplete: true, limit: 10).map(&:name)
+  end
 end

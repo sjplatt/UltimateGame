@@ -1,15 +1,13 @@
 <h1>Home Page</h1>
-  <%= form_for(:search_term,:url => 'get_game') do |f| %>
-  <%= f.label :steamid ,"Input game name"%>
-  <%= f.text_field :steamid %>
-  <%= submit_tag("Search") %>
-  <% end %>
-
   <%= form_tag "/get_game", class: "form_inline", method: :get do %>
-  <div class="form-group">
-    <%= text_field_tag :query, params[:query], class: "form-control" %>
-  <%= submit_tag "Search", class: "btn btn-primary" %>
-  <% if params[:query].present? %>
-    <%= link_to "clear", "/" %>
-  <% end %>
+  <div class="input-group input-group-lg">
+    <% if params[:query].present? %>
+      <div class="input-group-btn">
+        <%= link_to "clear", "/", class: "btn btn-default" %>
+      </div>
+    <% end %>
+    <%= text_field_tag :query, params[:query], class: "form-control", id: "game_search", autocomplete: "off" %>
+    <div class="input-group-btn">
+      <%= submit_tag "Search", class: "btn btn-primary" %>
+    </div>
   <% end %>

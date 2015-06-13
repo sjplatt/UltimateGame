@@ -6,4 +6,8 @@ class PackagesController < ApplicationController
       @search_results = Package.all.page params[:page]
     end
   end
+
+  def autocomplete
+    render json: Package.search(params[:query], autocomplete: true, limit: 10).map(&:name)
+  end
 end

@@ -1,5 +1,5 @@
 class Game < ActiveRecord::Base
-  searchkick
+  searchkick autocomplete: ["name"]
   has_many :dlcs
   has_many :packages
 end
