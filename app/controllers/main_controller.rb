@@ -144,7 +144,7 @@ class MainController < ApplicationController
   #5) how_long_to_beat_dlc()
   #6) set_subreddit_for_games
   def update_db()
-    update_steam_game_list
+    #update_steam_game_list
     fail = update_steam_dlc
     update_steam_dlc_failures(fail)
     how_long_to_beat

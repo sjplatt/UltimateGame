@@ -9,8 +9,8 @@ gem 'google-search'
 gem 'fuzzy-string-match'
 gem 'fuzzy_match'
 gem 'yaml_db'
-gem 'mysql2'
 gem 'searchkick'
+gem 'pg'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
