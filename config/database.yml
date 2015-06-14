@@ -25,5 +25,5 @@ test:
   database: gametest
 
 production:
-  <<: *default
-  database: gamedevelopment
+  adapter: postgresql
+  encoding: unicode
