@@ -14,7 +14,7 @@ default: &default
   host: localhost
 
 development:
-  <<: *default
+  #<<: *default
   database: gamedevelopment
 
 # Warning: The database defined as "test" will be erased and
