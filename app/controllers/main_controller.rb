@@ -425,15 +425,24 @@ class MainController < ApplicationController
   end
 
   def index
-    get_price_information("Bioshock Infinite",false)
+    #get_price_information("Bioshock Infinite",false)
     get_frontpage_deals
   end
 
   def get_game
-    input = params[:search_term][:steamid].downcase
-    fuzzy_string_analysis_initial(input)
-    if @top_ids != [] && @top_ids
-      @game = Game.find_by(steamid:@top_ids[0])
+    @game = Game.find_by(name:params[:query])
+    if !@game
+      puts "ERROR: Could not find " + params[:query]
     end
+
+    # @top_ids = Game.search(params[:query]).map(&:steamid)
+    # fuzzy_string_analysis_initial(params[:query])
+
+    # input = params[:search_term][:steamid].downcase
+    # fuzzy_string_analysis_initial(input)
+
+    # if @top_ids && @top_ids != []
+    #   @game = Game.find_by(steamid:@top_ids[0])
+    # end
   end
 end

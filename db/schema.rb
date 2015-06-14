@@ -80,4 +80,6 @@ ActiveRecord::Schema.define(version: 20150607213356) do
 
   add_index "packages", ["game_id"], name: "index_packages_on_game_id", using: :btree
 
+  add_foreign_key "dlcs", "games"
+  add_foreign_key "packages", "games"
 end

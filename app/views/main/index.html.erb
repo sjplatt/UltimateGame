@@ -1,21 +1,96 @@
-<h1>Home Page</h1>
-  <%= form_for(:search_term,:url => 'get_game') do |f| %>
-  <%= f.label :steamid ,"Input game name"%>
-  <%= f.text_field :steamid %>
-  <%= submit_tag("Search") %>
-  <% end %>
+<style>
+/*.col-md-3,.col-md-4,.col-md-8,.col-md-9 {
+  border: 1px solid blue;
+}*/
 
-  <% if @large_capsules != [] %>
-  <% @large_capsules.each do |capsule| %>
-  <% if Game.find_by(steamid:capsule) %>
-  <%=Game.find_by(steamid:capsule).name %>
-  <%end%>
-  <%end%>
-  <%end%>
-  <% if @small_capsules != [] %>
-  <% @small_capsules.each do |capsule| %>
-  <% if Game.find_by(steamid:capsule) %>
-  <%=Game.find_by(steamid:capsule).name %>
-  <%end%>
-  <%end%>
-  <%end%>
+.twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
+  vertical-align: middle;
+  width: 100%;
+}
+
+.input-group {
+  margin: auto;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.header {
+  height: 100px;
+  margin-bottom: 10px;
+  display: inline-flex;
+}
+.homepage-title {
+  margin: auto;
+}
+.search-bar {
+  margin: auto;
+}
+
+.col-md-9,.col-md-4 {
+  padding: 5px;
+}
+
+.homepage-img {
+  width: 100%;
+}
+
+.section-header {
+  margin: 5px 20px 5px 20px;
+  padding: 3px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+</style>
+
+<div class="col-md-12 header">
+  <div class="col-md-4 homepage-title">
+    <h1>Home Page</h1>
+  </div>
+
+  <div class="col-md-8 search-bar">
+    <%= form_tag "/get_game", method: :get do %>
+      <div class="input-group">
+        <% if params[:query].present? %>
+          <div class="input-group-btn">
+            <%= link_to "clear", "/", class: "btn btn-default" %>
+          </div>
+        <% end %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game_search", autocomplete: "off" %>
+        <div class="input-group-btn">
+          <%= submit_tag "Search", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="col-md-12">
+  <div class="col-md-3">
+    <% if @small_capsules != [] %>
+      <table>
+      <% @small_capsules.each do |capsule| %>
+        <% if Game.find_by(steamid:capsule) %>
+          <tr><td><%= Game.find_by(steamid:capsule).name %></td></tr>
+        <% end %>
+      <% end %>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="col-md-9">
+    <% if @large_capsules != [] %>
+      <% @large_capsules.each do |capsule| %>
+        <% if Game.find_by(steamid:capsule) %>
+          <div class="col-md-4">
+            <% if Game.find_by(steamid:capsule).headerimg %>
+              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>"><img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="homepage-img" /></a>
+            <% else %>
+              <p><%= Game.find_by(steamid:capsule).name %></p>
+              <!-- TODO: Add some generic steam logo image here -->
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
