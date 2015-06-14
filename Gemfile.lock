@@ -200,10 +200,7 @@ DEPENDENCIES
   google-search
   jbuilder (~> 2.0)
   jquery-rails
-<<<<<<< HEAD
   passenger
-=======
->>>>>>> Fixes for postgre
   pg
   rails (= 4.2.0)
   rails_12factor
