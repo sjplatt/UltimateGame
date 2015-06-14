@@ -271,15 +271,14 @@ module MainHelper
     browser = Watir::Browser.new
     browser.goto url
     page = Nokogiri::HTML.parse(browser.html)
-    while !page.at('p:contains("No results were returned for that query.")') && page_count<250
+    while page_count<225
+      #!page.at('p:contains("No results were returned for that query.")') && page_count<250
       page.css(".search_result_row").each do |element|
         id = element['href'].slice!(34..41)
         id.gsub!(/[^0-9]/,'')
         title = element.css(".title").text
-        if Game.find_by(steamid:id)
-           puts ""
-        else 
-           Game.create(name:title,steamid:id)
+        if !Game.find_by(steamid:id)
+          Game.create(name:title,steamid:id)
         end
       end
       url = main_url

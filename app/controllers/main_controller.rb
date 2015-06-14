@@ -144,7 +144,7 @@ class MainController < ApplicationController
   #5) how_long_to_beat_dlc()
   #6) set_subreddit_for_games
   def update_db()
-    update_steam_game_list
+    #update_steam_game_list
     fail = update_steam_dlc
     update_steam_dlc_failures(fail)
     how_long_to_beat
@@ -425,8 +425,9 @@ class MainController < ApplicationController
   end
 
   def index
-    get_price_information("Bioshock Infinite",false)
-    get_frontpage_deals
+    #get_price_information("Bioshock Infinite",false)
+    #get_frontpage_deals
+    update_db
   end
 
   def get_game

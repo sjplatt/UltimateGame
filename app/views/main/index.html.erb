@@ -5,14 +5,14 @@
   <%= submit_tag("Search") %>
   <% end %>
 
-  <% if @large_capsules != [] %>
+  <% if @large_capsules != [] && @large_capsules%>
   <% @large_capsules.each do |capsule| %>
   <% if Game.find_by(steamid:capsule) %>
   <%=Game.find_by(steamid:capsule).name %>
   <%end%>
   <%end%>
   <%end%>
-  <% if @small_capsules != [] %>
+  <% if @small_capsules != [] && @small_capsules%>
   <% @small_capsules.each do |capsule| %>
   <% if Game.find_by(steamid:capsule) %>
   <%=Game.find_by(steamid:capsule).name %>
