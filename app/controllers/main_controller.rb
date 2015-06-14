@@ -426,8 +426,8 @@ class MainController < ApplicationController
 
   def index
     #get_price_information("Bioshock Infinite",false)
-    #get_frontpage_deals
-    update_db
+    get_frontpage_deals
+    #update_db
   end
 
   def get_game
