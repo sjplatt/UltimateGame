@@ -48,14 +48,14 @@ $(document).ready(function() {
     displayKey: 'name',
     source: games_object.ttAdapter(),
     templates: {
-      header: "<h4>Standalone games</h4>"
+      header: "<h4 class='section-header'>Standalone games</h4>"
     }
   }, {
     name: 'dlcs_object',
     displayKey: 'name',
     source: dlcs_object.ttAdapter(),
     templates: {
-      header: "<h4>DLCs</h4>"
+      header: "<h4 class='section-header'>DLCs</h4>"
     }
   });
 });
