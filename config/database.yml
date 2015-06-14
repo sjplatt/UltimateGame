@@ -15,7 +15,13 @@ default: &default
 
 development:
   #<<: *default
-  database: gamedevelopment
+  #database: gamedevelopment
+  adapter: postgresql
+  encoding: unicode
+  database: gameproduction
+  username: pguser
+  password: Sjp.durak
+  host: localhost
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
