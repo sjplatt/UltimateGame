@@ -51,8 +51,4 @@ group :development, :test do
 end
 
 gem 'rails_12factor', group: :production
-<<<<<<< HEAD
 ruby "2.2.2"
-=======
-ruby "2.2.2"
->>>>>>> 2da6108914395f5476046ee777b4e610f1b3f0f3
