@@ -28,7 +28,7 @@ production:
  # <<: *default
   adapter: postgresql
   encoding: unicode
-  #database: gameproduction
-  #username: pguser
-  #password: Sjp.durak
-  #host: localhost
+  database: gameproduction
+  username: pguser
+  password: Sjp.durak
+  host: localhost
