@@ -5,7 +5,12 @@ Rails.application.routes.draw do
 
   resources :games, only: :index do
     collection do
-      post :import
+      get :autocomplete
+    end
+  end
+
+  resources :dlcs, only: :index do
+    collection do
       get :autocomplete
     end
   end

@@ -1,13 +1,27 @@
+<style>
+.twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
+  width: 100%;
+  vertical-align: middle;
+}
+
+.input-group {
+  margin: auto;
+  width: 50%;
+}
+
+</style>
+
 <h1>Home Page</h1>
-  <%= form_tag "/get_game", class: "form_inline", method: :get do %>
-  <div class="input-group input-group-lg">
+  <%= form_tag "/get_game", method: :get do %>
+  <div class="input-group">
     <% if params[:query].present? %>
       <div class="input-group-btn">
         <%= link_to "clear", "/", class: "btn btn-default" %>
       </div>
     <% end %>
-    <%= text_field_tag :query, params[:query], class: "form-control", id: "game_search", autocomplete: "off" %>
+    <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game_search", autocomplete: "off" %>
     <div class="input-group-btn">
       <%= submit_tag "Search", class: "btn btn-primary" %>
     </div>
+  </div>
   <% end %>
