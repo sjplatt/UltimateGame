@@ -1,4 +1,7 @@
 $(document).ready(function() {
+  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search";
+  // This will need to be changed if the search URL changes
+
   var games_object = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.nonword,
     queryTokenizer: Bloodhound.tokenizers.nonword,
@@ -48,7 +51,21 @@ $(document).ready(function() {
     displayKey: 'name',
     source: games_object.ttAdapter(),
     templates: {
-      header: "<h4 class='section-header'>Standalone games</h4>"
+      header: "<h4 class='section-header'>Standalone games</h4>",
+      suggestion: function(data) {
+        return data.name
+        + '<a href="'
+        + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
+        + '">'
+        + '<span class="suggestion-link"></span>'
+        + '</a>';
+        /*return
+        '<a href="/get_game?utf8=✓&query=' + data.name + '&commit=Search">'
+        + '<span class="suggestion-link">'
+        + '</span>'
+        + data.name
+        + '</a>';*/
+      }
     }
   }, {
     name: 'dlcs_object',

@@ -40,6 +40,10 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.0)
+    barber (0.4.2)
+      ember-source
+      execjs
+      handlebars-source
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
@@ -55,6 +59,7 @@ GEM
       execjs
     coffee-script-source (1.9.1.1)
     columnize (0.9.0)
+    commonjs (0.2.7)
     commonwatir (4.0.0)
     debug_inspector (0.0.2)
     elasticsearch (1.0.12)
@@ -65,6 +70,7 @@ GEM
     elasticsearch-transport (1.0.12)
       faraday
       multi_json
+    ember-source (1.13.0)
     erubis (2.7.0)
     execjs (2.5.2)
     faraday (0.9.1)
@@ -77,6 +83,15 @@ GEM
       activesupport (>= 4.1.0)
     google-search (1.0.3)
       json
+    handlebars (0.5.0)
+      commonjs (~> 0.2.3)
+      handlebars-source (~> 1.0.12)
+      therubyracer (~> 0.12.0)
+    handlebars-rails (0.4.2)
+      barber (~> 0.4.2)
+      handlebars (~> 0.5.0)
+      rails (>= 3.0)
+    handlebars-source (1.0.12)
     hashie (3.4.2)
     i18n (0.7.0)
     jbuilder (2.2.16)
@@ -87,6 +102,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    libv8 (3.16.14.7)
     loofah (2.0.2)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -128,6 +144,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rdoc (4.2.0)
+    ref (1.0.5)
     rubyzip (1.1.7)
     sass (3.4.14)
     sass-rails (5.0.3)
@@ -155,6 +172,9 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
@@ -189,6 +209,7 @@ DEPENDENCIES
   fuzzy-string-match
   fuzzy_match
   google-search
+  handlebars-rails
   jbuilder (~> 2.0)
   jquery-rails
   mysql2
