@@ -78,11 +78,11 @@ class MainController < ApplicationController
   end
 
   #Precondition: MUST CALL get_frontpage_deals first
-  #Postcondition: Creates @specials, @top_sellers, @new_releases
+  #Postcondition: Merges with @large_capsules. Creates @new_releases
   #and removes duplicates from get_frontpage_deals
   def get_more_frontpage_info()
-    @specials = []
-    @top_sellers = []
+    specials = []
+    top_sellers = []
     @new_releases = []
     base_url = "http://store.steampowered.com/api/featuredcategories/"
     uri = URI(base_url)
@@ -94,7 +94,7 @@ class MainController < ApplicationController
         top_seller = get_top_sellers(hash)
         top_seller.each do |cap|
           if has_id?(cap)
-            @top_sellers << get_id(cap)
+            top_sellers << get_id(cap)
           end
         end
       end
@@ -102,7 +102,7 @@ class MainController < ApplicationController
         special = get_specials(hash)
         special.each do |cap|
           if has_id?(cap)
-            @specials << get_id(cap)
+            specials << get_id(cap)
           end
         end
       end
@@ -117,6 +117,8 @@ class MainController < ApplicationController
     else
       puts "ERROR: PLEASE RELOAD WEBSITE"
     end
+    @large_capsules = 
+    (@large_capsules | specials | top_sellers).uniq
     #remove_duplicate_frontpage_info
   end
 
