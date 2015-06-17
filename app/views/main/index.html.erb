@@ -204,5 +204,30 @@
       <% end %>
     <% end %>
   </div>
+  <div class="col-md-9">
+    <% if @new_releases != [] %>
+      <% @new_releases.each do |capsule| %>
+        <% if Game.find_by(steamid:capsule) %>
+          <div class="col-md-4">
+            <% if Game.find_by(steamid:capsule).headerimg %>
+              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>"><img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="homepage-img" /></a>
+            <% else %>
+              <p><%= Game.find_by(steamid:capsule).name %></p>
+              <!-- TODO: Add some generic steam logo image here -->
+            <% end %>
+          </div>
+        <%elsif Package.find_by(packageid:capsule) %>
+          <div class="col-md-4">
+            <% if Package.find_by(packageid:capsule).headerimg %>
+              <a href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>"><img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="homepage-img" /></a>
+            <% else %>
+              <p><%= Package.find_by(packageid:capsule).name %></p>
+              <!-- TODO: Add some generic steam logo image here -->
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
 
 </div>
