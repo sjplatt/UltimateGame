@@ -57,7 +57,7 @@ $(document).ready(function() {
     highlight: true,
     minLength: 2
   }, {
-    name: 'games_object',
+    name: 'games',
     displayKey: 'name',
     source: games_object.ttAdapter(),
     templates: {
@@ -76,7 +76,15 @@ $(document).ready(function() {
     displayKey: 'name',
     source: dlcs_object.ttAdapter(),
     templates: {
-      header: "<h4 class='section-header'>DLCs</h4>"
+      header: "<h4 class='section-header'>DLCs</h4>",
+      suggestion: function(data) {
+        return data.name
+        + '<a href="'
+        + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
+        + '">'
+        + '<span class="suggestion-link"></span>'
+        + '</a>';
+      }
     }
   });
 });
