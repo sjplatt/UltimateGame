@@ -62,14 +62,14 @@ $(document).ready(function() {
     source: games_object.ttAdapter(),
     templates: {
       header: "<h4 class='section-header'>Standalone games</h4>",
-      /*suggestion: function(data) {
+      suggestion: function(data) {
         return data.name
         + '<a href="'
         + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
-      }*/
+      }
     }
   }, {
     name: 'dlcs',
