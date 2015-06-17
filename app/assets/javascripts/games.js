@@ -1,16 +1,31 @@
 $(document).ready(function() {
+  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search";
+  // This will need to be changed if the search URL changes
+
   var games_object = new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.nonword,
-    queryTokenizer: Bloodhound.tokenizers.nonword,
+    datumTokenizer: function(d) {
+      console.log(d);
+      return Bloodhound.tokenizers.nonword("sanitized_name");
+    },
+    queryTokenizer: function(q) {
+      return Bloodhound.tokenizers.obj.nonword(q);
+    },
+    // limit: 8,
     remote: {
       url: '/games/autocomplete?query=%QUERY',
       filter: function(results) {
         // console.log(results);
         return $.map(results, function(data) {
-          return {name: data};
+          return {
+            "name": data,
+            "sanitized_name": data
+              .replace(/[^a-zA-Z0-9\s]/g, "")
+              .replace(/\-/g, "")
+              .replace(/\s+/, " ")
+          };
           // add whatever you want to display here
         });
-      }
+      },
     }
   });
   var dlcs_object = new Bloodhound({
@@ -40,18 +55,24 @@ $(document).ready(function() {
 
   $('#game_search').typeahead({
     highlight: true,
-    minLength: 2,
-    hint: true,
-    items: 5
+    minLength: 2
   }, {
     name: 'games_object',
     displayKey: 'name',
     source: games_object.ttAdapter(),
     templates: {
-      header: "<h4 class='section-header'>Standalone games</h4>"
+      header: "<h4 class='section-header'>Standalone games</h4>",
+      suggestion: function(data) {
+        return data.name
+        + '<a href="'
+        + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
+        + '">'
+        + '<span class="suggestion-link"></span>'
+        + '</a>';
+      }
     }
   }, {
-    name: 'dlcs_object',
+    name: 'dlcs',
     displayKey: 'name',
     source: dlcs_object.ttAdapter(),
     templates: {

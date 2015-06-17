@@ -77,13 +77,77 @@ class MainController < ApplicationController
     
   end
 
+  #Precondition: MUST CALL get_frontpage_deals first
+  #Postcondition: Creates @specials, @top_sellers, @new_releases
+  #and removes duplicates from get_frontpage_deals
+  def get_more_frontpage_info()
+    @specials = []
+    @top_sellers = []
+    @new_releases = []
+    base_url = "http://store.steampowered.com/api/featuredcategories/"
+    uri = URI(base_url)
+    #get the body of the text
+    body = page_refresh_no_id(uri,1)
+    if valid_json?(body)
+      hash = JSON(body)
+      if has_top_sellers?(hash)
+        top_seller = get_top_sellers(hash)
+        top_seller.each do |cap|
+          if has_id?(cap)
+            @top_sellers << get_id(cap)
+          end
+        end
+      end
+      if has_specials?(hash)
+        special = get_specials(hash)
+        special.each do |cap|
+          if has_id?(cap)
+            @specials << get_id(cap)
+          end
+        end
+      end
+      if has_new_releases?(hash)
+        release = get_new_releases(hash)
+        release.each do |cap|
+          if has_id?(cap)
+            @new_releases << get_id(cap)
+          end
+        end
+      end
+    else
+      puts "ERROR: PLEASE RELOAD WEBSITE"
+    end
+    #remove_duplicate_frontpage_info
+  end
+
+  # def remove_duplicate_frontpage_info()
+  #   if @specials&@large_capsules != []
+  #     @large_capsules.each do |cap|
+  #       if @specials.include?(cap)
+  #         @specials.delete(cap)
+  #       end
+  #     end
+  #   end
+  #   if @top_sellers&@large_capsules
+  #     @large_capsules.each do |cap|
+  #       if @top_sellers.include?(cap)
+  #         @top_sellers.delete(cap)
+  #       end
+  #     end
+  #   end
+  #   if @new_releases&@large_capsules
+  #     @large_capsules.each do |cap|
+  #       if @new_releases.include?(cap)
+  #         @new_releases.delete(cap)
+  #       end
+  #     end
+  #   end
+  # end
+
   #Postcondition: creates instance variable @large_capsules which contains
   #the ids of the apps for the large banner
-  #Postcondition: creates instance variable @small_capsules which contains
-  #the ids of the apps for the small banner
   def get_frontpage_deals()
     @large_capsules = []
-    @small_capsules = []
     base_url = "http://store.steampowered.com/api/featured/"
     uri = URI(base_url)
     #get the body of the text
@@ -95,14 +159,6 @@ class MainController < ApplicationController
         large_cap.each do |cap|
           if has_id?(cap)
             @large_capsules << get_id(cap)
-          end
-        end
-      end
-      if has_small_capsules?(hash)
-        small_cap = get_small_capsules(hash)
-        small_cap.each do |cap|
-          if has_id?(cap)
-            @small_capsules << get_id(cap)
           end
         end
       end
@@ -144,7 +200,7 @@ class MainController < ApplicationController
   #5) how_long_to_beat_dlc()
   #6) set_subreddit_for_games
   def update_db()
-    update_steam_game_list
+    #update_steam_game_list
     fail = update_steam_dlc
     update_steam_dlc_failures(fail)
     how_long_to_beat
@@ -427,6 +483,8 @@ class MainController < ApplicationController
   def index
     #get_price_information("Bioshock Infinite",false)
     get_frontpage_deals
+    get_more_frontpage_info
+    #update_db
   end
 
   def get_game

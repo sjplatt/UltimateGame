@@ -245,17 +245,39 @@ module MainHelper
     return cap["id"]
   end
 
-  def has_small_capsules?(hash)
-    if hash && hash["featured_win"]
+  def has_top_sellers?(hash)
+    if hash && hash["top_sellers"] && hash["top_sellers"]["items"]
       return true
     end
     return false
   end
 
-  def get_small_capsules(cap)
-    return cap["featured_win"]
+  def get_top_sellers(hash)
+    return hash["top_sellers"]["items"]
   end
 
+  def has_specials?(hash)
+    if hash && hash["specials"] && hash["specials"]["items"]
+      return true
+    end
+    return false
+  end
+
+  def get_specials(hash)
+    return hash["specials"]["items"]
+  end
+
+  def has_new_releases?(hash)
+    if hash && hash["new_releases"] && hash["new_releases"]["items"]
+      return true
+    end
+    return false
+  end
+
+  def get_new_releases(hash)
+    return hash["new_releases"]["items"]
+  end
+  
   #Use to update database of games
   #DO NOT USE AT RUNTIME
   #Opens up actual browser to scrape data
@@ -271,15 +293,14 @@ module MainHelper
     browser = Watir::Browser.new
     browser.goto url
     page = Nokogiri::HTML.parse(browser.html)
-    while !page.at('p:contains("No results were returned for that query.")') && page_count<250
+    while page_count<225
+      #!page.at('p:contains("No results were returned for that query.")') && page_count<250
       page.css(".search_result_row").each do |element|
         id = element['href'].slice!(34..41)
         id.gsub!(/[^0-9]/,'')
         title = element.css(".title").text
-        if Game.find_by(steamid:id)
-           puts ""
-        else 
-           Game.create(name:title,steamid:id)
+        if !Game.find_by(steamid:id)
+          Game.create(name:title,steamid:id)
         end
       end
       url = main_url
