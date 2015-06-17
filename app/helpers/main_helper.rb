@@ -245,17 +245,39 @@ module MainHelper
     return cap["id"]
   end
 
-  def has_small_capsules?(hash)
-    if hash && hash["featured_win"]
+  def has_top_sellers?(hash)
+    if hash && hash["top_sellers"] && hash["top_sellers"]["items"]
       return true
     end
     return false
   end
 
-  def get_small_capsules(cap)
-    return cap["featured_win"]
+  def get_top_sellers(hash)
+    return hash["top_sellers"]["items"]
   end
 
+  def has_specials?(hash)
+    if hash && hash["specials"] && hash["specials"]["items"]
+      return true
+    end
+    return false
+  end
+
+  def get_specials(hash)
+    return hash["specials"]["items"]
+  end
+
+  def has_new_releases?(hash)
+    if hash && hash["new_releases"] && hash["new_releases"]["items"]
+      return true
+    end
+    return false
+  end
+
+  def get_new_releases(hash)
+    return hash["new_releases"]["items"]
+  end
+  
   #Use to update database of games
   #DO NOT USE AT RUNTIME
   #Opens up actual browser to scrape data
