@@ -6,6 +6,8 @@ an external file once the styling is mostly finalized */
   border: 1px solid blue;
 }*/
 
+/* Header styles */
+
 .twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
   vertical-align: middle;
   width: 100%;
@@ -26,13 +28,11 @@ an external file once the styling is mostly finalized */
   color: #999;
   font-style: italic;
 }
-
 .input-group {
   margin: auto;
   vertical-align: middle;
   width: 100%;
 }
-
 .header {
   height: 100px;
   margin-bottom: 10px;
@@ -44,30 +44,51 @@ an external file once the styling is mostly finalized */
 .search-bar {
   margin: auto;
 }
-
-.col-md-9,.col-md-4 {
-  padding: 5px;
-}
-
-.homepage-img {
-  width: 100%;
-}
-
 .section-header {
   margin: 5px 20px;
   padding: 3px 0;
   border-bottom: 1px solid #ccc;
 }
 
+/* Body styles */
+
+.col-md-9,.col-md-4 {
+  padding: 5px;
+}
+
+.game-img,.package-img {
+  width: 100%;
+}
+
+/* New Deals line styling */
+
 h3.divider {
   width: 100%;
   text-align: center;
   border-bottom: 1px solid #000;
   line-height: 0.1em;
-  margin: 10px 0 20px; } 
+  margin: 10px 0 20px;
+} 
 span.divider {
   background: #fff;
   padding: 0 10px;
+}
+
+/* Package styling */
+
+.vertical-spacer {
+  background-color: #333;
+  text-align: center;
+}
+.vertical-spacer-text {
+  /*line-height: 29px; <-- assigned dynamically in js */
+  white-space: nowrap;
+  opacity: 0.5;
+  color: #fff;
+  text-align: center;
+}
+.package-link:hover {
+  text-decoration: none;
 }
 
 </style>
@@ -98,25 +119,37 @@ span.divider {
   <div class="col-md-9">
     <% if @large_capsules != [] %>
       <% @large_capsules.each do |capsule| %>
+
         <% if Game.find_by(steamid:capsule) %>
           <div class="col-md-4">
             <% if Game.find_by(steamid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>"><img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="homepage-img" /></a>
+              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>">
+              <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
+              </a>
             <% else %>
-              <p><%= Game.find_by(steamid:capsule).name %></p>
-              <!-- TODO: Add some generic steam logo image here -->
+              <%= image_tag "steamlogo.jpg", class: "game-img" %>
+              <!--p><%= Game.find_by(steamid:capsule).name %></p-->
             <% end %>
           </div>
-        <%elsif Package.find_by(packageid:capsule) %>
+
+        <% elsif Package.find_by(packageid:capsule) %>
           <div class="col-md-4">
             <% if Package.find_by(packageid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>"><img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="homepage-img" /></a>
+              <a class="package-link" href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>">
+              <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
+
+              <div class="vertical-spacer">
+              <span class="vertical-spacer-text">PACKAGE</span>
+              </div>
+              </a>
+
             <% else %>
-              <p><%= Package.find_by(packageid:capsule).name %></p>
-              <!-- TODO: Add some generic steam logo image here -->
+              <%= image_tag "steamlogo.jpg", class: "package-img" %>
+              <!--p><%= Package.find_by(packageid:capsule).name %></p-->
             <% end %>
           </div>
         <% end %>
+
       <% end %>
     <% end %>
   </div>
@@ -128,27 +161,55 @@ span.divider {
   <div class="col-md-9">
     <% if @new_releases != [] %>
       <% @new_releases.each do |capsule| %>
+        
         <% if Game.find_by(steamid:capsule) %>
           <div class="col-md-4">
             <% if Game.find_by(steamid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>"><img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="homepage-img" /></a>
+              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>">
+              <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
+              </a>
             <% else %>
-              <p><%= Game.find_by(steamid:capsule).name %></p>
-              <!-- TODO: Add some generic steam logo image here -->
+              <%= image_tag "steamlogo.jpg", class: "game-img" %>
+              <!--p><%= Game.find_by(steamid:capsule).name %></p-->
             <% end %>
           </div>
-        <%elsif Package.find_by(packageid:capsule) %>
+
+        <% elsif Package.find_by(packageid:capsule) %>
           <div class="col-md-4">
             <% if Package.find_by(packageid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>"><img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="homepage-img" /></a>
+              <a class="package-link" href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>">
+              <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
+
+              <div class="vertical-spacer">
+              <span class="vertical-spacer-text">PACKAGE</span>
+              </div>
+              </a>
+
             <% else %>
-              <p><%= Package.find_by(packageid:capsule).name %></p>
-              <!-- TODO: Add some generic steam logo image here -->
+              <%= image_tag "steamlogo.jpg", class: "package-img" %>
+              <!--p><%= Package.find_by(packageid:capsule).name %></p-->
             <% end %>
           </div>
         <% end %>
+
       <% end %>
     <% end %>
   </div>
 
 </div>
+
+<script>
+// hacky: this eliminates the height difference between game header img height and package image height
+$(document).ready(function() {
+  var test_game_existence = $(".game-img").first();
+  var test_package_existence = $(".package-img").first();
+
+  if (test_game_existence != null && test_package_existence != null) {
+    var game_height = test_game_existence.css("height").replace("px","");
+    var package_height = test_package_existence.css("height").replace("px","");
+    var final_height = game_height-package_height + "px"
+    $(".vertical-spacer").css("height", final_height);
+    $(".vertical-spacer-text").css("line-height", final_height);
+  }
+}());
+</script>
