@@ -1,6 +1,7 @@
 <h1>SECOND PAGE</h1>
 <% if @game %>
-<table>                         
+<table>
+  <tr><td>is_dlc: <%=@is_dlc%></td></tr>
   <tr><td>Name: <%=@game.name%></td></tr> 
   <tr><td>Steamid: <%= @game.steamid%></td> </tr>   
   <tr><td>Metascore: <%= @game.metascore%></td> </tr> 
@@ -32,7 +33,7 @@
   <tr><td>HeaderImg : <%= @game.headerimg%></td></tr>  
   <tr><td>Recommendations : <%= @game.recommendations%></td></tr>
   <tr><td>Legal : <%= @game.legal%></td></tr>     
-  <tr><td>Reddit : <%= @game.subreddit%></td></tr>     
+  <tr><td>Reddit : <%= if !@is_dlc then @game.subreddit end %></td></tr>     
   <%Dlc.where(game_id:@game.id).each do |dlc|%>
     <tr><td>DLC : <%=dlc.name %></td></tr>
   <%end%>

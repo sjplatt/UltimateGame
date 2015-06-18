@@ -1,15 +1,10 @@
 $(document).ready(function() {
-  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search";
+  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=BOOL";
   // This will need to be changed if the search URL changes
 
   var games_object = new Bloodhound({
-    datumTokenizer: function(d) {
-      console.log(d);
-      return Bloodhound.tokenizers.nonword("sanitized_name");
-    },
-    queryTokenizer: function(q) {
-      return Bloodhound.tokenizers.obj.nonword(q);
-    },
+    datumTokenizer: Bloodhound.tokenizers.nonword,
+    queryTokenizer: Bloodhound.tokenizers.nonword,
     // limit: 8,
     remote: {
       url: '/games/autocomplete?query=%QUERY',
@@ -65,7 +60,9 @@ $(document).ready(function() {
       suggestion: function(data) {
         return data.name
         + '<a href="'
-        + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
+        + SAMPLE_SEARCH_URL_FORMAT
+          .replace(/query=(.*)&/, "query="+data.name+"&")
+          .replace(/dlc=(.*)/, "dlc=false")
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
@@ -80,7 +77,9 @@ $(document).ready(function() {
       suggestion: function(data) {
         return data.name
         + '<a href="'
-        + SAMPLE_SEARCH_URL_FORMAT.replace(/query=(.*)&/, "query="+data.name+"&")
+        + SAMPLE_SEARCH_URL_FORMAT
+          .replace(/query=(.*)&/, "query="+data.name+"&")
+          .replace(/dlc=(.*)/, "dlc=true")
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
