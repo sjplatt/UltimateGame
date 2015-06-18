@@ -57,6 +57,7 @@ $(document).ready(function() {
     source: games_object.ttAdapter(),
     templates: {
       header: "<h4 class='section-header'>Standalone games</h4>",
+      empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
       suggestion: function(data) {
         return data.name
         + '<a href="'
@@ -74,6 +75,7 @@ $(document).ready(function() {
     source: dlcs_object.ttAdapter(),
     templates: {
       header: "<h4 class='section-header'>DLCs</h4>",
+      empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
       suggestion: function(data) {
         return data.name
         + '<a href="'
