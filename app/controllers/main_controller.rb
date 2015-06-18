@@ -122,30 +122,6 @@ class MainController < ApplicationController
     #remove_duplicate_frontpage_info
   end
 
-  # def remove_duplicate_frontpage_info()
-  #   if @specials&@large_capsules != []
-  #     @large_capsules.each do |cap|
-  #       if @specials.include?(cap)
-  #         @specials.delete(cap)
-  #       end
-  #     end
-  #   end
-  #   if @top_sellers&@large_capsules
-  #     @large_capsules.each do |cap|
-  #       if @top_sellers.include?(cap)
-  #         @top_sellers.delete(cap)
-  #       end
-  #     end
-  #   end
-  #   if @new_releases&@large_capsules
-  #     @large_capsules.each do |cap|
-  #       if @new_releases.include?(cap)
-  #         @new_releases.delete(cap)
-  #       end
-  #     end
-  #   end
-  # end
-
   #Postcondition: creates instance variable @large_capsules which contains
   #the ids of the apps for the large banner
   def get_frontpage_deals()

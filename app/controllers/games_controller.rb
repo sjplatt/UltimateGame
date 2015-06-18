@@ -8,6 +8,6 @@ class GamesController < ApplicationController
   end
 
   def autocomplete
-    render json: Game.search(params[:query], autocomplete: true, limit: 10).map(&:name)
+    render json: Game.search(params[:query], operator:"or", limit: 10).map(&:name)
   end
 end
