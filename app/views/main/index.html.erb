@@ -1,4 +1,7 @@
 <style>
+/* This is all temporary, and should be moved to
+an external file once the styling is mostly finalized */
+
 /*.col-md-3,.col-md-4,.col-md-8,.col-md-9 {
   border: 1px solid blue;
 }*/
@@ -8,17 +11,20 @@
   width: 100%;
 }
 .tt-suggestion {
-  position:relative;
+  position: relative;
 }
 .suggestion-link {
   position:absolute; 
-  width:100%;
-  height:100%;
-  top:0;
+  width: 100%;
+  height: 100%;
+  top: 0;
   left: 0;
-
-  /* edit: added z-index */
-  z-index: 1000000;
+  /*z-index: 1000000;*/
+}
+.empty-suggestions {
+  margin: 3px 20px;
+  color: #999;
+  font-style: italic;
 }
 
 .input-group {
@@ -48,9 +54,20 @@
 }
 
 .section-header {
-  margin: 5px 20px 5px 20px;
+  margin: 5px 20px;
   padding: 3px 0;
   border-bottom: 1px solid #ccc;
+}
+
+h3.divider {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #000;
+  line-height: 0.1em;
+  margin: 10px 0 20px; } 
+span.divider {
+  background: #fff;
+  padding: 0 10px;
 }
 
 </style>
@@ -103,7 +120,11 @@
       <% end %>
     <% end %>
   </div>
-  
+
+  <div class="col-md-9">
+  <h3 class="divider"><span class="divider">New Deals</span></h3>
+  </div>
+
   <div class="col-md-9">
     <% if @new_releases != [] %>
       <% @new_releases.each do |capsule| %>
