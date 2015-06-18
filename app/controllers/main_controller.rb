@@ -465,11 +465,13 @@ class MainController < ApplicationController
   end
 
   def get_game
-    @is_dlc = params[:dlc]
+    is_dlc_string = params[:dlc]
 
-    if @is_dlc
+    if is_dlc_string.eql?("true")
+      @is_dlc = true
       @game = Dlc.find_by(name:params[:query])
     else
+      @is_dlc = false
       @game = Game.find_by(name:params[:query])
     end
 
