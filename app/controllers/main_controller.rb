@@ -488,7 +488,14 @@ class MainController < ApplicationController
   end
 
   def get_game
-    @game = Game.find_by(name:params[:query])
+    @is_dlc = params[:dlc]
+
+    if @is_dlc
+      @game = Dlc.find_by(name:params[:query])
+    else
+      @game = Game.find_by(name:params[:query])
+    end
+
     if !@game
       puts "ERROR: Could not find " + params[:query]
     end
