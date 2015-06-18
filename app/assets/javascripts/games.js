@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=BOOL";
+  var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=DLCBOOL";
   // This will need to be changed if the search URL changes
 
   var games_object = new Bloodhound({
@@ -61,8 +61,8 @@ $(document).ready(function() {
         return data.name
         + '<a href="'
         + SAMPLE_SEARCH_URL_FORMAT
-          .replace(/query=(.*)&/, "query="+data.name+"&")
-          .replace(/dlc=(.*)/, "dlc=false")
+          .replace("GAMENAME", data.name)
+          .replace("DLCBOOL", "false")
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
@@ -78,8 +78,8 @@ $(document).ready(function() {
         return data.name
         + '<a href="'
         + SAMPLE_SEARCH_URL_FORMAT
-          .replace(/query=(.*)&/, "query="+data.name+"&")
-          .replace(/dlc=(.*)/, "dlc=true")
+          .replace("GAMENAME", data.name)
+          .replace("DLCBOOL", "true")
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
