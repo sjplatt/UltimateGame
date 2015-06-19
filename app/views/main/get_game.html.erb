@@ -1,4 +1,99 @@
-<h1>SECOND PAGE</h1>
+<div class="container">
+
+<div class="col-md-12 header">
+  <div class="col-md-4 homepage-title">
+    <h1>The Name Goes Here</h1>
+  </div>
+
+  <div class="col-md-8 search-bar">
+    <%= form_tag "/get_game", method: :get do %>
+      <div class="input-group">
+        <% if params[:query].present? %>
+          <div class="input-group-btn">
+            <%= link_to "clear", "/", class: "btn btn-default" %>
+          </div>
+        <% end %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game_search", autocomplete: "off" %>
+        <div class="input-group-btn">
+          <%= submit_tag "Search", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row nav-bar">
+  <div class="col-md-3"></div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-3"></div>
+</div>
+
+<div class="row game-name">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <h3><%= @game.name %></h3>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+
+<div class="row vital-data">
+<div class="col-md-2"></div>
+<div class="col-md-8">
+
+  <div class="img-container">
+    <img class="gamepage-img" src="<%= @game.headerimg %>" />
+  </div>
+
+  <div class="info-container">
+    <div class="center">
+      <div class="col-md-4 score-container">
+        <div class="circle">
+        <span class="metascore"><%= @game.metascore %></span>
+        </div>
+      </div>
+      <div class="col-md-4 score-container">
+        <div class="circle">
+        <span class="steam-pct">100</span>
+        </div>
+      </div>
+      <div class="col-md-4 score-container">
+        <div class="circle">
+        <span class="recommendations"><%= @game.recommendations %></span>
+        </div>
+      </div>
+    </div>
+
+    asdf
+  </div>
+</div>
+
+<div class="col-md-2"></div>
+</div>
+
+</div>
+
+<script>
+$(window).load(function() {
+  var full_width = $(".info-container").parent().css("width").replace("px","");
+  var img_width = $(".img-container").css("width").replace("px","");
+  $(".info-container").css("width",full_width-img_width-6 + "px");
+  $(".scores-row").css("width",full_width-img_width-30 + "px");
+
+  var circle_width = $(".score-container").css("width");
+  $(".score-container").css("height",circle_width);
+
+  /*var cx = circle_width/2;
+  var r = cx - 5;
+  $(".metascore").append("<circle></circle>");
+  $(".metascore circle").attr("cx",cx)
+  .attr("cy",cx)
+  .attr("r",r)
+  .attr("fill","#84FF38");*/
+}());
+</script>
+
 <% if @game %>
 <table>
   <tr><td>is_dlc: <%=@is_dlc%></td></tr>
