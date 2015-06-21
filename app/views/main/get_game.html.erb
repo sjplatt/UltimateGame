@@ -50,7 +50,7 @@
       </div><!--
       --><div class="score-container">
         <div class="circle">
-        <span class="steam-pct"><%= @steam_percentage %></span>
+        <span class="steam-pct"><%= @price_info[@game.name][:steam_percentage] %></span>
         </div>
       </div>
     </div>
@@ -70,14 +70,17 @@
       <li>Released: <%= @game.releasedate %></li>
       <li>Developer<%= "s" if @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
         <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') %></li>
-      <li>Website: <a href="<%= @game.website %>"><%= @game.website.sub("http://","") %></a></li>
+      <li>Website: <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub("com/","com") %></a></li>
       <li><a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a></li>
     </ul>
   </div>
 </div>
 
 <div class="row main-column pricing">
-  <%= @prices %>
+  <%= @price_info.each do |name,data| %>
+    <p><%= name %></p>
+    <%= data[:prices] %>
+  <% end %>
 </div>
 
 <div class="row main-column hltb-description">

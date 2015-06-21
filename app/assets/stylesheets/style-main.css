@@ -12,6 +12,8 @@ body {
 .twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
   vertical-align: middle;
   width: 100%;
+  color: #555;
+  /* overridden by body{} above, re-overridden to normal here */
 }
 .tt-suggestion {
   position: relative;

@@ -236,11 +236,128 @@ class MainController < ApplicationController
     end
   end
 
+  def encode_itad_plain(name)
+    # Rules:
+    # Every "+"" becomes "plus"
+    # Every "the" becomes ""
+    # All digits except 0 get converted to lowercase Roman numerals
+    # All other non-alphanumeric characters are removed
+    # (This means e.g. 12 and 3 both get converted to "iii"
+    #  but this shouldn't be a problem if it isn't for ITAD)
+    spaced_plain = name.gsub(/\+/,"plus")
+                       .gsub(/\bthe\b/i,"")
+                       .gsub(/1/,"i")
+                       .gsub(/2/,"ii")
+                       .gsub(/3/,"iii")
+                       .gsub(/4/,"iv")
+                       .gsub(/5/,"v")
+                       .gsub(/6/,"vi")
+                       .gsub(/7/,"vii")
+                       .gsub(/8/,"viii")
+                       .gsub(/9/,"ix");
+    return clean_string_stronger(spaced_plain).gsub(/\s/,"").downcase;
+  end
+
   #Precondition: game_name is the name of the game
   #Precondition: input_is_DLC is true if game is dlc
   #Postcondition: @metascore,@metacritic_link,@steam_percentage,
   #Postcondition: @wiki_link,@prices are created
-  def get_price_information(game_name,input_is_DLC)
+  def get_price_information(game_name,input_is_DLC,input_is_pkg)
+    # default outputs
+    metascore = "??"
+    metacritic_link = "http://metacritic.com"
+    steam_percentage = "??"
+    wiki_search_string = URI.encode(game_name)
+    wiki_link = "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=#{wiki_search_string}&button="
+    prices = []
+
+    game_needed = game_name
+
+    if !game_needed
+      puts "[CRITICAL] See above; could not find the game_needed"
+    else
+      #puts game_needed
+      formatted_game_name = encode_itad_plain(game_needed)
+      detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
+      puts detailed_deals_url
+      begin
+        detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
+      rescue Exception => e
+        puts "Nokogiri HTML error: #{e}"
+      end
+
+      #puts detailed_deals.text
+      if detailed_deals.nil?
+        puts "[CRITICAL] Nokogiri HTML call for detailed deals failed"
+        puts "[Note] Consider using link only, since scraping details won't work"
+      else
+        # ENSURES: All calls to the detailed page for formatted_game_name contain data
+        if detailed_deals.at("span.score.score-number")
+          metascore = detailed_deals.at("span.score.score-number").text.to_i
+        end
+
+        if detailed_deals.at("div.score-section a")
+          if detailed_deals.at("div.score-section a")[:href]
+            metacritic_link = detailed_deals.at("div.score-section a")[:href]
+          end
+        end
+        
+        if detailed_deals.css("div.score-section")
+          if detailed_deals.css("div.score-section")[1].css("span")
+            if detailed_deals.css("div.score-section")[1].css("span")[2]
+              steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
+              start_index2 = steam_text.index(", ") + ", ".length()
+              end_index2 = steam_text.index("%")
+              steam_percentage = steam_text[start_index2..end_index2].to_i
+            end
+          end
+        end
+        
+        if detailed_deals.at("div.wiki.link a")
+          if detailed_deals.at("div.wiki.link a")[:href]
+            wiki_link = detailed_deals.at("div.wiki.link a")[:href]
+          end
+        end
+
+        if detailed_deals.at("div.buy table")
+          price_table = detailed_deals.at("div.buy table")
+          price_rows = price_table.css("tr.row")
+          price_rows.each do |row|
+            store = row.css("td")[0].at("a").text
+            store_url = row.css("td")[0].at("a")[:href]
+            price_cut = row.at("td.cut").text
+            current_price = row.at("td.new").text
+            lowest_recorded = row.at("td.low").text
+            regular_price = row.at("td.old").text
+            prices.push({store: store,
+                         store_url: store_url,
+                         price_cut: price_cut,
+                         current_price: current_price,
+                         lowest_recorded: lowest_recorded,
+                         regular_price: regular_price})
+          end
+        end
+      end
+    end
+
+    if !@price_info
+      @price_info = {}
+    end
+    @price_info[game_name] = {name: game_name,
+                              is_dlc: input_is_DLC,
+                              is_pkg: input_is_pkg,
+                              metascore: metascore,
+                              metacritic_link: metacritic_link,
+                              steam_percentage: steam_percentage,
+                              wiki_link: wiki_link,
+                              prices: prices}
+    # is_dlc,is_pkg can be:
+    # false,false (just the game itself),
+    # true,false,
+    # false,true
+  end
+
+  def get_price_information_old(game_name,input_is_DLC)
     # default outputs
     @metascore = "??"
     @metacritic_link = "http://metacritic.com"
@@ -523,15 +640,25 @@ class MainController < ApplicationController
     if is_dlc_string.eql?("true")
       @is_dlc = true
       @game = Dlc.find_by(name:params[:query])
-      get_price_information(params[:query], true)
+      if !@game
+        puts "ERROR: Could not find " + params[:query]
+      else
+        get_price_information(@game.name, true, false)
+      end
     else
       @is_dlc = false
       @game = Game.find_by(name:params[:query])
-      get_price_information(params[:query], false)
-    end
-
-    if !@game
-      puts "ERROR: Could not find " + params[:query]
+      if !@game
+        puts "ERROR: Could not find " + params[:query]
+      else
+        get_price_information(@game.name, false, false)
+        Dlc.where(game_id:@game.id).each do |dlc|
+          get_price_information(dlc.name, true, false)
+        end
+        Package.where(game_id:@game.id).each do |pkg|
+          get_price_information(pkg.name, false, true)
+        end
+      end
     end
 
     # @top_ids = Game.search(params[:query]).map(&:steamid)

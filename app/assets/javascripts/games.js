@@ -50,7 +50,8 @@ $(document).ready(function() {
 
   $('#game_search').typeahead({
     highlight: true,
-    minLength: 2
+    minLength: 2,
+    autoselect: true
   }, {
     name: 'games',
     displayKey: 'name',
