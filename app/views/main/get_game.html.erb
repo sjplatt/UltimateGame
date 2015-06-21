@@ -30,51 +30,111 @@
   <div class="col-md-3"></div>
 </div>
 
-<div class="row game-name">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    <h3><%= @game.name %></h3>
-  </div>
-  <div class="col-md-2"></div>
+<div class="row main-column game-name">
+  <h3><%= @game.name %></h3>
 </div>
 
-<div class="row vital-data">
-<div class="col-md-2"></div>
-<div class="col-md-8">
+<div class="row main-column vital-data">
 
   <div class="img-container">
     <img class="gamepage-img" src="<%= @game.headerimg %>" />
   </div>
 
   <div class="info-container">
+
     <div class="center">
-      <div class="col-md-4 score-container">
+      <div class="score-container">
         <div class="circle">
-        <span class="metascore"><%= @game.metascore %></span>
+        <span class="metascore"><%= @game.metascore || 100 %></span>
         </div>
-      </div>
-      <div class="col-md-4 score-container">
+      </div><!--
+      --><div class="score-container">
         <div class="circle">
-        <span class="steam-pct">100</span>
-        </div>
-      </div>
-      <div class="col-md-4 score-container">
-        <div class="circle">
-        <span class="recommendations"><%= @game.recommendations %></span>
+        <span class="steam-pct"><%= @steam_percentage %></span>
         </div>
       </div>
     </div>
 
-    asdf
+    <div class="recs-container">
+      <span class="recs-num"><%= @game.recommendations || 0 %></span>
+      <p class="recs-word">recommendations</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="row main-column nonvital-data">
+  <div class="pics-container">Placeholder</div>
+  <div class="extra-info-container">
+    <ul>
+      <li>Released: <%= @game.releasedate %></li>
+      <li>Developer<%= "s" if @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
+        <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') %></li>
+      <li>Website: <a href="<%= @game.website %>"><%= @game.website.sub("http://","") %></a></li>
+      <li><a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a></li>
+    </ul>
   </div>
 </div>
 
-<div class="col-md-2"></div>
+<div class="row main-column pricing">
+  <%= @prices %>
 </div>
+
+<div class="row main-column hltb-description">
+  <div class="hltb-container">
+    <a href="http://howlongtobeat.com/<%= @game.hltb %>">View on HowLongToBeat</a>
+    <table>
+
+      <tr>
+        <th></th>
+        <th>Time (hours)</th>
+        <th>Price per hour (USD)</th>
+      </tr>
+
+      <tr>
+        <td>Main Story:</td>
+        <td><%= @game.MainStory %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Main + Extras:</td>
+        <td><%= @game.MainExtra %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Completionist:</td>
+        <td><%= @game.Completion %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Combined:</td>
+        <td><%= @game.Combined %></td>
+        <td>0</td>
+      </tr>
+
+    </table>
+  </div>
+
+  <div class="description-container">
+    Placeholder
+    <!--<% if @game.description %>
+      <p><%= @game.description.html_safe %></p>
+    <% else %>
+      <p><%= @game.description %></p>
+    <% end %>-->
+  </div>
+</div>
+
+
+
+<div class="row main-column reddit-reviews">
 
 </div>
 
-<script>
+<!--script>
 $(window).load(function() {
   var full_width = $(".info-container").parent().css("width").replace("px","");
   var img_width = $(".img-container").css("width").replace("px","");
@@ -92,7 +152,7 @@ $(window).load(function() {
   .attr("r",r)
   .attr("fill","#84FF38");*/
 }());
-</script>
+</script-->
 
 <% if @game %>
 <table>
@@ -101,6 +161,7 @@ $(window).load(function() {
   <tr><td>Steamid: <%= @game.steamid%></td> </tr>   
   <tr><td>Metascore: <%= @game.metascore%></td> </tr> 
   <tr><td>Metaurl: <%= @game.metaurl%></td> </tr> 
+
   <tr><td>HLTB: <%= @game.hltb%></td> </tr> 
   <tr><td>Main Story: <%= @game.MainStory%></td> </tr> 
   <tr><td>Main Story + Extra: <%= @game.MainExtra%></td> </tr> 
@@ -111,6 +172,7 @@ $(window).load(function() {
   <%else %>
      <tr><td>Description : <%= @game.description%></td> </tr>    
   <%end%>  
+
   <tr><td>Website : <%= @game.website%></td> </tr>   
   <tr><td>Review : <%= @game.review%></td> </tr> 
   <%if @game.minreq %>

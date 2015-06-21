@@ -242,10 +242,10 @@ class MainController < ApplicationController
   #Postcondition: @wiki_link,@prices are created
   def get_price_information(game_name,input_is_DLC)
     # default outputs
-    @metascore = "Unknown"
-    @metacritic_link = "Unknown"
-    @steam_percentage = "Unknown"
-    @wiki_link = "Unknown"
+    @metascore = "??"
+    @metacritic_link = "http://metacritic.com"
+    @steam_percentage = "??"
+    @wiki_link = "http://en.wikipedia.org"
     @prices = []
 
     raw_game_name = strip_nonalphanumeric(game_name)
@@ -298,7 +298,11 @@ class MainController < ApplicationController
           deals_list.each do |list_item|
             this_game_string = get_game_string(list_item[:href])
 
-            end_index = list_item.text.index(" share") - 1
+            if list_item.text.index(" share")
+              end_index = list_item.text.index(" share") - 1
+            else
+              end_index = list_item.text.length
+            end
             name = list_item.text[0..end_index]
             sanitized_name = clean_string_stronger(name)
             url = URI.decode(list_item[:href]).gsub("\\","")
@@ -345,67 +349,88 @@ class MainController < ApplicationController
 
       # Splitting each hash list into deals on DLCs and nondeals on DLCs
 
-      #puts "Deals hash @@@@@@@@@@@@@@@@@@@@@@"
-      #puts deals_hashlist
-      #puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      #puts "Nondeals hash @@@@@@@@@@@@@@@@@@@"
-      #puts nondeals_hashlist
-      #puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      # puts "Deals hash @@@@@@@@@@@@@@@@@@@@@@"
+      # puts deals_hashlist
+      # puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      # puts "Nondeals hash @@@@@@@@@@@@@@@@@@@"
+      # puts nondeals_hashlist
+      # puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 
-      deals_hashlist_DLC = []
-      nondeals_hashlist_DLC = []
-      combined_hashlist_DLC = []
+      # prioritize exact name matches regardless of DLCness
+      found_deal = deals_hashlist.find {|item| item[:name] == @game.name}
+      found_nondeal = nondeals_hashlist.find {|item| item[:name] == @game.name}
 
-      # Note: some of these may be empty
-      deals_hashlist.each do |item|
-        if item[:isDLC]
-          deals_hashlist_DLC.push(item)
-          deals_hashlist.delete(item)
-        end
-      end
-      nondeals_hashlist.each do |item|
-        if item[:isDLC]
-          nondeals_hashlist_DLC.push(item)
-          nondeals_hashlist.delete(item)
-        end
-      end
-      combined_hashlist.each do |item|
-        if item[:isDLC]
-          combined_hashlist_DLC.push(item)
-          combined_hashlist.delete(item)
-        end
-      end
-
-
-
-      # Fuzzy string matching to search the proper list for the input
-
-      if input_is_DLC
-        deals_matcher = FuzzyMatch.new(deals_hashlist_DLC, :read => :sanitized_name)
-        nondeals_matcher = FuzzyMatch.new(nondeals_hashlist_DLC, :read => :sanitized_name)
-        combined_matcher = FuzzyMatch.new(combined_hashlist_DLC, :read => :sanitized_name)
-      else
-        deals_matcher = FuzzyMatch.new(deals_hashlist, :read => :sanitized_name)
-        nondeals_matcher = FuzzyMatch.new(nondeals_hashlist, :read => :sanitized_name)
-        combined_matcher = FuzzyMatch.new(combined_hashlist, :read => :sanitized_name)
-      end
-
-      found_deal = deals_matcher.find(clean_string_stronger(game_name))
-      found_nondeal = nondeals_matcher.find(clean_string_stronger(game_name))
-      found_combined = combined_matcher.find(clean_string_stronger(game_name))
-
-      if found_deal && found_nondeal &&
-        found_deal[:sanitized_name].eql?(found_nondeal[:sanitized_name])
-        # use the one in the deals list, idk why the nondeals list sometimes
-        # shows things that should be in the deals list
+      # sometimes games appear in both for some reason
+      # prioritize the appearance in deals hash list
+      if found_deal
         game_needed = found_deal
-      else
-        if found_combined
-          game_needed = found_combined
-        else
-          puts "[WARNING] No game was matched. Are all lists empty? Did you correctly specify DLCness?"
+        if game_needed[:is_dlc] != input_is_DLC
+          puts "[WARNING] DLC parameter doesn't match, but we had an exact name match"
         end
+      elsif found_nondeal
+        game_needed = found_nondeal
+        if game_needed[:is_dlc] != input_is_DLC
+          puts "[WARNING] DLC parameter doesn't match, but we had an exact name match"
+        end
+      else
+        puts "[WARNING] No game was matched. Are all lists empty? Did you correctly specify DLCness?"
       end
+
+      # otherwise try to fuzzy match the name
+
+      # deals_hashlist_DLC = []
+      # nondeals_hashlist_DLC = []
+      # combined_hashlist_DLC = []
+
+      # # Note: some of these may be empty
+      # deals_hashlist.each do |item|
+      #   if item[:isDLC]
+      #     deals_hashlist_DLC.push(item)
+      #     deals_hashlist.delete(item)
+      #   end
+      # end
+      # nondeals_hashlist.each do |item|
+      #   if item[:isDLC]
+      #     nondeals_hashlist_DLC.push(item)
+      #     nondeals_hashlist.delete(item)
+      #   end
+      # end
+      # combined_hashlist.each do |item|
+      #   if item[:isDLC]
+      #     combined_hashlist_DLC.push(item)
+      #     combined_hashlist.delete(item)
+      #   end
+      # end
+
+
+
+      # # Fuzzy string matching to search the proper list for the input
+
+      # if input_is_DLC
+      #   deals_matcher = FuzzyMatch.new(deals_hashlist_DLC, :read => :sanitized_name)
+      #   nondeals_matcher = FuzzyMatch.new(nondeals_hashlist_DLC, :read => :sanitized_name)
+      #   combined_matcher = FuzzyMatch.new(combined_hashlist_DLC, :read => :sanitized_name)
+      # else
+      #   deals_matcher = FuzzyMatch.new(deals_hashlist, :read => :sanitized_name)
+      #   nondeals_matcher = FuzzyMatch.new(nondeals_hashlist, :read => :sanitized_name)
+      #   combined_matcher = FuzzyMatch.new(combined_hashlist, :read => :sanitized_name)
+      # end
+
+      # found_deal = deals_matcher.find(clean_string_stronger(game_name))
+      # found_nondeal = nondeals_matcher.find(clean_string_stronger(game_name))
+      # found_combined = combined_matcher.find(clean_string_stronger(game_name))
+
+      # # ideally, only used if the autocomplete didn't suggest
+      # if found_deal && found_nondeal &&
+      #   found_deal[:sanitized_name].eql?(found_nondeal[:sanitized_name])
+      #   # use the one in the deals list, idk why the nondeals list sometimes
+      #   # shows things that should be in the deals list
+      #   game_needed = found_deal
+      # elsif found_combined
+      #   game_needed = found_combined
+      # else
+      #   puts "[WARNING] No game was matched. Are all lists empty? Did you correctly specify DLCness?"
+      # end
 
 
       # Scraping the detail page (the popup when clicking on a link)
@@ -415,8 +440,10 @@ class MainController < ApplicationController
       else
         #puts game_needed
         formatted_game_name = get_game_string(game_needed[:url])
+        detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
+        puts detailed_deals_url
         begin
-          detailed_deals = Nokogiri::HTML(open("http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"))
+          detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
         rescue Exception => e
           puts "Nokogiri HTML error: #{e}"
         end
@@ -429,6 +456,7 @@ class MainController < ApplicationController
           # ENSURES: All calls to the detailed page for formatted_game_name contain data
           if detailed_deals.at("span.score.score-number")
             @metascore = detailed_deals.at("span.score.score-number").text.to_i
+            puts @metascore
           end
 
           if detailed_deals.at("div.score-section a")
@@ -495,9 +523,11 @@ class MainController < ApplicationController
     if is_dlc_string.eql?("true")
       @is_dlc = true
       @game = Dlc.find_by(name:params[:query])
+      get_price_information(params[:query], true)
     else
       @is_dlc = false
       @game = Game.find_by(name:params[:query])
+      get_price_information(params[:query], false)
     end
 
     if !@game
