@@ -13,9 +13,9 @@
             <%= link_to "clear", "/", class: "btn btn-default" %>
           </div>
         <% end %>
-        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game_search", autocomplete: "off" %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game-search", autocomplete: "off" %>
         <div class="input-group-btn">
-          <%= submit_tag "Search", class: "btn btn-primary" %>
+          <%= submit_tag "Search", class: "submit-button btn btn-primary" %>
         </div>
       </div>
     <% end %>

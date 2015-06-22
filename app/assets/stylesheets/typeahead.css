@@ -137,7 +137,7 @@
   padding: 3px 20px;
 }
 /*.tt-suggestion.tt-is-under-cursor*/
-.tt-suggestion:hover {
+.tt-suggestion.tt-cursor {
   cursor: pointer; cursor: hand;
   color: #fff;
   background-color: #0081c2;
@@ -150,7 +150,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
 }
 /*.tt-suggestion.tt-is-under-cursor a*/
-.tt-suggestion:hover a {
+.tt-suggestion.tt-cursor a {
   color: #fff;
 }
 .tt-suggestion p {

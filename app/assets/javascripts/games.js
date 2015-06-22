@@ -48,7 +48,20 @@ $(document).ready(function() {
     .done(function() { console.log('dlcs searcher - success!'); })
     .fail(function() { console.log('dlcs searcher - error!'); });
 
-  $('#game_search').typeahead({
+  function get_search_url(name,is_dlc) {
+    if (is_dlc) {
+      return SAMPLE_SEARCH_URL_FORMAT
+          .replace("GAMENAME", name)
+          .replace("DLCBOOL", "true");
+    }
+    else {
+      return SAMPLE_SEARCH_URL_FORMAT
+        .replace("GAMENAME", name)
+        .replace("DLCBOOL", "false");
+    }
+  }
+
+  $('#game-search').typeahead({
     highlight: true,
     minLength: 2,
     autoselect: true
@@ -62,9 +75,7 @@ $(document).ready(function() {
       suggestion: function(data) {
         return data.name
         + '<a href="'
-        + SAMPLE_SEARCH_URL_FORMAT
-          .replace("GAMENAME", data.name)
-          .replace("DLCBOOL", "false")
+        + get_search_url(data.name,false)
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
@@ -80,13 +91,14 @@ $(document).ready(function() {
       suggestion: function(data) {
         return data.name
         + '<a href="'
-        + SAMPLE_SEARCH_URL_FORMAT
-          .replace("GAMENAME", data.name)
-          .replace("DLCBOOL", "true")
+        + get_search_url(data.name,true)
         + '">'
         + '<span class="suggestion-link"></span>'
         + '</a>';
       }
     }
+  }).on("typeahead:selected", function(ev, suggestion) {
+    console.log(suggestion);
+    window.location = get_search_url(suggestion.name,false)
   });
 });
