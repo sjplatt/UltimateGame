@@ -2,25 +2,30 @@ $(document).ready(function() {
   var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=DLCBOOL";
   // This will need to be changed if the search URL changes
 
+  var bloodhound_remote_filter = function(is_dlc_param) {
+    return function(results) {
+      // console.log(results);
+      return $.map(results, function(data) {
+        return {
+          name: data,
+          sanitized_name: data
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .replace(/\-/g, "")
+            .replace(/\s+/, " "),
+          is_dlc: is_dlc_param
+        };
+        // add whatever you want to display here
+      });
+    }
+  };
+
   var games_object = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.nonword,
     queryTokenizer: Bloodhound.tokenizers.nonword,
     // limit: 8,
     remote: {
       url: '/games/autocomplete?query=%QUERY',
-      filter: function(results) {
-        // console.log(results);
-        return $.map(results, function(data) {
-          return {
-            "name": data,
-            "sanitized_name": data
-              .replace(/[^a-zA-Z0-9\s]/g, "")
-              .replace(/\-/g, "")
-              .replace(/\s+/, " ")
-          };
-          // add whatever you want to display here
-        });
-      },
+      filter: bloodhound_remote_filter(false)
     }
   });
   var dlcs_object = new Bloodhound({
@@ -28,13 +33,7 @@ $(document).ready(function() {
     queryTokenizer: Bloodhound.tokenizers.nonword,
     remote: {
       url: '/dlcs/autocomplete?query=%QUERY',
-      filter: function(results) {
-        // console.log(results);
-        return $.map(results, function(data) {
-          return {name: data};
-          // add whatever you want to display here
-        });
-      }
+      filter: bloodhound_remote_filter(true)
     }
   });
 
@@ -48,8 +47,8 @@ $(document).ready(function() {
     .done(function() { console.log('dlcs searcher - success!'); })
     .fail(function() { console.log('dlcs searcher - error!'); });
 
-  function get_search_url(name,is_dlc) {
-    if (is_dlc) {
+  function get_search_url(name,is_dlc_param) {
+    if (is_dlc_param) {
       return SAMPLE_SEARCH_URL_FORMAT
           .replace("GAMENAME", name)
           .replace("DLCBOOL", "true");
@@ -58,6 +57,17 @@ $(document).ready(function() {
       return SAMPLE_SEARCH_URL_FORMAT
         .replace("GAMENAME", name)
         .replace("DLCBOOL", "false");
+    }
+  }
+
+  var typeahead_suggestion = function(is_dlc_param) {
+    return function(data) {
+      return data.name
+      + '<a href="'
+      + get_search_url(data.name,is_dlc_param)
+      + '">'
+      + '<span class="suggestion-link"></span>'
+      + '</a>';
     }
   }
 
@@ -72,14 +82,7 @@ $(document).ready(function() {
     templates: {
       header: "<h4 class='section-header'>Standalone games</h4>",
       empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
-      suggestion: function(data) {
-        return data.name
-        + '<a href="'
-        + get_search_url(data.name,false)
-        + '">'
-        + '<span class="suggestion-link"></span>'
-        + '</a>';
-      }
+      suggestion: typeahead_suggestion(false)
     }
   }, {
     name: 'dlcs',
@@ -88,17 +91,10 @@ $(document).ready(function() {
     templates: {
       header: "<h4 class='section-header'>DLCs</h4>",
       empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
-      suggestion: function(data) {
-        return data.name
-        + '<a href="'
-        + get_search_url(data.name,true)
-        + '">'
-        + '<span class="suggestion-link"></span>'
-        + '</a>';
-      }
+      suggestion: typeahead_suggestion(true)
     }
   }).on("typeahead:selected", function(ev, suggestion) {
     console.log(suggestion);
-    window.location = get_search_url(suggestion.name,false)
+    window.location = get_search_url(suggestion.name,suggestion.is_dlc)
   });
 });

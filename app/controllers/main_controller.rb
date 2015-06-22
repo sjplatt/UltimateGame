@@ -238,13 +238,15 @@ class MainController < ApplicationController
 
   def encode_itad_plain(name)
     # Rules:
-    # Every "+"" becomes "plus"
-    # Every "the" becomes ""
+    # Every "+" becomes "plus"
+    # Every "&" becomes "and"
+    # Every "the" becomes "" (whole word only; '"the' stays the same)
     # All digits except 0 get converted to lowercase Roman numerals
     # All other non-alphanumeric characters are removed
     # (This means e.g. 12 and 3 both get converted to "iii"
     #  but this shouldn't be a problem if it isn't for ITAD)
     spaced_plain = name.gsub(/\+/,"plus")
+                       .gsub(/&/,"and")
                        .gsub(/\bthe\b/i,"")
                        .gsub(/1/,"i")
                        .gsub(/2/,"ii")
@@ -260,8 +262,10 @@ class MainController < ApplicationController
 
   #Precondition: game_name is the name of the game
   #Precondition: input_is_DLC is true if game is dlc
-  #Postcondition: @metascore,@metacritic_link,@steam_percentage,
-  #Postcondition: @wiki_link,@prices are created
+  #Precondition: input_is_pkg is true if game is a package
+  #Postcondition: @prices_info is created if it doesn't exist
+  #Postcondition: It is populated with name,is_dlc,is_pkg,metascore,
+  #Postcondition: metacritic_link,steam_percentage,wiki_link,prices
   def get_price_information(game_name,input_is_DLC,input_is_pkg)
     # default outputs
     metascore = "??"
@@ -271,13 +275,11 @@ class MainController < ApplicationController
     wiki_link = "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=#{wiki_search_string}&button="
     prices = []
 
-    game_needed = game_name
-
-    if !game_needed
-      puts "[CRITICAL] See above; could not find the game_needed"
+    if !game_name
+      puts "[CRITICAL] Could not find the game_name (must be exact!)"
     else
-      #puts game_needed
-      formatted_game_name = encode_itad_plain(game_needed)
+      #puts game_name
+      formatted_game_name = encode_itad_plain(game_name)
       detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
       puts detailed_deals_url
       begin
@@ -627,11 +629,38 @@ class MainController < ApplicationController
     #puts @prices
   end
 
+  def is_itad_url_valid(game_name)
+    formatted_game_name = encode_itad_plain(game_name)
+    detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
+    begin
+      detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
+    rescue Exception => e
+      puts "Nokogiri HTML error: #{e}"
+      return false
+    end
+
+    if detailed_deals.at("div.pageError div.pageMessageContent")
+      if detailed_deals.at("div.pageError div.pageMessageContent").text.eql?("We don't have this game in our database")
+        return false
+      end
+    end
+
+    if detailed_deals.at("div#pageContent .section")
+      return true
+    end
+
+    return false
+  end
+
   def index
     #get_price_information("Bioshock Infinite",false)
     get_frontpage_deals
     get_more_frontpage_info
     #update_db
+
+    puts is_itad_url_valid("asdf")
+    puts is_itad_url_valid("Fallout 3")
+    puts is_itad_url_valid("Bioshock Infinite")
   end
 
   def get_game

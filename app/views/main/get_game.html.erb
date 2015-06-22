@@ -45,7 +45,7 @@
     <div class="center">
       <div class="score-container">
         <div class="circle">
-        <span class="metascore"><%= @game.metascore || 100 %></span>
+        <span class="metascore"><%= @game.metascore || "??" %></span>
         </div>
       </div><!--
       --><div class="score-container">
@@ -56,7 +56,7 @@
     </div>
 
     <div class="recs-container">
-      <span class="recs-num"><%= @game.recommendations || 0 %></span>
+      <span class="recs-num"><%= @game.recommendations || "??" %></span>
       <p class="recs-word">recommendations</p>
     </div>
   </div>
