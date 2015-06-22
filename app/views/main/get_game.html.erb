@@ -1,4 +1,162 @@
-<h1>SECOND PAGE</h1>
+<div class="container">
+
+<div class="col-md-12 header">
+  <div class="col-md-4 homepage-title">
+    <h1>The Name Goes Here</h1>
+  </div>
+
+  <div class="col-md-8 search-bar">
+    <%= form_tag "/get_game", method: :get do %>
+      <div class="input-group">
+        <% if params[:query].present? %>
+          <div class="input-group-btn">
+            <%= link_to "clear", "/", class: "btn btn-default" %>
+          </div>
+        <% end %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game_search", autocomplete: "off" %>
+        <div class="input-group-btn">
+          <%= submit_tag "Search", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row nav-bar">
+  <div class="col-md-3"></div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-2">Placeholder</div>
+  <div class="col-md-3"></div>
+</div>
+
+<div class="row main-column game-name">
+  <h3><%= @game.name %></h3>
+</div>
+
+<div class="row main-column vital-data">
+
+  <div class="img-container">
+    <img class="gamepage-img" src="<%= @game.headerimg %>" />
+  </div>
+
+  <div class="info-container">
+
+    <div class="center">
+      <div class="score-container">
+        <div class="circle">
+        <span class="metascore"><%= @game.metascore || "??" %></span>
+        </div>
+      </div><!--
+      --><div class="score-container">
+        <div class="circle">
+        <span class="steam-pct"><%= @price_info[@game.name][:steam_percentage] %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="recs-container">
+      <span class="recs-num"><%= @game.recommendations || "??" %></span>
+      <p class="recs-word">recommendations</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="row main-column nonvital-data">
+  <div class="pics-container">Placeholder</div>
+  <div class="extra-info-container">
+    <ul>
+      <li>Released: <%= @game.releasedate %></li>
+      <li>Developer<%= "s" if @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
+        <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') %></li>
+      <li>Website: <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub("com/","com") %></a></li>
+      <li><a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="row main-column pricing">
+  <%= @price_info.each do |name,data| %>
+    <p><%= name %></p>
+    <%= data[:prices] %>
+  <% end %>
+</div>
+
+<div class="row main-column hltb-description">
+  <div class="hltb-container">
+    <a href="http://howlongtobeat.com/<%= @game.hltb %>">View on HowLongToBeat</a>
+    <table>
+
+      <tr>
+        <th></th>
+        <th>Time (hours)</th>
+        <th>Price per hour (USD)</th>
+      </tr>
+
+      <tr>
+        <td>Main Story:</td>
+        <td><%= @game.MainStory %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Main + Extras:</td>
+        <td><%= @game.MainExtra %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Completionist:</td>
+        <td><%= @game.Completion %></td>
+        <td>0</td>
+      </tr>
+
+      <tr>
+        <td>Combined:</td>
+        <td><%= @game.Combined %></td>
+        <td>0</td>
+      </tr>
+
+    </table>
+  </div>
+
+  <div class="description-container">
+    Placeholder
+    <!--<% if @game.description %>
+      <p><%= @game.description.html_safe %></p>
+    <% else %>
+      <p><%= @game.description %></p>
+    <% end %>-->
+  </div>
+</div>
+
+
+
+<div class="row main-column reddit-reviews">
+
+</div>
+
+<!--script>
+$(window).load(function() {
+  var full_width = $(".info-container").parent().css("width").replace("px","");
+  var img_width = $(".img-container").css("width").replace("px","");
+  $(".info-container").css("width",full_width-img_width-6 + "px");
+  $(".scores-row").css("width",full_width-img_width-30 + "px");
+
+  var circle_width = $(".score-container").css("width");
+  $(".score-container").css("height",circle_width);
+
+  /*var cx = circle_width/2;
+  var r = cx - 5;
+  $(".metascore").append("<circle></circle>");
+  $(".metascore circle").attr("cx",cx)
+  .attr("cy",cx)
+  .attr("r",r)
+  .attr("fill","#84FF38");*/
+}());
+</script-->
+
 <% if @game %>
 <table>
   <tr><td>is_dlc: <%=@is_dlc%></td></tr>
@@ -6,6 +164,7 @@
   <tr><td>Steamid: <%= @game.steamid%></td> </tr>   
   <tr><td>Metascore: <%= @game.metascore%></td> </tr> 
   <tr><td>Metaurl: <%= @game.metaurl%></td> </tr> 
+
   <tr><td>HLTB: <%= @game.hltb%></td> </tr> 
   <tr><td>Main Story: <%= @game.MainStory%></td> </tr> 
   <tr><td>Main Story + Extra: <%= @game.MainExtra%></td> </tr> 
@@ -16,6 +175,7 @@
   <%else %>
      <tr><td>Description : <%= @game.description%></td> </tr>    
   <%end%>  
+
   <tr><td>Website : <%= @game.website%></td> </tr>   
   <tr><td>Review : <%= @game.review%></td> </tr> 
   <%if @game.minreq %>
