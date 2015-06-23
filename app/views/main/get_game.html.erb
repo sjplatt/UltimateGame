@@ -77,10 +77,39 @@
 </div>
 
 <div class="row main-column pricing">
-  <%= @price_info.each do |name,data| %>
-    <p><%= name %></p>
-    <%= data[:prices] %>
-  <% end %>
+  <table>
+  <tr><td>
+    <table>
+    <% if @price_info.each do |name,data| %>
+      <% if !data[:is_dlc] && !data[:is_pkg] %>
+        <tr><td><%= data[:name] %></td></tr>
+      <% end %>
+    <% end.empty? %>
+      <tr><td>NONE</td></tr>
+    <% end %>
+    </table>
+
+    <table>
+    <% if @price_info.each do |name,data| %>
+      <% if data[:is_dlc] %>
+        <tr><td><%= data[:name] %></td></tr>
+      <% end %>
+    <% end.empty? %>
+      <tr><td>NONE</td></tr>
+    <% end %>
+    </table>
+    
+    <table>
+    <% if @price_info.each do |name,data| %>
+      <% if data[:is_pkg] %>
+        <tr><td><%= data[:name] %></td></tr>
+      <% end %>
+    <% end.empty? %>
+      <tr><td>NONE</td></tr>
+    <% end %>
+    </table>
+  </td></tr>
+  </table>
 </div>
 
 <div class="row main-column hltb-description">
