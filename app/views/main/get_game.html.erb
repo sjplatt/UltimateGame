@@ -77,38 +77,47 @@
 </div>
 
 <div class="row main-column pricing">
+  <a href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">View on IsThereAnyDeal</a>
   <table>
-  <tr><td>
-    <table>
-    <% if @price_info.each do |name,data| %>
-      <% if !data[:is_dlc] && !data[:is_pkg] %>
-        <tr><td><%= data[:name] %></td></tr>
+  <tr>
+    <td class="pricing-entry">
+      <% @price_info.each do |name,data| %>
+        <% if data[:default] %>
+          <table>
+            <% data[:prices].each do |entry| %>
+              <tr>
+                <td><%= entry[:store] %></td>
+                <td><%= entry[:current_price] %> (<%= entry[:price_cut] %>)</td>
+                <td><%= entry[:regular_price] %></td>
+              </tr>
+            <% end %>
+          </table>
+        <% end %>
       <% end %>
-    <% end.empty? %>
-      <tr><td>NONE</td></tr>
-    <% end %>
-    </table>
+    </td>
 
+    <td class="pricing-entry">
     <table>
-    <% if @price_info.each do |name,data| %>
-      <% if data[:is_dlc] %>
-        <tr><td><%= data[:name] %></td></tr>
+      <tr><th>DLCs for this game</th></tr>
+      <% @price_info.each do |name,data| %>
+        <% if data[:is_dlc] %>
+          <tr><td><%= name %></td></tr>
+        <% end %>
       <% end %>
-    <% end.empty? %>
-      <tr><td>NONE</td></tr>
-    <% end %>
     </table>
+    </td>
     
+    <td class="pricing-entry">
     <table>
-    <% if @price_info.each do |name,data| %>
-      <% if data[:is_pkg] %>
-        <tr><td><%= data[:name] %></td></tr>
+      <tr><th>Packages containing this game</th></tr>
+      <% @price_info.each do |name,data| %>
+        <% if data[:is_pkg] %>
+          <tr><td><%= name %></td></tr>
+        <% end %>
       <% end %>
-    <% end.empty? %>
-      <tr><td>NONE</td></tr>
-    <% end %>
     </table>
-  </td></tr>
+    </td>
+  </tr>
   </table>
 </div>
 

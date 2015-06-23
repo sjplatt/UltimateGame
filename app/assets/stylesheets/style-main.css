@@ -171,6 +171,9 @@ li {
 .pricing {
   margin-top: 40px;
 }
+.pricing-entry {
+  vertical-align: top;
+}
 
 .hltb-description {
   margin-top: 40px;
