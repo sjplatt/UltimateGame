@@ -236,27 +236,28 @@ class MainController < ApplicationController
     return clean_string_stronger(spaced_plain).gsub(/\s/,"").downcase;
   end
 
-  #Precondition: game_name is the name of the game
+  #Precondition: associated_with is the game the item is associated with
+  #Precondition: input_name is the name of the item
+  #Precondition: itad_plain is the part after plain= in corresponding ITAD URL
   #Precondition: input_is_DLC is true if game is dlc
   #Precondition: input_is_pkg is true if game is a package
   #Postcondition: @prices_info is created if it doesn't exist
   #Postcondition: It is populated with name,is_dlc,is_pkg,metascore,
   #Postcondition: metacritic_link,steam_percentage,wiki_link,prices
-  def get_price_information(game_name,input_is_DLC,input_is_pkg)
+  def get_price_information(associated_with,input_name,itad_plain,input_is_DLC,input_is_pkg)
     # default outputs
     metascore = "??"
     metacritic_link = "http://metacritic.com"
     steam_percentage = "??"
-    wiki_search_string = URI.encode(game_name)
+    wiki_search_string = URI.encode(input_name)
     wiki_link = "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=#{wiki_search_string}&button="
     prices = []
 
-    if !game_name
-      puts "[CRITICAL] Could not find the game_name (must be exact!)"
+    if !input_name
+      puts "[CRITICAL] Could not find the input_name (must be exact!)"
     else
-      #puts game_name
-      formatted_game_name = encode_itad_plain(game_name)
-      detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
+      #puts input_name
+      detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{itad_plain}"
       puts detailed_deals_url
       begin
         detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
@@ -269,7 +270,7 @@ class MainController < ApplicationController
         puts "[CRITICAL] Nokogiri HTML call for detailed deals failed"
         puts "[Note] Consider using link only, since scraping details won't work"
       else
-        # ENSURES: All calls to the detailed page for formatted_game_name contain data
+        # ENSURES: All calls to the detailed page for itad_plain contain data
         if detailed_deals.at("span.score.score-number")
           metascore = detailed_deals.at("span.score.score-number").text.to_i
         end
@@ -280,8 +281,8 @@ class MainController < ApplicationController
           end
         end
         
-        if detailed_deals.css("div.score-section")
-          if detailed_deals.css("div.score-section")[1].css("span")
+        if detailed_deals.css("div.score-section") && detailed_deals.css("div.score-section") != []
+          if detailed_deals.css("div.score-section")[1].css("span") && detailed_deals.css("div.score-section")[1].css("span") != []
             if detailed_deals.css("div.score-section")[1].css("span")[2]
               steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
               start_index2 = steam_text.index(", ") + ", ".length()
@@ -321,7 +322,7 @@ class MainController < ApplicationController
     if !@price_info
       @price_info = {}
     end
-    @price_info[game_name] = {name: game_name,
+    @price_info[input_name] = {default: input_name.eql?(associated_with),
                               is_dlc: input_is_DLC,
                               is_pkg: input_is_pkg,
                               metascore: metascore,
@@ -331,278 +332,10 @@ class MainController < ApplicationController
                               prices: prices}
     # is_dlc,is_pkg can be:
     # false,false (just the game itself),
+    # (sometimes it is listed as a package, so default specifies it as
+    #  "the game itself" if this is the case)
     # true,false,
     # false,true
-  end
-
-  def get_price_information_old(game_name,input_is_DLC)
-    # default outputs
-    @metascore = "??"
-    @metacritic_link = "http://metacritic.com"
-    @steam_percentage = "??"
-    @wiki_link = "http://en.wikipedia.org"
-    @prices = []
-
-    raw_game_name = strip_nonalphanumeric(game_name)
-    filterArg = URI.encode("/search:#{raw_game_name};/scroll:#gamelist;")
-    now = get_timestamp
-    now_prime = get_timestamp.split('.')[1]
-    region = "us"
-    offset = 0
-
-    finalNondealsURL = "http://www.isthereanydeal.com"\
-    "/ajax/nondeal.php?by=time%3Adesc&offset=0&limit=75"\
-    "&filter=#{filterArg}"\
-    "&file=#{now}&lastSeen=#{now_prime}&region=#{region}"
-
-    finalDealsURL =
-    "http://www.isthereanydeal.com"\
-    "/ajax/data/lazy.deals.php?by=time%3Adesc&offset=#{offset}&limit=75"\
-    "&filter=#{filterArg}"\
-    "&file=#{now}&lastSeen=#{now_prime}&region=#{region}"
-
-    begin
-      nondeals = Nokogiri::HTML(open(finalNondealsURL))
-      deals = Nokogiri::HTML(open(finalDealsURL))
-    rescue Exception => e
-      puts "Nokogiri HTML error: #{e}"
-    end
-    if nondeals.nil? || deals.nil?
-      puts "[CRITICAL] One or more Nokogiri calls failed"
-    else
-
-      # ENSURES: All calls to the deals/nondeals pages are valid HTML
-      deals_hashlist = []
-      nondeals_hashlist = []
-      combined_hashlist = []
-
-
-
-      # Creating the deals hash list
-      reformatted_deals = Nokogiri::HTML(deals.to_s.gsub("\/","/"))
-
-      if reformatted_deals.text.downcase.include?("timeout")
-        puts "[WARNING] The timestamp used to generate the deals page is bad"
-      elsif reformatted_deals.text.include?('"list":""')
-        puts "[WARNING] No deal games found. No results on sale or bad query"
-      else
-        # ENSURES: All calls to the deals page contain games
-        deals_list = reformatted_deals.css("a.noticeable")
-        while deals_list.length() > 0
-          puts "[Note] Pulling #{deals_list.length()} deals..."
-          deals_list.each do |list_item|
-            this_game_string = get_game_string(list_item[:href])
-
-            if list_item.text.index(" share")
-              end_index = list_item.text.index(" share") - 1
-            else
-              end_index = list_item.text.length
-            end
-            name = list_item.text[0..end_index]
-            sanitized_name = clean_string_stronger(name)
-            url = URI.decode(list_item[:href]).gsub("\\","")
-            isDLC = !list_item.at_css("a.dlc").nil? && list_item.css("a.dlc")[0][:href].include?(this_game_string)
-            
-            deals_hashlist.push({name: name, sanitized_name: sanitized_name, url: url, isDLC: isDLC})
-            combined_hashlist.push({name: name, sanitized_name: sanitized_name, url: url, isDLC: isDLC})
-          end
-
-          # keep looping until we get all the games, if more exist
-          offset += deals_list.length()
-          finalDealsURL2 =
-          "http://isthereanydeal.com"\
-          "/ajax/data/lazy.deals.php?by=time%3Adesc&offset=#{offset}&limit=75"\
-          "&filter=#{filterArg}"\
-          "&file=#{now}&lastSeen=#{now_prime}&region=#{region}"
-          # hopefully this doesn't break, only thing changed is offset
-          deals2 = Nokogiri::HTML(open(finalDealsURL2))
-          reformatted_deals2 = Nokogiri::HTML(deals2.to_s.gsub("\/","/"))
-          deals_list = reformatted_deals2.css("a.noticeable")
-        end
-      end
-
-
-
-      # Creating the non-deals hash list
-      if nondeals.at_css("p.refNote")
-        puts "[WARNING] No nondeal games found. All results on sale or bad query"
-      else
-        # ENSURES: All calls to the nondeals page contain games
-        nondeals_list = nondeals.css("div.game")
-        nondeals_list.each do |list_item|
-          name = list_item.at("a.noticeable").text
-          sanitized_name = clean_string_stronger(name)
-          url = list_item.at("a.noticeable")[:href]
-          isDLC = !list_item.at_css("a.dlc").nil?
-
-          nondeals_hashlist.push({name: name, sanitized_name: sanitized_name, url: url, isDLC: isDLC})
-          combined_hashlist.push({name: name, sanitized_name: sanitized_name, url: url, isDLC: isDLC})
-        end
-      end
-
-
-
-      # Splitting each hash list into deals on DLCs and nondeals on DLCs
-
-      # puts "Deals hash @@@@@@@@@@@@@@@@@@@@@@"
-      # puts deals_hashlist
-      # puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      # puts "Nondeals hash @@@@@@@@@@@@@@@@@@@"
-      # puts nondeals_hashlist
-      # puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-
-      # prioritize exact name matches regardless of DLCness
-      found_deal = deals_hashlist.find {|item| item[:name] == @game.name}
-      found_nondeal = nondeals_hashlist.find {|item| item[:name] == @game.name}
-
-      # sometimes games appear in both for some reason
-      # prioritize the appearance in deals hash list
-      if found_deal
-        game_needed = found_deal
-        if game_needed[:is_dlc] != input_is_DLC
-          puts "[WARNING] DLC parameter doesn't match, but we had an exact name match"
-        end
-      elsif found_nondeal
-        game_needed = found_nondeal
-        if game_needed[:is_dlc] != input_is_DLC
-          puts "[WARNING] DLC parameter doesn't match, but we had an exact name match"
-        end
-      else
-        puts "[WARNING] No game was matched. Are all lists empty? Did you correctly specify DLCness?"
-      end
-
-      # otherwise try to fuzzy match the name
-
-      # deals_hashlist_DLC = []
-      # nondeals_hashlist_DLC = []
-      # combined_hashlist_DLC = []
-
-      # # Note: some of these may be empty
-      # deals_hashlist.each do |item|
-      #   if item[:isDLC]
-      #     deals_hashlist_DLC.push(item)
-      #     deals_hashlist.delete(item)
-      #   end
-      # end
-      # nondeals_hashlist.each do |item|
-      #   if item[:isDLC]
-      #     nondeals_hashlist_DLC.push(item)
-      #     nondeals_hashlist.delete(item)
-      #   end
-      # end
-      # combined_hashlist.each do |item|
-      #   if item[:isDLC]
-      #     combined_hashlist_DLC.push(item)
-      #     combined_hashlist.delete(item)
-      #   end
-      # end
-
-
-
-      # # Fuzzy string matching to search the proper list for the input
-
-      # if input_is_DLC
-      #   deals_matcher = FuzzyMatch.new(deals_hashlist_DLC, :read => :sanitized_name)
-      #   nondeals_matcher = FuzzyMatch.new(nondeals_hashlist_DLC, :read => :sanitized_name)
-      #   combined_matcher = FuzzyMatch.new(combined_hashlist_DLC, :read => :sanitized_name)
-      # else
-      #   deals_matcher = FuzzyMatch.new(deals_hashlist, :read => :sanitized_name)
-      #   nondeals_matcher = FuzzyMatch.new(nondeals_hashlist, :read => :sanitized_name)
-      #   combined_matcher = FuzzyMatch.new(combined_hashlist, :read => :sanitized_name)
-      # end
-
-      # found_deal = deals_matcher.find(clean_string_stronger(game_name))
-      # found_nondeal = nondeals_matcher.find(clean_string_stronger(game_name))
-      # found_combined = combined_matcher.find(clean_string_stronger(game_name))
-
-      # # ideally, only used if the autocomplete didn't suggest
-      # if found_deal && found_nondeal &&
-      #   found_deal[:sanitized_name].eql?(found_nondeal[:sanitized_name])
-      #   # use the one in the deals list, idk why the nondeals list sometimes
-      #   # shows things that should be in the deals list
-      #   game_needed = found_deal
-      # elsif found_combined
-      #   game_needed = found_combined
-      # else
-      #   puts "[WARNING] No game was matched. Are all lists empty? Did you correctly specify DLCness?"
-      # end
-
-
-      # Scraping the detail page (the popup when clicking on a link)
-      
-      if !game_needed
-        puts "[CRITICAL] See above; could not find the game_needed"
-      else
-        #puts game_needed
-        formatted_game_name = get_game_string(game_needed[:url])
-        detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
-        puts detailed_deals_url
-        begin
-          detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
-        rescue Exception => e
-          puts "Nokogiri HTML error: #{e}"
-        end
-
-        #puts detailed_deals.text
-        if detailed_deals.nil?
-          puts "[CRITICAL] Nokogiri HTML call for detailed deals failed"
-          puts "[Note] Consider using link only, since scraping details won't work"
-        else
-          # ENSURES: All calls to the detailed page for formatted_game_name contain data
-          if detailed_deals.at("span.score.score-number")
-            @metascore = detailed_deals.at("span.score.score-number").text.to_i
-            puts @metascore
-          end
-
-          if detailed_deals.at("div.score-section a")
-            if detailed_deals.at("div.score-section a")[:href]
-              @metacritic_link = detailed_deals.at("div.score-section a")[:href]
-            end
-          end
-          
-          if detailed_deals.css("div.score-section")
-            if detailed_deals.css("div.score-section")[1].css("span")
-              if detailed_deals.css("div.score-section")[1].css("span")[2]
-                steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
-                start_index2 = steam_text.index(", ") + ", ".length()
-                end_index2 = steam_text.index("%")
-                @steam_percentage = steam_text[start_index2..end_index2].to_i
-              end
-            end
-          end
-          
-          if detailed_deals.at("div.wiki.link a")
-            if detailed_deals.at("div.wiki.link a")[:href]
-              @wiki_link = detailed_deals.at("div.wiki.link a")[:href]
-            end
-          end
-          if detailed_deals.at("div.buy table")
-            price_table = detailed_deals.at("div.buy table")
-            price_rows = price_table.css("tr.row")
-            price_rows.each do |row|
-              store = row.css("td")[0].at("a").text
-              store_url = row.css("td")[0].at("a")[:href]
-              price_cut = row.at("td.cut").text
-              current_price = row.at("td.new").text
-              lowest_recorded = row.at("td.low").text
-              regular_price = row.at("td.old").text
-              @prices.push({store: store,
-                            store_url: store_url,
-                            price_cut: price_cut,
-                            current_price: current_price,
-                            lowest_recorded: lowest_recorded,
-                            regular_price: regular_price})
-            end
-          end
-        end
-      end
-    end
-
-    #puts @metascore
-    #puts @metacritic_link 
-    #puts @steam_percentage
-    #puts @wiki_link
-    #puts @prices
   end
 
   def is_itad_url_valid(game_name)
@@ -651,14 +384,15 @@ class MainController < ApplicationController
       if !@game
         puts "ERROR: Could not find " + params[:query]
       else
-        get_price_information(@game.name, false, false)
+        get_price_information(@game.name, @game.name, @game.itad, false, false)
         Dlc.where(game_id:@game.id).each do |dlc|
-          get_price_information(dlc.name, true, false)
+          get_price_information(@game.name, dlc.name, dlc.itad, true, false)
         end
         Package.where(game_id:@game.id).each do |pkg|
-          get_price_information(pkg.name, false, true)
+          get_price_information(@game.name, pkg.name, pkg.itad, false, true)
         end
       end
+      puts @price_info
     end
 
     # @top_ids = Game.search(params[:query]).map(&:steamid)

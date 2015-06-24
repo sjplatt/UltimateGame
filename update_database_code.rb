@@ -1,4 +1,4 @@
-def set_itad_variable
+ def set_itad_variable
     Game.all.each do |game|
       Game.update(game.id,:itad=>encode_itad_plain(game.name))
     end
