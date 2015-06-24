@@ -128,7 +128,6 @@ span.divider {
   background-color: #84FF38;
   text-align: center;
 }
-
 .metascore,.steam-pct {
   font-size: 36pt;
 }
@@ -144,29 +143,20 @@ span.divider {
   line-height: 10pt;
 }
 
-.nonvital-data * {
+
+.pics * {
   padding: 0;
 }
-.nonvital-data {
+.pics {
   margin-top: 40px;
 }
-
 .pics-container {
   background-color: white;
   color: black;
-  display: inline-block;
-  width: 460px;
+  width: 100%;
   height: 150px;
 }
-.extra-info-container {
-  display: inline-block;
-  width: 300px;
-  padding-left: 20px;
-  float: right;
-}
-li {
-  margin: .3em;
-}
+
 
 .pricing {
   margin-top: 40px;
@@ -175,15 +165,26 @@ li {
   vertical-align: top;
 }
 
-.hltb-description {
+
+.hltb-extra {
   margin-top: 40px;
 }
 .hltb-container {
   display: inline-block;
-  width: 300px;
+}
+.extra-info-container {
+  padding-left: 0px;
+}
+li {
+  margin: .5em 0;
+}
+
+
+.description {
+  margin-top: 40px;
 }
 .description-container {
-  display: inline-block;
+  /*display: inline-block;
   width: 460px;
-  float: right;
+  float: right;*/
 }

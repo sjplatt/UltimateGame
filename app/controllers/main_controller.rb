@@ -305,8 +305,8 @@ class MainController < ApplicationController
           end
         end
         
-        if detailed_deals.css("div.score-section")
-          if detailed_deals.css("div.score-section")[1].css("span")
+        if detailed_deals.css("div.score-section") && detailed_deals.css("div.score-section") != []
+          if detailed_deals.css("div.score-section")[1].css("span") && detailed_deals.css("div.score-section")[1].css("span") != []
             if detailed_deals.css("div.score-section")[1].css("span")[2]
               steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
               start_index2 = steam_text.index(", ") + ", ".length()
