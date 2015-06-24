@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150607213356) do
+ActiveRecord::Schema.define(version: 20150622023003) do
 
   create_table "dlcs", force: :cascade do |t|
     t.string   "name",            limit: 255
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20150607213356) do
     t.text     "headerimg",       limit: 65535
     t.integer  "recommendations", limit: 4
     t.text     "legal",           limit: 65535
+    t.string   "itad",            limit: 255
   end
 
   add_index "dlcs", ["game_id"], name: "index_dlcs_on_game_id", using: :btree
@@ -65,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150607213356) do
     t.text     "subreddit",       limit: 65535
     t.text     "wikipedia",       limit: 65535
     t.integer  "steampercent",    limit: 4
+    t.string   "itad",            limit: 255
   end
 
   create_table "packages", force: :cascade do |t|
@@ -76,10 +78,9 @@ ActiveRecord::Schema.define(version: 20150607213356) do
     t.text     "headerimg",   limit: 65535
     t.integer  "packageid",   limit: 4
     t.text     "apps",        limit: 65535
+    t.string   "itad",        limit: 255
   end
 
   add_index "packages", ["game_id"], name: "index_packages_on_game_id", using: :btree
 
-  add_foreign_key "dlcs", "games"
-  add_foreign_key "packages", "games"
 end

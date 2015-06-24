@@ -22,6 +22,13 @@
   </div>
 </div>
 
+
+<% if !@game %>
+<div class="not-found">
+  <h4>The game requested was not found in the database</h4>
+</div>
+
+<% else %>
 <div class="row nav-bar">
   <div class="col-md-3"></div>
   <div class="col-md-2">Placeholder</div>
@@ -50,7 +57,7 @@
       </div><!--
       --><div class="score-container">
         <div class="circle">
-        <span class="steam-pct"><%= @price_info[@game.name][:steam_percentage] %></span>
+        <span class="steam-pct"><%= @price_info[@game.name][:steam_percentage] || "??" %></span>
         </div>
       </div>
     </div>
@@ -63,64 +70,154 @@
 
 </div>
 
-<div class="row main-column nonvital-data">
+<div class="row main-column pics">
   <div class="pics-container">Placeholder</div>
-  <div class="extra-info-container">
+</div>
+
+<div class="row main-column hltb-extra">
+  <h4>Game statistics</h4>
+
+  <div class="col-md-8 hltb-container">
+    <% if !@game.hltb %>
+      <p>We couldn't find gameplay information on </p>
+      <a href="http://howlongtobeat.com">HowLongToBeat.</a>
+    <% else %>
+      <table class="table">
+
+        <tr>
+          <th></th>
+          <th>Time to beat</th>
+          <th>Price/hr (lowest discounted)</th>
+          <th>Price/hr (lowest undiscounted)</th>
+        </tr>
+
+        <tr>
+          <td>Main Story:</td>
+          <td><%= @game.MainStory %></td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+
+        <tr>
+          <td>Main + Extras:</td>
+          <td><%= @game.MainExtra %></td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+
+        <tr>
+          <td>Completionist:</td>
+          <td><%= @game.Completion %></td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+
+        <tr>
+          <td>Combined:</td>
+          <td><%= @game.Combined %></td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+
+      </table>
+
+      <a href="http://howlongtobeat.com/<%= @game.hltb %>">(View on HowLongToBeat)</a>
+    <% end %>
+  </div>
+
+  <div class="col-md-4 extra-info-container">
     <ul>
-      <li>Released: <%= @game.releasedate %></li>
-      <li>Developer<%= "s" if @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
-        <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') %></li>
-      <li>Website: <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub("com/","com") %></a></li>
-      <li><a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a></li>
+      <li>Released: <%= @game.releasedate || "Unknown" %></li>
+      
+      <li>
+      Developer<%= "s" if @game.developer && @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
+      <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown" %>
+      </li>
+      
+      <li>Website:
+      <% if @game.website %>
+        <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub("com/","com") %></a>
+      <% end %>
+      </li>
+      
+      <li>
+      <% if @game.steamid %>
+        <a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a>
+      <% else %>
+        <a href="http://store.steampowered.com">View on Steam</a>
+      <% end %>
+      </li>
+
+      <li>
+      <% if @game.metaurl %>
+        <a href="<%= @game.metaurl %>">View on Metacritic</a>
+      <% else %>
+        <a href="http://metacritic.com">View on Metacritic</a>
+      <% end %>
+      </li>
     </ul>
   </div>
 </div>
 
 <div class="row main-column pricing">
-  <%= @price_info.each do |name,data| %>
-    <p><%= name %></p>
-    <%= data[:prices] %>
+  <% if !@game.itad %>
+    <p>We couldn't find any deals on </p>
+    <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
+  <% else %>
+    <h4>Price information</h4>
+
+    <table>
+    <tr>
+      <td class="col-md-4 pricing-entry">
+        <% @price_info.each do |name,data| %>
+          <% if data[:default] %>
+            <table class="table">
+              <tr>
+                <th>Vendor</th>
+                <th>Price</th>
+                <th>Original</th>
+              </tr>
+              <% data[:prices].each do |entry| %>
+                <tr>
+                  <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
+                  <td><%= entry[:current_price] %> (<%= entry[:price_cut] %>)</td>
+                  <td><%= entry[:regular_price] %></td>
+                </tr>
+              <% end %>
+            </table>
+          <% end %>
+        <% end %>
+      </td>
+
+      <td class="col-md-4 pricing-entry">
+      <table class="table">
+        <tr><th>DLCs for this game</th></tr>
+        <% @price_info.each do |name,data| %>
+          <% if data[:is_dlc] %>
+            <tr><td><%= name %></td></tr>
+          <% end %>
+        <% end %>
+      </table>
+      </td>
+      
+      <td class="col-md-4 pricing-entry">
+      <table class="table">
+        <tr><th>Packages containing this game</th></tr>
+        <% @price_info.each do |name,data| %>
+          <% if data[:is_pkg] %>
+            <tr><td><%= name %></td></tr>
+          <% end %>
+        <% end %>
+      </table>
+      </td>
+    </tr>
+    </table>
+
+    <a href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
   <% end %>
 </div>
 
-<div class="row main-column hltb-description">
-  <div class="hltb-container">
-    <a href="http://howlongtobeat.com/<%= @game.hltb %>">View on HowLongToBeat</a>
-    <table>
-
-      <tr>
-        <th></th>
-        <th>Time (hours)</th>
-        <th>Price per hour (USD)</th>
-      </tr>
-
-      <tr>
-        <td>Main Story:</td>
-        <td><%= @game.MainStory %></td>
-        <td>0</td>
-      </tr>
-
-      <tr>
-        <td>Main + Extras:</td>
-        <td><%= @game.MainExtra %></td>
-        <td>0</td>
-      </tr>
-
-      <tr>
-        <td>Completionist:</td>
-        <td><%= @game.Completion %></td>
-        <td>0</td>
-      </tr>
-
-      <tr>
-        <td>Combined:</td>
-        <td><%= @game.Combined %></td>
-        <td>0</td>
-      </tr>
-
-    </table>
-  </div>
-
+<div class="row main-column description">
   <div class="description-container">
     Placeholder
     <!--<% if @game.description %>
@@ -131,11 +228,12 @@
   </div>
 </div>
 
-
+<!-- todo: vertically center extra-info, add popout and jquery selection and scroll bar to DLC/package itad list -->
 
 <div class="row main-column reddit-reviews">
 
 </div>
+<% end %>
 
 <!--script>
 $(window).load(function() {
