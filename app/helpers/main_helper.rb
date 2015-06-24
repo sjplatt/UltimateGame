@@ -605,7 +605,6 @@ module MainHelper
           combined = 0
           for i in (0..times.size-1) do
             if i == 1
-              puts game.name
               if times[i].text.include?("Hours")
                 main_story = times[i].text.gsub("½",".5").delete("Hours").to_f
               elsif times[i].text.include?("Mins")
@@ -613,7 +612,6 @@ module MainHelper
               else
                 main_story = times[i].text.tr('^0-9', '').to_f
               end
-              puts main_story
             end 
             if i == 3
               if times[i].text.include?("Hours")
@@ -623,7 +621,6 @@ module MainHelper
               else
                  main_extra = times[i].text.tr('^0-9', '').to_f
               end
-              puts main_extra
             end
             if i == 5
               if times[i].text.include?("Hours")
@@ -633,7 +630,6 @@ module MainHelper
               else
                  completion = times[i].text.tr('^0-9', '').to_f
               end
-              puts completion
             end
             if i ==7 
               if times[i].text.include?("Hours")
@@ -643,14 +639,13 @@ module MainHelper
               else
                  combined = times[i].text.tr('^0-9', '').to_f
               end
-              puts combined
             end
           end
-          #Game.update(game.id,:hltb => html_link, 
-          #  :MainStory => main_story, :MainExtra => main_extra, 
-          #  :Completion => completion, :Combined => combined)
+          Game.update(game.id,:hltb => html_link, 
+           :MainStory => main_story, :MainExtra => main_extra, 
+           :Completion => completion, :Combined => combined)
         else
-          #Game.update(game.id,:hltb => html_link)
+          Game.update(game.id,:hltb => html_link)
         end
       end
     end
@@ -683,16 +678,40 @@ module MainHelper
           combined = 0
           for i in (0..times.size-1) do
             if i == 1
-              main_story = times[i].text.tr('^0-9', '').to_i
+              if times[i].text.include?("Hours")
+                main_story = times[i].text.gsub("½",".5").delete("Hours").to_f
+              elsif times[i].text.include?("Mins")
+                main_story = times[i].text.delete("Mins").tr('^0-9', '').to_f/60.0
+              else
+                main_story = times[i].text.tr('^0-9', '').to_f
+              end
             end 
             if i == 3
-              main_extra = times[i].text.tr('^0-9', '').to_i
+              if times[i].text.include?("Hours")
+                main_extra = times[i].text.gsub("½",".5").delete("Hours").to_f
+              elsif times[i].text.include?("Mins")
+                main_extra = times[i].text.delete("Mins").tr('^0-9', '').to_f/60.0
+              else
+                 main_extra = times[i].text.tr('^0-9', '').to_f
+              end
             end
             if i == 5
-              completion = times[i].text.tr('^0-9', '').to_i
+              if times[i].text.include?("Hours")
+                completion = times[i].text.gsub("½",".5").delete("Hours").to_f
+              elsif times[i].text.include?("Mins")
+                completion = times[i].text.delete("Mins").tr('^0-9', '').to_f/60.0
+              else
+                 completion = times[i].text.tr('^0-9', '').to_f
+              end
             end
             if i ==7 
-              combined = times[i].text.tr('^0-9', '').to_i
+              if times[i].text.include?("Hours")
+                combined = times[i].text.gsub("½",".5").delete("Hours").to_f
+              elsif times[i].text.include?("Mins")
+                combined = times[i].text.delete("Mins").tr('^0-9', '').to_f/60.0
+              else
+                 combined = times[i].text.tr('^0-9', '').to_f
+              end
             end
           end
           Dlc.update(game.id,:hltb => html_link, 
