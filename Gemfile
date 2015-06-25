@@ -11,6 +11,8 @@ gem 'fuzzy_match'
 gem 'yaml_db'
 gem 'mysql2'
 gem 'searchkick'
+gem 'google-api-client'
+gem 'trollop'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
