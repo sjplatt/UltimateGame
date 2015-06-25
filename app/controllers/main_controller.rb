@@ -422,7 +422,6 @@ class MainController < ApplicationController
   def index
     get_frontpage_deals
     get_more_frontpage_info
-    youtube_info("Witcher 3","Reviews")
   end
 
   def get_game
