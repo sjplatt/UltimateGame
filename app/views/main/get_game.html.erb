@@ -94,7 +94,11 @@
         <tr>
           <td>Main Story:</td>
           <td><%= @game.MainStory %></td>
-          <td>0</td>
+          <td><%= if
+            @price_info[:DEFAULT_NAME] &&
+            @price_info[@price_info[:DEFAULT_NAME]][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@price_info[:DEFAULT_NAME]][:prices].sort_by {|entry| entry[:current_price]} != [] then
+            (@price_info[@price_info[:DEFAULT_NAME]][:prices].sort_by {|entry| entry[:current_price]})[0][:current_price] end %></td>
           <td>0</td>
         </tr>
 
