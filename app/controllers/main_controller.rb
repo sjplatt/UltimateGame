@@ -89,13 +89,15 @@ class MainController < ApplicationController
   
   #Precondition: name is the name of a game
   #Precondition: tag = "reviews" or tag = "gameplay"
-  #Postcondition: RETURN two arrays in this order
+  #Postcondition: RETURN three arrays in this order
   #First array is set of youtube video names
   #Second array is set of youtube video links
+  #Third array is set of image links for the videos
   def youtube_info(name,tag)
     search_term = name + tag
     video_names = []
     video_links = []
+    video_image_links = []
     opts = Trollop::options do
       opt :q, search_term, :type => String, :default => search_term
       opt :max_results, 'Max results', :type => :int, :default => 10
@@ -124,15 +126,15 @@ class MainController < ApplicationController
             video_names << "#{search_result.snippet.title}"
             video_links << "https://www.youtube.com/watch?v="+
             "#{search_result.id.videoId}"
+            video_image_links << 
+            "#{search_result.snippet.thumbnails.default.url}"
         end
       end
 
-      puts video_names
-      puts video_links
     rescue Google::APIClient::TransmissionError => e
       puts e.result.body
     end
-    return video_names,video_links
+    return video_names,video_links,video_image_links
   end
 
   #Precondition: MUST CALL get_frontpage_deals first
