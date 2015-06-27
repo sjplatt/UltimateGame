@@ -382,8 +382,10 @@ class MainController < ApplicationController
     if !@price_info
       @price_info = {}
     end
-    @price_info[input_name] = {default: input_name.eql?(associated_with),
-                              is_dlc: input_is_DLC,
+    if !@default_displayed && input_name.eql?(associated_with)
+      @default_displayed = input_name
+    end
+    @price_info[input_name] = {is_dlc: input_is_DLC,
                               is_pkg: input_is_pkg,
                               metascore: metascore,
                               metacritic_link: metacritic_link,

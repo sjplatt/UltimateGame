@@ -87,36 +87,162 @@
         <tr>
           <th></th>
           <th>Time to beat</th>
-          <th>Price/hr (lowest discounted)</th>
-          <th>Price/hr (lowest undiscounted)</th>
+          <th>Price/hr (lowest discounted<%= if
+            @default_displayed &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} != []
+            then
+            ", " + (@price_info[@default_displayed][:prices]
+              .sort_by {|entry| entry[:current_price]})[0][:current_price]
+            end %>)</th>
+          <th>Price/hr (lowest original<%= if
+            @default_displayed &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} != []
+            then
+            ", " + (@price_info[@default_displayed][:prices]
+              .sort_by {|entry| entry[:regular_price]})[0][:regular_price]
+            end %>)</th>
         </tr>
 
         <tr>
-          <td>Main Story:</td>
-          <td><%= @game.MainStory %></td>
-          <td>0</td>
-          <td>0</td>
+          <td style="width:120px">Main Story:</td>
+          <td><%= if @game.MainStory then
+            if @game.MainStory < 1 then
+              ((@game.MainStory)*60).to_s + " min"
+            else
+              (@game.MainStory).to_s + " hr"
+            end
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.MainStory &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:current_price]})[0][:current_price]
+              .gsub("$","").to_f)/(@game.MainStory))
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.MainStory &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:regular_price]})[0][:regular_price]
+              .gsub("$","").to_f)/(@game.MainStory))
+            else "??" end %></td>
         </tr>
 
         <tr>
           <td>Main + Extras:</td>
-          <td><%= @game.MainExtra %></td>
-          <td>0</td>
-          <td>0</td>
+          <td><%= if @game.MainExtra then
+            if @game.MainExtra < 1 then
+              ((@game.MainExtra)*60).to_s + " min"
+            else
+              (@game.MainExtra).to_s + " hr"
+            end
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.MainExtra &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:current_price]})[0][:current_price]
+              .gsub("$","").to_f)/(@game.MainExtra))
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.MainExtra &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:regular_price]})[0][:regular_price]
+              .gsub("$","").to_f)/(@game.MainExtra))
+            else "??" end %></td>
         </tr>
 
         <tr>
           <td>Completionist:</td>
-          <td><%= @game.Completion %></td>
-          <td>0</td>
-          <td>0</td>
+          <td><%= if @game.Completion then
+            if @game.Completion < 1 then
+              ((@game.Completion)*60).to_s + " min"
+            else
+              (@game.Completion).to_s + " hr"
+            end
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.Completion &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:current_price]})[0][:current_price]
+              .gsub("$","").to_f)/(@game.Completion))
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.Completion &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:regular_price]})[0][:regular_price]
+              .gsub("$","").to_f)/(@game.Completion))
+            else "??" end %></td>
         </tr>
 
         <tr>
           <td>Combined:</td>
-          <td><%= @game.Combined %></td>
-          <td>0</td>
-          <td>0</td>
+          <td><%= if @game.Combined then
+            if @game.Combined < 1 then
+              ((@game.Combined)*60).to_s + " min"
+            else
+              (@game.Combined).to_s + " hr"
+            end
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.Combined &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:current_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:current_price]})[0][:current_price]
+              .gsub("$","").to_f)/(@game.Combined))
+            else "??" end %></td>
+
+          <td><%= if
+            @default_displayed &&
+            @game.Combined &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} &&
+            @price_info[@default_displayed][:prices].sort_by {|entry| entry[:regular_price]} != []
+            then
+            "$" + sprintf("%.2f",
+              ((@price_info[@default_displayed][:prices]
+                .sort_by {|entry| entry[:regular_price]})[0][:regular_price]
+              .gsub("$","").to_f)/(@game.Combined))
+            else "??" end %></td>
         </tr>
 
       </table>
@@ -167,50 +293,82 @@
     <h4>Price information</h4>
 
     <table>
-    <tr>
-      <td class="col-md-4 pricing-entry">
-        <% @price_info.each do |name,data| %>
-          <% if data[:default] %>
-            <table class="table">
-              <tr>
-                <th>Vendor</th>
-                <th>Price</th>
-                <th>Original</th>
-              </tr>
-              <% data[:prices].each do |entry| %>
-                <tr>
-                  <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
-                  <td><%= entry[:current_price] %> (<%= entry[:price_cut] %>)</td>
-                  <td><%= entry[:regular_price] %></td>
-                </tr>
-              <% end %>
-            </table>
-          <% end %>
-        <% end %>
-      </td>
+      <tr>
+        <td class="col-md-6">
 
-      <td class="col-md-4 pricing-entry">
-      <table class="table">
-        <tr><th>DLCs for this game</th></tr>
-        <% @price_info.each do |name,data| %>
-          <% if data[:is_dlc] %>
-            <tr><td><%= name %></td></tr>
+          <div class="section-view">
+            <span class="section-title">DLCs for this game</span>
+            <div class="section-view-inner">
+              <table class="table">
+                <% @price_info.each do |name,data| %>
+                  <% if data[:is_dlc] %>
+                    <tr><td class="game-entry"><%= name %></td></tr>
+                  <% end %>
+                <% end %>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-view">
+            <span class="section-title">Packages for this game</span>
+            <div class="section-view-inner">
+              <table class="table">
+                <% @price_info.each do |name,data| %>
+                  <% if data[:is_pkg] %>
+                    <tr><td class="game-entry"><%= name %></td></tr>
+                  <% end %>
+                <% end %>
+              </table>
+            </div>
+          </div>
+
+        </td>
+
+        <td class="col-md-6 pricing-entry">
+          <% @price_info.each do |name,data| %>
+            <div class="pricing-entry-inner
+            <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
+            <%= name.gsub(" ","-").gsub(":","-") %>
+            <%= 'dlc' if data[:is_dlc] %>
+            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
+              <span class="pricing-title"><%= name %></span>
+              <table class="table">
+                <tr>
+                  <th>Vendor</th>
+                  <th>Price</th>
+                  <th>Original</th>
+                </tr>
+                <% data[:prices].each do |entry| %>
+                  <tr>
+                    <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
+                    <td><%= entry[:current_price] %> (<%= entry[:price_cut] %>)</td>
+                    <td><%= entry[:regular_price] %></td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
           <% end %>
-        <% end %>
-      </table>
-      </td>
-      
-      <td class="col-md-4 pricing-entry">
-      <table class="table">
-        <tr><th>Packages containing this game</th></tr>
-        <% @price_info.each do |name,data| %>
-          <% if data[:is_pkg] %>
-            <tr><td><%= name %></td></tr>
+
+          <% @price_info.each do |name,data| %>
+            <% if data[:is_pkg] %>
+              <div class="pricing-entry-pkg-contents
+              <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
+              <%= name.gsub(" ","-").gsub(":","-") %>">
+                Contents:
+                <ul>
+                <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
+                  <% if Game.find_by(steamid: item_id) %>
+                    <li><%= Game.find_by(steamid: item_id).name %></li>
+                  <% elsif Dlc.find_by(steamid: item_id) %>
+                    <li><%= Dlc.find_by(steamid: item_id).name %></li>
+                  <% end %>
+                <% end %>
+                </ul>
+              </div>
+            <% end %>
           <% end %>
-        <% end %>
-      </table>
-      </td>
-    </tr>
+        </td>
+      </tr>
     </table>
 
     <a href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
@@ -228,12 +386,26 @@
   </div>
 </div>
 
-<!-- todo: vertically center extra-info, add popout and jquery selection and scroll bar to DLC/package itad list -->
-
 <div class="row main-column reddit-reviews">
 
 </div>
 <% end %>
+
+<script>
+// when clicking a game entry, make its corresponding price appear
+// (and package contents if applicable)
+$(".game-entry").click(function(e) {
+  var selected_class = $(e.target).text().replace(/(\s|:|\(|\))/g,"-");
+
+  // search for currently selected entries; deselect them
+  $(".game-entry").removeClass("selected");
+  $(".pricing-entry .selected").removeClass("selected").addClass("unselected");
+
+  // search for classes matching the current selection; select them
+  $(e.target).addClass("selected");
+  $(".pricing-entry ."+selected_class).removeClass("unselected").addClass("selected");
+});
+</script>
 
 <!--script>
 $(window).load(function() {
