@@ -346,8 +346,8 @@ class MainController < ApplicationController
     if !@price_info
       @price_info = {}
     end
-    if !@price_info[:DEFAULT_NAME] && input_name.eql?(associated_with)
-      @price_info[:DEFAULT_NAME] = input_name
+    if !@default_displayed && input_name.eql?(associated_with)
+      @default_displayed = input_name
     end
     @price_info[input_name] = {is_dlc: input_is_DLC,
                               is_pkg: input_is_pkg,
