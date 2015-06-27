@@ -150,7 +150,7 @@ span.divider {
 .pics {
   margin-top: 40px;
 }
-.pics-container {
+.pics .pics-container {
   background-color: white;
   color: black;
   width: 100%;
@@ -160,16 +160,55 @@ span.divider {
 
 .pricing {
   margin-top: 40px;
+  border: 1px solid green;
 }
-.pricing-entry {
+.pricing div {
+  border: 1px solid green;
+}
+.pricing table {
+  width: 100%;
+}
+.section-view {
+  height: 250px;
+}
+.pricing .section-view-inner {
+  height: 220px;
+  overflow-y: auto;
+}
+.pricing .game-entry:hover {
+  background-color: rgba(255,255,255,0.1)
+}
+.pricing .game-entry.selected {
+  background-color: rgba(255,255,255,0.3);
+}
+.pricing .pricing-entry {
   vertical-align: top;
 }
+.pricing .pricing-entry .pricing-entry-inner {
+  height: 350px;
+  overflow-y: auto;
+}
+.pricing .pricing-entry .pricing-entry-inner.dlc,
+.pricing .pricing-entry .pricing-entry-inner.unlisted {
+  height: 500px;
+}
+.pricing .pricing-entry .pricing-entry-pkg-contents {
+  height: 150px;
+  overflow-y: auto;
+}
+.pricing .pricing-entry .selected {
+  display: block;
+}
+.pricing .pricing-entry .unselected {
+  display: none;
+}
+
 
 
 .hltb-extra {
   margin-top: 40px;
 }
-.hltb-container {
+.hl.hltb-container {
   display: inline-block;
 }
 .extra-info-container {
