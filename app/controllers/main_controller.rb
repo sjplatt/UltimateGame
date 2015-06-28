@@ -296,21 +296,83 @@ class MainController < ApplicationController
     return clean_string_stronger(spaced_plain).gsub(/\s/,"").downcase;
   end
 
-  #Precondition: associated_with is the game the item is associated with
-  #Precondition: input_name is the name of the item
+  #Precondition: input_name is the name of the game/DLC/package we are currently viewing
   #Precondition: itad_plain is the part after plain= in corresponding ITAD URL
-  #Precondition: input_is_DLC is true if game is dlc
-  #Precondition: input_is_pkg is true if game is a package
-  #Postcondition: @prices_info is created if it doesn't exist
-  #Postcondition: It is populated with name,is_dlc,is_pkg,metascore,
-  #Postcondition: metacritic_link,steam_percentage,wiki_link,prices
-  def get_price_information(associated_with,input_name,itad_plain,input_is_DLC,input_is_pkg)
+  #Postcondition: @misc_info hash is created if it doesn't exist
+  #Postcondition: It is populated with metascore, metacritic_link, steam_percentage, wiki_link
+  def get_misc_info(input_name, itad_plain)
     # default outputs
     metascore = "??"
     metacritic_link = "http://metacritic.com"
     steam_percentage = "??"
     wiki_search_string = URI.encode(input_name)
     wiki_link = "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=#{wiki_search_string}&button="
+
+    if !input_name
+      puts "[CRITICAL] Could not find the input_name (must be exact!)"
+    else
+      #puts input_name
+      detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{itad_plain}"
+      puts detailed_deals_url
+      begin
+        detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
+      rescue Exception => e
+        puts "Nokogiri HTML error: #{e}"
+      end
+
+      #puts detailed_deals.text
+      if detailed_deals.nil?
+        puts "[CRITICAL] Nokogiri HTML call for detailed deals failed"
+        puts "[Note] Consider using link only, since scraping details won't work"
+      else
+        # ENSURES: All calls to the detailed page for itad_plain contain data
+
+        # Metascore
+        if detailed_deals.at("span.score.score-number")
+          metascore = detailed_deals.at("span.score.score-number").text.to_i
+        end
+
+        # Metacritic link
+        if detailed_deals.at("div.score-section a")
+          if detailed_deals.at("div.score-section a")[:href]
+            metacritic_link = detailed_deals.at("div.score-section a")[:href]
+          end
+        end
+        
+        # Steam percentage
+        if detailed_deals.css("div.score-section") && detailed_deals.css("div.score-section") != [] && detailed_deals.css("div.score-section")[1]
+          if detailed_deals.css("div.score-section")[1].css("span") && detailed_deals.css("div.score-section")[1].css("span") != []
+            if detailed_deals.css("div.score-section")[1].css("span")[2]
+              steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
+              start_index2 = steam_text.index(", ") + ", ".length()
+              end_index2 = steam_text.index("%")
+              steam_percentage = steam_text[start_index2..end_index2].to_i
+            end
+          end
+        end
+        
+        # Wiki link
+        if detailed_deals.at("div.wiki.link a")
+          if detailed_deals.at("div.wiki.link a")[:href]
+            wiki_link = detailed_deals.at("div.wiki.link a")[:href]
+          end
+        end
+      end
+    end
+
+    @misc_info = {metascore: metascore,
+                  metacritic_link: metacritic_link,
+                  steam_percentage: steam_percentage,
+                  wiki_link: wiki_link}
+  end
+
+
+  # Precondition: input_name is the name of the game/DLC/package
+  # Precondition: itad_plain is the part after plain= in corresponding ITAD URL
+  # (upon load, this is only called for the game whose page we are on)
+  # (as user clicks on price entries, we make ajax calls for each item clicked)
+  # Postcondition: The price data for input_name are added to @prices (created if nonexistent)
+  def get_prices_ajax(input_name, itad_plain)
     prices = []
 
     if !input_name
@@ -331,33 +393,6 @@ class MainController < ApplicationController
         puts "[Note] Consider using link only, since scraping details won't work"
       else
         # ENSURES: All calls to the detailed page for itad_plain contain data
-        if detailed_deals.at("span.score.score-number")
-          metascore = detailed_deals.at("span.score.score-number").text.to_i
-        end
-
-        if detailed_deals.at("div.score-section a")
-          if detailed_deals.at("div.score-section a")[:href]
-            metacritic_link = detailed_deals.at("div.score-section a")[:href]
-          end
-        end
-        
-        if detailed_deals.css("div.score-section") && detailed_deals.css("div.score-section") != [] && detailed_deals.css("div.score-section")[1]
-          if detailed_deals.css("div.score-section")[1].css("span") && detailed_deals.css("div.score-section")[1].css("span") != []
-            if detailed_deals.css("div.score-section")[1].css("span")[2]
-              steam_text = detailed_deals.css("div.score-section")[1].css("span")[2].text
-              start_index2 = steam_text.index(", ") + ", ".length()
-              end_index2 = steam_text.index("%")
-              steam_percentage = steam_text[start_index2..end_index2].to_i
-            end
-          end
-        end
-        
-        if detailed_deals.at("div.wiki.link a")
-          if detailed_deals.at("div.wiki.link a")[:href]
-            wiki_link = detailed_deals.at("div.wiki.link a")[:href]
-          end
-        end
-
         if detailed_deals.at("div.buy table")
           price_table = detailed_deals.at("div.buy table")
           price_rows = price_table.css("tr.row")
@@ -376,22 +411,30 @@ class MainController < ApplicationController
                          regular_price: regular_price})
           end
         end
+
+        if !@prices
+          @prices = {}
+        end
+        @prices[input_name] = prices
+
+        # e.g. @prices = {"Bioshock Infinite"=>[{price entry 1}, {price entry 2}, ...], ...}
       end
     end
+  end
 
-    if !@price_info
-      @price_info = {}
+
+  #Precondition: input_name is the name of the game/DLC/package
+  #Precondition: associated_with is the name of the game whose page shows input_name's data
+  #Precondition: input_is_DLC is true if game is dlc
+  #Precondition: input_is_pkg is true if game is a package
+  #Postcondition: @associated_names (created if nonexistent) contains an entry with this data
+  def add_associated_name(associated_with, input_name, input_is_DLC, input_is_pkg)
+    if !@associated_names
+      @associated_names = {}
     end
-    if !@default_displayed && input_name.eql?(associated_with)
-      @default_displayed = input_name
-    end
-    @price_info[input_name] = {is_dlc: input_is_DLC,
-                              is_pkg: input_is_pkg,
-                              metascore: metascore,
-                              metacritic_link: metacritic_link,
-                              steam_percentage: steam_percentage,
-                              wiki_link: wiki_link,
-                              prices: prices}
+    @associated_names[input_name] = {is_dlc: input_is_DLC,
+                                     is_pkg: input_is_pkg}
+
     # is_dlc,is_pkg can be:
     # false,false (just the game itself),
     # (sometimes it is listed as a package, so default specifies it as
@@ -430,8 +473,8 @@ class MainController < ApplicationController
 
   def get_game
     is_dlc_string = params[:dlc]
-    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
-    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
+    #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
+    #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
     #Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
 
     if is_dlc_string.eql?("true")
@@ -440,7 +483,7 @@ class MainController < ApplicationController
       if !@game
         puts "ERROR: Could not find " + params[:query]
       else
-        get_price_information(@game.name, true, false)
+        add_associated_name(@game.name, @game.name, true, false)
       end
     else
       @is_dlc = false
@@ -448,13 +491,24 @@ class MainController < ApplicationController
       if !@game
         puts "ERROR: Could not find " + params[:query]
       else
-        get_price_information(@game.name, @game.name, @game.itad, false, false)
+        # Populate @associated_names to get all DLCs/packages associated with @game
+        add_associated_name(@game.name, @game.name, false, false)
         Dlc.where(game_id:@game.id).each do |dlc|
-          get_price_information(@game.name, dlc.name, dlc.itad, true, false)
+          add_associated_name(@game.name, dlc.name, true, false)
         end
         Package.where(game_id:@game.id).each do |pkg|
-          get_price_information(@game.name, pkg.name, pkg.itad, false, true)
+          add_associated_name(@game.name, pkg.name, false, true)
         end
+
+        # Get misc info and prices for @game only
+        get_misc_info(@game.name, @game.itad)
+        get_prices_ajax(@game.name, @game.itad)
+
+        @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f} || []
+        @lowest_regular_arr = @prices[@game.name].sort_by {|entry| entry[:regular_price].gsub("$","").to_f} || []
+
+        # Other prices are retrieved one by one with get_prices_ajax
+
       end
     end
 
