@@ -231,7 +231,7 @@
           <% @price_info.each do |name,data| %>
             <div class="pricing-entry-inner
             <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
-            <%= name.gsub(" ","-").gsub(":","-") %>
+            <%= name.gsub(/[^\w\d]/,"-") %>
             <%= 'dlc' if data[:is_dlc] %>
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
               <span class="pricing-title"><%= name %></span>
@@ -256,7 +256,7 @@
             <% if data[:is_pkg] %>
               <div class="pricing-entry-pkg-contents
               <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
-              <%= name.gsub(" ","-").gsub(":","-") %>">
+              <%= name.gsub(/[^\w\d]/,"-") %>">
                 Contents:
                 <ul>
                 <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
@@ -298,7 +298,7 @@
 // when clicking a game entry, make its corresponding price appear
 // (and package contents if applicable)
 $(".game-entry").click(function(e) {
-  var selected_class = $(e.target).text().replace(/(\s|:|\(|\))/g,"-");
+  var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
 
   // search for currently selected entries; deselect them
   $(".game-entry").removeClass("selected");
