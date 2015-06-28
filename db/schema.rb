@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150622023003) do
+ActiveRecord::Schema.define(version: 20150624180051) do
 
   create_table "dlcs", force: :cascade do |t|
     t.string   "name",            limit: 255
@@ -22,10 +22,10 @@ ActiveRecord::Schema.define(version: 20150622023003) do
     t.integer  "metascore",       limit: 4
     t.text     "metaurl",         limit: 65535
     t.text     "hltb",            limit: 65535
-    t.integer  "MainStory",       limit: 4
-    t.integer  "MainExtra",       limit: 4
-    t.integer  "Completion",      limit: 4
-    t.integer  "Combined",        limit: 4
+    t.float    "MainStory",       limit: 53
+    t.float    "MainExtra",       limit: 53
+    t.float    "Completion",      limit: 53
+    t.float    "Combined",        limit: 53
     t.text     "description",     limit: 65535
     t.text     "website",         limit: 65535
     t.text     "review",          limit: 65535
@@ -49,10 +49,10 @@ ActiveRecord::Schema.define(version: 20150622023003) do
     t.integer  "metascore",       limit: 4
     t.text     "metaurl",         limit: 65535
     t.text     "hltb",            limit: 65535
-    t.integer  "MainStory",       limit: 4
-    t.integer  "MainExtra",       limit: 4
-    t.integer  "Completion",      limit: 4
-    t.integer  "Combined",        limit: 4
+    t.float    "MainStory",       limit: 53
+    t.float    "MainExtra",       limit: 53
+    t.float    "Completion",      limit: 53
+    t.float    "Combined",        limit: 53
     t.text     "description",     limit: 65535
     t.text     "website",         limit: 65535
     t.text     "review",          limit: 65535

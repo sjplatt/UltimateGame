@@ -430,6 +430,9 @@ class MainController < ApplicationController
 
   def get_game
     is_dlc_string = params[:dlc]
+    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
+    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
+    #Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
 
     if is_dlc_string.eql?("true")
       @is_dlc = true
@@ -453,7 +456,6 @@ class MainController < ApplicationController
           get_price_information(@game.name, pkg.name, pkg.itad, false, true)
         end
       end
-      puts @price_info
     end
 
     # @top_ids = Game.search(params[:query]).map(&:steamid)
