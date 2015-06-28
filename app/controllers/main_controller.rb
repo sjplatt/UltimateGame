@@ -372,11 +372,11 @@ class MainController < ApplicationController
   # (upon load, this is only called for the game whose page we are on)
   # (as user clicks on price entries, we make ajax calls for each item clicked)
   # Postcondition: The price data for input_name are added to @prices (created if nonexistent)
-  def get_prices_ajax(input_name, itad_plain)
+  def get_prices(input_name, itad_plain)
     prices = []
 
-    if !input_name
-      puts "[CRITICAL] Could not find the input_name (must be exact!)"
+    if !input_name || !itad_plain
+      puts "[CRITICAL] Could not find either the input_name or the itad url (must be exact!)"
     else
       #puts input_name
       detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{itad_plain}"
@@ -416,9 +416,25 @@ class MainController < ApplicationController
           @prices = {}
         end
         @prices[input_name] = prices
-
         # e.g. @prices = {"Bioshock Infinite"=>[{price entry 1}, {price entry 2}, ...], ...}
+
+        return prices
       end
+    end
+  end
+
+  def get_prices_ajax
+    input_name = params[:input_name]
+    puts input_name
+    item_needed = Game.find_by(name: input_name) ||
+                  Dlc.find_by(name: input_name) ||
+                  Package.find_by(name: input_name)
+    itad_plain = item_needed.itad
+
+    prices = get_prices(input_name, itad_plain)
+
+    respond_to do |format|
+      format.json {render :json => {:results => prices}}
     end
   end
 
@@ -502,7 +518,7 @@ class MainController < ApplicationController
 
         # Get misc info and prices for @game only
         get_misc_info(@game.name, @game.itad)
-        get_prices_ajax(@game.name, @game.itad)
+        get_prices(@game.name, @game.itad)
 
         @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f} || []
         @lowest_regular_arr = @prices[@game.name].sort_by {|entry| entry[:regular_price].gsub("$","").to_f} || []

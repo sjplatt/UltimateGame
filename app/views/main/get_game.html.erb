@@ -193,7 +193,7 @@
               <table class="table">
                 <% @associated_names.each do |name,data| %>
                   <% if data[:is_dlc] %>
-                    <tr><td class="game-entry"><%= name %></td></tr>
+                    <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
                   <% end %>
                 <% end %>
               </table>
@@ -206,7 +206,7 @@
               <table class="table">
                 <% @associated_names.each do |name,data| %>
                   <% if data[:is_pkg] %>
-                    <tr><td class="game-entry"><%= name %></td></tr>
+                    <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
                   <% end %>
                 <% end %>
               </table>
@@ -218,18 +218,32 @@
         <td class="col-md-6 pricing-entry">
           <% @associated_names.each do |name,data| %>
             <div class="pricing-entry-inner
-            <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
+            <%= name.eql?(@game.name) ? 'selected' : 'unselected' %>
             <%= name.gsub(/[^\w\d]/,"-") %>
             <%= 'dlc' if data[:is_dlc] %>
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
               <span class="pricing-title"><%= name %></span>
               <table class="table">
-                <tr>
-                  <th>Vendor</th>
-                  <th>Price</th>
-                  <th>Original</th>
-                </tr>
-                
+                <% if name.eql?(@game.name) && @prices[@game.name] %>
+
+                  <tr>
+                    <th>Vendor</th>
+                    <th>Price</th>
+                    <th>Original</th>
+                  </tr>
+
+                  <% @prices[@game.name].each do |entry| %>
+                    <tr>
+                      <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
+                      <td><%= entry[:current_price] %> (<%= entry[:price_cut]%>)</td>
+                      <td><%= entry[:regular_price] %></td>
+                    </tr>
+                  <% end %>
+
+                <% end %>
+                <!-- this is just the default display,
+                else this data is appended to the appropriate element by jquery/ajax -->
+
               </table>
             </div>
           <% end %>
@@ -237,7 +251,7 @@
           <% @associated_names.each do |name,data| %>
             <% if data[:is_pkg] %>
               <div class="pricing-entry-pkg-contents
-              <%= name.eql?(@default_displayed) ? 'selected' : 'unselected' %>
+              <%= name.eql?(@game.name) ? 'selected' : 'unselected' %>
               <%= name.gsub(/[^\w\d]/,"-") %>">
                 Contents:
                 <ul>
@@ -288,7 +302,37 @@ $(".game-entry").click(function(e) {
 
   // search for classes matching the current selection; select them
   $(e.target).addClass("selected");
-  $(".pricing-entry ."+selected_class).removeClass("unselected").addClass("selected");
+  $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
+
+  // send the ajax request using the game name (ITAD URL can only be found with Ruby)
+  if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
+    console.log("Already loaded " + selected_class);
+  else {
+    $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
+    
+    $.post("/ajax/get_prices.json",
+      { input_name: $(e.target).text() },
+      function(data) {
+        var output = data.results;
+        // console.log(output);
+
+        var outputHTML = "<tr>\
+          <th>Vendor</th>\
+          <th>Price</th>\
+          <th>Original</th>\
+        </tr>";
+
+        for (var i = 0; i < output.length; i++) {
+          outputHTML += "<tr>\
+            <td><a href='" + output[i].store_url + "'>" + output[i].store + "</a></td>\
+            <td>" + output[i].current_price + " (" + output[i].price_cut + ")</td>\
+            <td>" + output[i].regular_price + "</td>\
+          </tr>"
+        }
+
+        $(".pricing-entry-inner." + selected_class + " table").append(outputHTML);
+      });
+  }
 });
 </script>
 

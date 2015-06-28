@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root 'main#index'
   #post 'get_game' => 'main#get_game'
   get 'get_game' => 'main#get_game'
+  post '/ajax/get_prices' => 'main#get_prices_ajax'
 
   resources :games, only: :index do
     collection do
