@@ -91,3 +91,9 @@
     Package.update(Package.find_by(name:"F1 2013 ROW").id,:itad=>"fiii0iiiiclassicedition")
     Package.update(Package.find_by(name:"Great White Shark: GTA$1,250,000").id,:itad=>"grandtheftautoonlinegreatwhitesharkcashcard")
   end
+
+  def set_itad_variable2()
+    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
+    Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
+    Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
+  end
