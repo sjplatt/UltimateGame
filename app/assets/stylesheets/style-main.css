@@ -150,10 +150,22 @@ span.divider {
 .pics {
   margin-top: 40px;
 }
-.pics .pics-container {
+.pics .pics-container-outer {
   background-color: white;
   color: black;
   width: 100%;
+  height: 150px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+.pics .pics-container-inner {
+  width: 10000px;
+  height: 150px;
+}
+.pics .lightbox-image {
+  display: inline;
+}
+.pics .display-image {
   height: 150px;
 }
 

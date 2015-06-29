@@ -70,8 +70,20 @@
 
 </div>
 
-<div class="row main-column pics">
-  <div class="pics-container">Placeholder</div>
+<div class="row main-column pics" >
+  <div class="pics-container-outer">
+    <div class="pics-container-inner">
+      <%@google_image_links.each do |image|%>
+        <div class="lightbox-image">
+          <a href="<%= image %>"
+            data-lightbox="image-gallery"
+            data-title="<%= @game.name %>">
+            <img class="display-image" src="<%= image %>">
+          </a>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <div class="row main-column hltb-extra">
