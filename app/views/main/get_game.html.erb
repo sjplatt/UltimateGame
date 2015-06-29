@@ -229,14 +229,14 @@
                   <tr>
                     <th>Vendor</th>
                     <th>Price</th>
-                    <th>Original</th>
+                    <th style="width:80px">Lowest recorded</th>
                   </tr>
 
                   <% @prices[@game.name].each do |entry| %>
                     <tr>
                       <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
                       <td><%= entry[:current_price] %> (<%= entry[:price_cut]%>)</td>
-                      <td><%= entry[:regular_price] %></td>
+                      <td><%= entry[:lowest_recorded] %></td>
                     </tr>
                   <% end %>
 
@@ -309,7 +309,8 @@ $(".game-entry").click(function(e) {
     console.log("Already loaded " + selected_class);
   else {
     $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
-    
+
+    // ajax request: format the table based on hash received from data.results
     $.post("/ajax/get_prices.json",
       { input_name: $(e.target).text() },
       function(data) {
@@ -319,7 +320,7 @@ $(".game-entry").click(function(e) {
         var outputHTML = "<tr>\
           <th>Vendor</th>\
           <th>Price</th>\
-          <th>Original</th>\
+          <th style='width:80px'>Lowest recorded</th>\
         </tr>";
 
         for (var i = 0; i < output.length; i++) {
