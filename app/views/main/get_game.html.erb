@@ -274,19 +274,23 @@
   <% end %>
 </div>
 
-<div class="row main-column description">
-  <div class="description-container">
-    Placeholder
-    <!--<% if @game.description %>
-      <p><%= @game.description.html_safe %></p>
-    <% else %>
-      <p><%= @game.description %></p>
-    <% end %>-->
+<div class="row main-column description col-md-4 extra-info-container" >
+  <div class="description-container" 
+    style="max-height: 300px; overflow: hidden;">
+    <%if @game.description %>
+      <%=("<h1>About the Game</h1>" + 
+        @game.description.split('About the Game')[1..-1]
+      .join("")).html_safe%>
+    <%else %>
+      <%= @game.description%>
+    <%end%>  
   </div>
 </div>
-
 <div class="row main-column reddit-reviews">
 
+</div>
+<div class="collapsed-description">
+  ...
 </div>
 <% end %>
 
@@ -336,7 +340,14 @@ $(".game-entry").click(function(e) {
   }
 });
 </script>
-
+<script>
+$(".collapsed-description").click(function(e) {
+  if ($(".description-container")[0].style.maxHeight == "300px")
+    $(".description-container")[0].style.maxHeight = "none"
+  else
+    $(".description-container")[0].style.maxHeight = "300px"
+});
+</script>
 <!--script>
 $(window).load(function() {
   var full_width = $(".info-container").parent().css("width").replace("px","");
