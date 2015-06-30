@@ -70,7 +70,7 @@
 
 </div>
 
-<div class="row main-column pics" >
+<!--div class="row main-column pics">
   <div class="pics-container-outer">
     <div class="pics-container-inner">
       <%@google_image_links.each do |image|%>
@@ -84,7 +84,33 @@
       <% end %>
     </div>
   </div>
+</div-->
+
+<!-- funny-looking comments are to get rid of extra spaces; erb is still rendered -->
+<div class="row main-column pics">
+  <ul id="horiz_container_outer">
+    <li id="horiz_container_inner">
+      <ul id="horiz_container"><!--
+        <%@google_image_links.each do |image|%>
+          --><li><a href="<%= image %>"
+            data-lightbox="image-gallery"
+            data-title="<%= @game.name %>">
+            <img class="display-image" src="<%= image %>">
+          </a></li><!--
+        <% end %>
+      --></ul>
+    </li>
+  </ul>
+
+  <div id="scrollbar">
+    <a id="left_scroll" class="mouseover_left" href="#"></a>
+    <div id="track">
+      <div id="dragBar"></div>
+    </div>
+    <a id="right_scroll" class="mouseover_right" href="#"></a>
+  </div>
 </div>
+
 
 <div class="row main-column hltb-extra">
   <h4>Game statistics</h4>
@@ -309,55 +335,71 @@
 <script>
 // when clicking a game entry, make its corresponding price appear
 // (and package contents if applicable)
-$(".game-entry").click(function(e) {
-  var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
+$(window).load(function() {
+  $(".game-entry").click(function(e) {
+    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
 
-  // search for currently selected entries; deselect them
-  $(".game-entry").removeClass("selected");
-  $(".pricing-entry .selected").removeClass("selected").addClass("unselected");
+    // search for currently selected entries; deselect them
+    $(".game-entry").removeClass("selected");
+    $(".pricing-entry .selected").removeClass("selected").addClass("unselected");
 
-  // search for classes matching the current selection; select them
-  $(e.target).addClass("selected");
-  $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
+    // search for classes matching the current selection; select them
+    $(e.target).addClass("selected");
+    $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
 
-  // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-  if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
-    console.log("Already loaded " + selected_class);
-  else {
-    $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
+    // send the ajax request using the game name (ITAD URL can only be found with Ruby)
+    if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
+      console.log("Already loaded " + selected_class);
+    else {
+      $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
 
-    // ajax request: format the table based on hash received from data.results
-    $.post("/ajax/get_prices.json",
-      { input_name: $(e.target).text() },
-      function(data) {
-        var output = data.results;
-        // console.log(output);
+      // ajax request: format the table based on hash received from data.results
+      $.post("/ajax/get_prices.json",
+        { input_name: $(e.target).text() },
+        function(data) {
+          var output = data.results;
+          // console.log(output);
 
-        var outputHTML = "<tr>\
-          <th>Vendor</th>\
-          <th>Price</th>\
-          <th style='width:80px'>Lowest recorded</th>\
-        </tr>";
+          var outputHTML = "<tr>\
+            <th>Vendor</th>\
+            <th>Price</th>\
+            <th style='width:80px'>Lowest recorded</th>\
+          </tr>";
 
-        for (var i = 0; i < output.length; i++) {
-          outputHTML += "<tr>\
-            <td><a href='" + output[i].store_url + "'>" + output[i].store + "</a></td>\
-            <td>" + output[i].current_price + " (" + output[i].price_cut + ")</td>\
-            <td>" + output[i].regular_price + "</td>\
-          </tr>"
-        }
+          for (var i = 0; i < output.length; i++) {
+            outputHTML += "<tr>\
+              <td><a href='" + output[i].store_url + "'>" + output[i].store + "</a></td>\
+              <td>" + output[i].current_price + " (" + output[i].price_cut + ")</td>\
+              <td>" + output[i].regular_price + "</td>\
+            </tr>"
+          }
 
-        $(".pricing-entry-inner." + selected_class + " table").append(outputHTML);
-      });
-  }
-});
-</script>
-<script>
-$(".collapsed-description").click(function(e) {
-  if ($(".description-container")[0].style.maxHeight == "300px")
-    $(".description-container")[0].style.maxHeight = "none"
-  else
-    $(".description-container")[0].style.maxHeight = "300px"
+          $(".pricing-entry-inner." + selected_class + " table").append(outputHTML);
+        });
+    }
+  });
+
+  $(".collapsed-description").click(function(e) {
+    if ($(".description-container")[0].style.maxHeight == "300px")
+      $(".description-container")[0].style.maxHeight = "none";
+    else
+      $(".description-container")[0].style.maxHeight = "300px";
+  });
+
+  /*$(".pics-container-outer").mousewheel(function(e, delta) {
+    this.scrollLeft -= (delta*40);
+    e.preventDefault();
+  });*/
+  
+  var total_width = 0;
+  $("#horiz_container li").each(function(index) {
+    total_width += parseInt($(this).outerWidth(true), 10);
+  });
+  console.log(total_width);
+
+  $("#horiz_container").css("width",(total_width+10)+"px"); // +10 for 5px padding on each side
+  $("#horiz_container_outer").horizontalScroll();
+  
 });
 </script>
 <!--script>

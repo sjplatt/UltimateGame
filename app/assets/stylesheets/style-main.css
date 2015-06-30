@@ -150,7 +150,7 @@ span.divider {
 .pics {
   margin-top: 40px;
 }
-.pics .pics-container-outer {
+/*.pics .pics-container-outer {
   background-color: white;
   color: black;
   width: 100%;
@@ -164,11 +164,31 @@ span.divider {
 }
 .pics .lightbox-image {
   display: inline;
-}
+}*/
 .pics .display-image {
   height: 150px;
+  border-radius: 5px;
 }
 
+#horiz_container_outer {
+  width: 100%;
+  height: 170px;
+}
+#horiz_container_inner {
+  margin: 0;
+  padding: 0;
+}
+#horiz_container {
+  height: 170px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+#horiz_container li {
+  margin: 10px 5px;
+}
+#scrollbar, #track {
+  width: 100%;
+}
 
 .pricing {
   margin-top: 40px;
