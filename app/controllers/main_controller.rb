@@ -517,8 +517,7 @@ class MainController < ApplicationController
 
     if is_dlc_string.eql?("true")
       @is_dlc = true
-      @google_image_links = 
-        google_image_info(params[:query],Time.now,true)
+      @google_image_links = []
       @game = Dlc.find_by(name:params[:query])
       if !@game
         puts "ERROR: Could not find " + params[:query]
@@ -527,8 +526,7 @@ class MainController < ApplicationController
       end
     else
       @is_dlc = false
-      @google_image_links = 
-        google_image_info(params[:query],Time.now,true)
+      @google_image_links = []
       @game = Game.find_by(name:params[:query])
       if !@game
         puts "ERROR: Could not find " + params[:query]
