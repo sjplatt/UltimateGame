@@ -61,6 +61,13 @@ $(window).load(function() {
   });*/
   
   function get_images() {
+    $("#horiz_container_outer").prepend('<div id="img-loading-overlay">\
+      <div id="img-loading-overlay-inner">\
+        <img src="/assets/fancybox_loading.gif" />\
+        Loading images...<br>(Taking too long? <a class="reload-images">Reload images</a>)\
+      </div>\
+    </div>');
+
     $.post("/ajax/get_images",
       { input_name: $(".game-name").text() },
       function(data) {
@@ -74,11 +81,12 @@ $(window).load(function() {
             class="fancybox"\
             rel="game-images"\
             title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
-            <img src="' + images[i] + '">\
+            <img src="' + images[i] + '" alt="">\
           </a></li>');
         }
 
         //$("#horiz_container").append(outputHTML);
+        $("#img-loading-overlay").hide(200);
 
         // important: if using thumbs, note application.js where
         // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
@@ -96,14 +104,16 @@ $(window).load(function() {
           console.log(total_width);
 
           $("#horiz_container").css("width",(total_width+10)+"px"); // +10 for 5px padding on each side
+          $("#img-loading-overlay").remove();
           $("#horiz_container_outer").horizontalScroll();
+          $("#dragBar").css("display","block");
         }, 500);
       });
   }
 
   get_images();
 
-  $("#reload-images").click(function(e) {
+  $(".reload-images").click(function(e) {
     $("#horiz_container").empty();
     get_images();
   });

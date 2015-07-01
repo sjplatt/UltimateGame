@@ -150,25 +150,21 @@ span.divider {
 .pics {
   margin-top: 40px;
 }
-/*.pics .pics-container-outer {
-  background-color: white;
-  color: black;
-  width: 100%;
-  height: 150px;
-  overflow-x: scroll;
-  overflow-y: hidden;
+.pics #img-loading-overlay {
+  height: 100%;
 }
-.pics .pics-container-inner {
-  width: 10000px;
-  height: 150px;
+.pics #img-loading-overlay-inner {
+  position: absolute;
+  text-align: center;
+
+  width: 300px;
+  height: calc(24px + 1em);
+
+  top: 50%;
+  left: 50%;
+  margin: calc(-12px - 0.5em) 0 0 -150px;
 }
-.pics .lightbox-image {
-  display: inline;
-}*/
-.pics img {
-  height: 150px;
-  border-radius: 5px;
-}
+
 /*.pics a {
   padding: 3px;
   height: 150px;
@@ -177,9 +173,13 @@ span.divider {
   background-color: white;
 }*/
 
+#horiz_container img {
+  height: 150px;
+  border-radius: 5px;
+}
 #horiz_container_outer {
   width: 100%;
-  height: 170px;
+  height: 170px; /* 150+10+10 */
 }
 #horiz_container_inner {
   margin: 0;
@@ -187,7 +187,7 @@ span.divider {
 }
 #horiz_container {
   height: 170px;
-  padding-left: 5px;
+  padding-left: 5px; /* 10/2 */
   padding-right: 5px;
 }
 #horiz_container li {
@@ -195,6 +195,9 @@ span.divider {
 }
 #scrollbar, #track {
   width: 100%;
+}
+#dragBar {
+  display: none; /* made visible in ajax call */
 }
 
 .pricing {
