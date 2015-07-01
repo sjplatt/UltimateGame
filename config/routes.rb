@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   #post 'get_game' => 'main#get_game'
   get 'get_game' => 'main#get_game'
   post '/ajax/get_prices' => 'main#get_prices_ajax'
+  post '/ajax/get_images' => 'main#get_images_ajax'
 
   resources :games, only: :index do
     collection do

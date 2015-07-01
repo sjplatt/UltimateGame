@@ -165,7 +165,7 @@ span.divider {
 .pics .lightbox-image {
   display: inline;
 }*/
-.pics .display-image {
+.pics img {
   height: 150px;
   border-radius: 5px;
 }
