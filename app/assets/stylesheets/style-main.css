@@ -169,6 +169,13 @@ span.divider {
   height: 150px;
   border-radius: 5px;
 }
+/*.pics a {
+  padding: 3px;
+  height: 150px;
+}
+.pics a:hover {
+  background-color: white;
+}*/
 
 #horiz_container_outer {
   width: 100%;
