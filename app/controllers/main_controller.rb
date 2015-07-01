@@ -44,31 +44,53 @@ class MainController < ApplicationController
     end
   end
 
-  #Precondition: name is the name of a game.
-  #Postcondition: creates instance variable @google_links for the
-  #top 10 links for the google search of name "reviews"
-  def google_info(name)
-    @google_links = []
+  #Precondition: name is the name of a game,start_time is the time
+  #of the first call to this method, first_call is true if it is
+  #the first call and false otherwise
+  #Postcondition: returns array filled with top 10 google results
+  def google_info(name,start_time,first_call)
+    google_links = []
     count = 0
-    Google::Search::Web.new(:query => (name + "reviews")).each do |web|
-      if !web.uri.include?("reddit") && !web.uri.include?("wikipedia") && 
-        !web.uri.include?("youtube") && count<10
-        @google_links << web.uri
-        count+=1
+    begin
+      Google::Search::Web.new(:query => (name + "reviews")).each do |web|
+        if !web.uri.include?("reddit") && !web.uri.include?("wikipedia") && 
+          !web.uri.include?("youtube") && count<10
+          google_links << web.uri
+          count+=1
+        end
+      end
+    rescue
+      if Time.now<start_time+5.seconds && !first_call
+        sleep(0.2)
+        google_info(name,start_time,false)
+      else 
+        return google_links
       end
     end
+    return google_links
   end
 
-  #Precondition: name is the name of a game.
-  #Postcondition: creates instance variable @google_image_links for
-  #the links for the images of the game
-  def google_image_info(name)
-    @google_image_links = []
-    Google::Search::Image.new(:query => (name+"imgur")).each do |image|
-      if image.uri.include?("imgur")
-        @google_image_links<< image.uri
+  #Precondition: name is the name of a game,start_time is the time
+  #of the first call to this method, first_call is true if it is
+  #the first call and false otherwise
+  #Postcondition: returns array filled with google image links
+  def google_image_info(name,start_time,first_call)
+    google_image_links = []
+    begin
+      Google::Search::Image.new(:query => (name+"imgur")).each do |image|
+        if image.uri.include?("imgur")
+          google_image_links<< image.uri
+        end
+      end
+    rescue
+      if Time.now<start_time+5.seconds && !first_call
+        sleep(0.2)
+        google_image_info(name,start_time,false)
+      else 
+        return google_image_links
       end
     end
+    return google_image_links
   end
 
   DEVELOPER_KEY = ENV['YOUTUBE_API_KEY']
@@ -495,7 +517,7 @@ class MainController < ApplicationController
 
     if is_dlc_string.eql?("true")
       @is_dlc = true
-      google_image_info(params[:query])
+      @google_image_links = []
       @game = Dlc.find_by(name:params[:query])
       if !@game
         puts "ERROR: Could not find " + params[:query]
@@ -504,7 +526,7 @@ class MainController < ApplicationController
       end
     else
       @is_dlc = false
-      google_image_info(params[:query])
+      @google_image_links = []
       @game = Game.find_by(name:params[:query])
       if !@game
         puts "ERROR: Could not find " + params[:query]
