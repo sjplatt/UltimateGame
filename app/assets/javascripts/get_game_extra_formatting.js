@@ -59,48 +59,52 @@ $(window).load(function() {
     this.scrollLeft -= (delta*40);
     e.preventDefault();
   });*/
+  
+  function get_images() {
+    $.post("/ajax/get_images",
+      { input_name: $(".game-name").text() },
+      function(data) {
+        var images = data.results;
+        console.log(images);
 
-  $.post("/ajax/get_images",
-    { input_name: $(".game-name").text() },
-    function(data) {
-      var images = data.results;
-      console.log(images);
-
-      var game_name = $(".game-name").text();
-      var outputHTML = "";
-
-      for (var i = 0; i < images.length; i++) {
-        outputHTML += '<li><a href="' + images[i] + '"\
-          class="fancybox-thumb"\
-          rel="game-images"\
-          title="' + images[i] + '">\
-          <img src="' + images[i] + '">\
-        </a></li>';
-      }
-
-      $("#horiz_container").append(outputHTML);
-
-      // important: note application.js where
-      // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
-      $(".fancybox-thumb").fancybox({
-        prevEffect: 'fade',
-        nextEffect: 'fade',
-        helpers: {
-          thumbs: {
-            width: 50,
-            height: 50
-          }
+        var game_name = $(".game-name").text();
+        //var outputHTML = "";
+        for (var i = 0; i < images.length; i++) {
+          $("#horiz_container").append('<li><a href="' + images[i] + '"\
+            class="fancybox"\
+            rel="game-images"\
+            title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
+            <img src="' + images[i] + '">\
+          </a></li>');
         }
+
+        //$("#horiz_container").append(outputHTML);
+
+        // important: if using thumbs, note application.js where
+        // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
+        $(".fancybox").fancybox({
+          prevEffect: 'elastic',
+          nextEffect: 'elastic'
+        });
+
+        // make sure everything is loaded before trying to set width
+        var total_width = 0;
+        setTimeout(function() {
+          $("#horiz_container li").each(function(index) {
+            total_width += parseInt($(this).outerWidth(true), 10);
+          });
+          console.log(total_width);
+
+          $("#horiz_container").css("width",(total_width+10)+"px"); // +10 for 5px padding on each side
+          $("#horiz_container_outer").horizontalScroll();
+        }, 500);
       });
+  }
 
-      var total_width = 0;
-      $("#horiz_container li").each(function(index) {
-        total_width += parseInt($(this).outerWidth(true), 10);
-      });
-      console.log(total_width);
+  get_images();
 
-      $("#horiz_container").css("width",(total_width+10)+"px"); // +10 for 5px padding on each side
-      $("#horiz_container_outer").horizontalScroll();
-
-    });
+  $("#reload-images").click(function(e) {
+    $("#horiz_container").empty();
+    get_images();
+  });
 });

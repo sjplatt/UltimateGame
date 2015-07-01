@@ -37,9 +37,13 @@
   <div class="col-md-3"></div>
 </div>
 
+
+
 <div class="row main-column game-name">
   <h3><%= @game.name %></h3>
 </div>
+
+
 
 <div class="row main-column vital-data">
 
@@ -70,23 +74,8 @@
 
 </div>
 
-<!--div class="row main-column pics">
-  <div class="pics-container-outer">
-    <div class="pics-container-inner">
-      <%@google_image_links.each do |image|%>
-        <div class="lightbox-image">
-          <a href="<%= image %>"
-            data-lightbox="image-gallery"
-            data-title="<%= @game.name %>">
-            <img class="display-image" src="<%= image %>">
-          </a>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div-->
 
-<!-- funny-looking comments are to get rid of extra spaces; erb is still rendered -->
+
 <div class="row main-column pics">
   <ul id="horiz_container_outer">
     <li id="horiz_container_inner">
@@ -103,7 +92,10 @@
     </div>
     <a id="right_scroll" class="mouseover_right" href="#"></a>
   </div>
+
+  <a id="reload-images">Reload images</a>
 </div>
+
 
 
 <div class="row main-column hltb-extra">
@@ -174,6 +166,8 @@
     <% end %>
   </div>
 
+
+
   <div class="col-md-4 extra-info-container">
     <ul>
       <li>Released: <%= @game.releasedate || "Unknown" %></li>
@@ -207,6 +201,8 @@
     </ul>
   </div>
 </div>
+
+
 
 <div class="row main-column pricing">
   <% if !@game.itad %>
@@ -305,6 +301,8 @@
     <a href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
   <% end %>
 </div>
+
+
 
 <div class="row main-column description col-md-4 extra-info-container" >
   <div class="description-container" 

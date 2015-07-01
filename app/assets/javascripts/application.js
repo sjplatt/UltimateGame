@@ -13,6 +13,4 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require jquery.fancybox.pack.js
-//= require jquery.fancybox-thumbs.js
 //= require_tree .
