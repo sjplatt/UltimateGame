@@ -158,11 +158,11 @@ span.divider {
   text-align: center;
 
   width: 300px;
-  height: calc(24px + 1em);
+  height: 24px;
 
   top: 50%;
   left: 50%;
-  margin: calc(-12px - 0.5em) 0 0 -150px;
+  margin: -12px 0 0 -150px;
 }
 
 /*.pics a {
@@ -269,7 +269,7 @@ li {
   margin-top: 40px;
 }
 .description-container {
-  /*display: inline-block;
-  width: 460px;
-  float: right;*/
+  max-height: 300px;
+  overflow: hidden;
+  border: 1px solid yellow;
 }

@@ -56,15 +56,10 @@ $(window).load(function() {
   }
 
   $(".reload-prices").click(function(e) {
+    // placeholder for possible reload price functionality
   })
 
-  // DESCRIPTION
-  $(".collapsed-description").click(function(e) {
-    if ($(".description-container")[0].style.maxHeight == "300px")
-      $(".description-container")[0].style.maxHeight = "none";
-    else
-      $(".description-container")[0].style.maxHeight = "300px";
-  });
+
 
   // IMAGES VIEW
   /*$(".pics-container-outer").mousewheel(function(e, delta) {
@@ -76,7 +71,7 @@ $(window).load(function() {
     $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <img src="/assets/fancybox_loading.gif" />\
-        Loading images...<br>(Taking too long? <a class="reload-images">Reload images</a>)\
+        Loading images...\
       </div>\
     </div>');
 
@@ -98,7 +93,8 @@ $(window).load(function() {
         }
 
         //$("#horiz_container").append(outputHTML);
-        $("#img-loading-overlay").hide(200);
+        $(".img-loading-overlay").hide(300);
+        $(".img-loading-overlay").remove();
 
         // important: if using thumbs, note application.js where
         // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
@@ -115,11 +111,18 @@ $(window).load(function() {
           });
           console.log(total_width);
 
-          $("#horiz_container").css("width",(total_width+10)+"px"); // +10 for 5px padding on each side
-          $("#img-loading-overlay").remove();
-          $("#horiz_container_outer").horizontalScroll();
+          $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
           $("#dragBar").css("display","block");
-        }, 500);
+          $("#horiz_container_outer").horizontalScroll();
+        }, 1000);
+
+        if (!$.trim($("#horiz_container").html())) {
+          $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+            <div class="img-loading-overlay-inner">\
+              Sorry, image loading failed. <a class="reload-images">Reload images</a>\
+            </div>\
+          </div>');
+        }
       });
   }
 
@@ -128,5 +131,15 @@ $(window).load(function() {
   $(".reload-images").click(function(e) {
     $("#horiz_container").empty();
     get_images();
+  });
+
+
+
+  // DESCRIPTION
+  $(".collapse-description").click(function(e) {
+    if ($(".description-container").css("max-height") === "300px")
+      $(".description-container").css("max-height","none");
+    else
+      $(".description-container").css("max-height","300px");
   });
 });

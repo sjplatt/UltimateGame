@@ -252,7 +252,7 @@
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
               <span class="pricing-title"><%= name %></span>
               <table class="table">
-                <% if name.eql?(@game.name) && @prices[@game.name] %>
+                <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
                   <tr>
                     <th>Vendor</th>
@@ -304,23 +304,26 @@
 
 
 
-<div class="row main-column description col-md-4 extra-info-container" >
-  <div class="description-container" 
-    style="max-height: 300px; overflow: hidden;">
-    <%if @game.description %>
-      <%=("<h1>About the Game</h1>" + 
+<div class="row main-column description">
+  <div class="description-container">
+    <% if @game.description %>
+      <h4>Game description</h4>
+      <!--%=("<h1>About the Game</h1>" + 
         @game.description.split('About the Game')[1..-1]
-      .join("")).html_safe%>
-    <%else %>
-      <%= @game.description%>
-    <%end%>  
+      .join("")).html_safe%-->
+      <%= @game.description.html_safe %>
+    <% else %>
+      <%= @game.description %>
+    <% end %>  
   </div>
+
+  <a class="collapse-description">Read more...</a>
 </div>
+
+
+
 <div class="row main-column reddit-reviews">
 
-</div>
-<div class="collapsed-description">
-  ...
 </div>
 <% end %>
 
