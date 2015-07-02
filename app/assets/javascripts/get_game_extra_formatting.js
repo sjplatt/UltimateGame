@@ -19,32 +19,44 @@ $(window).load(function() {
       console.log("Already loaded " + selected_class);
     else {
       $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
-
-      // ajax request: format the table based on hash received from data.results
-      $.post("/ajax/get_prices", // get_prices.json
-        { input_name: $(e.target).text() },
-        function(data) {
-          var output = data.results;
-          // console.log(output);
-
-          var outputHTML = "<tr>\
-            <th>Vendor</th>\
-            <th>Price</th>\
-            <th style='width:80px'>Lowest recorded</th>\
-          </tr>";
-
-          for (var i = 0; i < output.length; i++) {
-            outputHTML += "<tr>\
-              <td><a href='" + output[i].store_url + "'>" + output[i].store + "</a></td>\
-              <td>" + output[i].current_price + " (" + output[i].price_cut + ")</td>\
-              <td>" + output[i].regular_price + "</td>\
-            </tr>"
-          }
-
-          $(".pricing-entry-inner." + selected_class + " table").append(outputHTML);
-        });
+      get_prices(selected_class, $(e.target).text());
     }
   });
+
+  function get_prices(selected, input_name_text) {
+    $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
+      <img src="/assets/fancybox_loading.gif" />\
+      Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
+    </div>');*/
+
+    // ajax request: format the table based on hash received from data.results
+    $.post("/ajax/get_prices", // get_prices.json
+      { input_name: input_name_text },
+      function(data) {
+        var output = data.results;
+        // console.log(output);
+
+        var outputHTML = '<tr>\
+          <th>Vendor</th>\
+          <th>Price</th>\
+          <th style="width:80px">Lowest recorded</th>\
+        </tr>';
+
+        for (var i = 0; i < output.length; i++) {
+          outputHTML += '<tr>\
+            <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+            <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+            <td>' + output[i].regular_price + '</td>\
+          </tr>'
+        }
+
+        $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
+        $(".pricing-entry-inner." + selected + " table").append(outputHTML);
+      });
+  }
+
+  $(".reload-prices").click(function(e) {
+  })
 
   // DESCRIPTION
   $(".collapsed-description").click(function(e) {
@@ -61,8 +73,8 @@ $(window).load(function() {
   });*/
   
   function get_images() {
-    $("#horiz_container_outer").prepend('<div id="img-loading-overlay">\
-      <div id="img-loading-overlay-inner">\
+    $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
         <img src="/assets/fancybox_loading.gif" />\
         Loading images...<br>(Taking too long? <a class="reload-images">Reload images</a>)\
       </div>\

@@ -150,10 +150,10 @@ span.divider {
 .pics {
   margin-top: 40px;
 }
-.pics #img-loading-overlay {
+.pics .img-loading-overlay {
   height: 100%;
 }
-.pics #img-loading-overlay-inner {
+.pics .img-loading-overlay-inner {
   position: absolute;
   text-align: center;
 
@@ -243,6 +243,10 @@ span.divider {
 }
 .pricing .pricing-entry .unselected {
   display: none;
+}
+.pricing .price-loading-overlay {
+  display: block;
+  text-align: center;
 }
 
 
