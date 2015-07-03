@@ -93,7 +93,7 @@ class MainController < ApplicationController
     return google_image_links
   end
 
-  DEVELOPER_KEY = ENV['YOUTUBE_API_KEY']
+  DEVELOPER_KEY = 'AIzaSyC1mNWx-nBPQ0K1yt_KNFwQm0kq-ESks98' #ENV['YOUTUBE_API_KEY']
   YOUTUBE_API_SERVICE_NAME = 'youtube'
   YOUTUBE_API_VERSION = 'v3'
 
@@ -508,11 +508,33 @@ class MainController < ApplicationController
   # POST '/ajax/get_images'
   def get_images_ajax
     input_name = params[:input_name]
-    puts input_name
     @google_image_links = google_image_info(input_name, Time.now, false)
 
     respond_to do |format|
       format.json {render :json => {:results => @google_image_links}}
+    end
+  end
+
+  # POST '/ajax/get_videos'
+  def get_videos_ajax
+    input_name = params[:input_name]
+
+    video_names1, video_links1, video_image_links1 = youtube_info(input_name, "reviews")
+    video_names2, video_links2, video_image_links2 = youtube_info(input_name, "gameplay")
+
+    respond_to do |format|
+      format.json {render :json => {
+        :reviews => {
+          :names => video_names1,
+          :links => video_links1,
+          :image_links => video_image_links1
+        },
+        :gameplay => {
+          :names => video_names2,
+          :links => video_links2,
+          :image_links => video_image_links2
+        }
+      }}
     end
   end
 

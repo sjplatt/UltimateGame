@@ -31,7 +31,7 @@ $(window).load(function() {
 
     // ajax request: format the table based on hash received from data.results
     $.post("/ajax/get_prices", // get_prices.json
-      { input_name: input_name_text },
+      {input_name: input_name_text},
       function(data) {
         var output = data.results;
         // console.log(output);
@@ -76,7 +76,7 @@ $(window).load(function() {
     </div>');
 
     $.post("/ajax/get_images",
-      { input_name: $(".game-name").text() },
+      {input_name: $(".game-name").text().replace("\n","")},
       function(data) {
         var images = data.results;
         console.log(images);
@@ -132,6 +132,38 @@ $(window).load(function() {
     $("#horiz_container").empty();
     get_images();
   });
+
+
+
+  function get_videos() {
+    $.post("/ajax/get_videos",
+      {input_name: $(".game-name").text().replace(/\n/g,"")},
+      function(data) {
+        for (var i = 0; i < data.reviews.names.length; i++) {
+          $(".left-sidebar").append('<div>\
+              <p class="video-title">\
+              <a href="' + data.reviews.links[i] + '">' + data.reviews.names[i] + '</a>\
+              </p>\
+              <a href="' + data.reviews.links[i] + '">\
+              <img class="video-img" src="' + data.reviews.image_links[i] + '" />\
+              </a>\
+            </div>');
+        }
+
+        for (var i = 0; i < data.gameplay.names.length; i++) {
+          $(".right-sidebar").append('<div>\
+              <p class="video-title">\
+              <a href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] + '</a>\
+              </p>\
+              <a href="' + data.gameplay.links[i] + '">\
+              <img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
+              </a>\
+            </div>');
+        }
+      });
+  }
+
+  get_videos();
 
 
 
