@@ -136,11 +136,18 @@ $(window).load(function() {
 
 
   function get_videos() {
+    $(".videos").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <img src="/assets/fancybox_loading.gif" />\
+        Loading videos...\
+      </div>\
+    </div>');
+
     $.post("/ajax/get_videos",
       {input_name: $(".game-name").text().replace(/\n/g,"")},
       function(data) {
         for (var i = 0; i < data.reviews.names.length; i++) {
-          $(".left-sidebar").append('<div>\
+          $(".videos.left-sidebar").append('<div>\
               <p class="video-title">\
               <a href="' + data.reviews.links[i] + '">' + data.reviews.names[i] + '</a>\
               </p>\
@@ -151,7 +158,7 @@ $(window).load(function() {
         }
 
         for (var i = 0; i < data.gameplay.names.length; i++) {
-          $(".right-sidebar").append('<div>\
+          $(".videos.right-sidebar").append('<div>\
               <p class="video-title">\
               <a href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] + '</a>\
               </p>\
@@ -160,6 +167,8 @@ $(window).load(function() {
               </a>\
             </div>');
         }
+
+        $(".videos .img-loading-overlay").remove();
       });
   }
 
