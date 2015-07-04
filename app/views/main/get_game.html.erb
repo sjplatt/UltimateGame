@@ -1,4 +1,5 @@
-<div class="container">
+<!-- preload ajax images -->
+<img style="display:none" src="/assets/fancybox_loading.gif" />
 
 <div class="col-md-12 header">
   <div class="col-md-4 homepage-title">
@@ -37,9 +38,13 @@
   <div class="col-md-3"></div>
 </div>
 
+
+
 <div class="row main-column game-name">
   <h3><%= @game.name %></h3>
 </div>
+
+
 
 <div class="row main-column vital-data">
 
@@ -70,8 +75,36 @@
 
 </div>
 
+
+
 <div class="row main-column pics">
-  <div class="pics-container">Placeholder</div>
+  <ul id="horiz_container_outer">
+    <li id="horiz_container_inner">
+      <ul id="horiz_container">
+        <!-- images are added here via ajax -->
+      </ul>
+    </li>
+  </ul>
+
+  <div id="scrollbar">
+    <a id="left_scroll" class="mouseover_left" href="#"></a>
+    <div id="track">
+      <div id="dragBar"></div>
+    </div>
+    <a id="right_scroll" class="mouseover_right" href="#"></a>
+  </div>
+
+  <a class="reload-images">Reload images</a>
+</div>
+
+
+
+<div class="videos left-sidebar">
+  <h4>Game reviews on YouTube</h4>
+</div>
+
+<div class="videos right-sidebar">
+  <h4>Gameplay videos on YouTube</h4>
 </div>
 
 <div class="row main-column hltb-extra">
@@ -142,6 +175,8 @@
     <% end %>
   </div>
 
+
+
   <div class="col-md-4 extra-info-container">
     <ul>
       <li>Released: <%= @game.releasedate || "Unknown" %></li>
@@ -175,6 +210,8 @@
     </ul>
   </div>
 </div>
+
+
 
 <div class="row main-column pricing">
   <% if !@game.itad %>
@@ -224,19 +261,19 @@
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
               <span class="pricing-title"><%= name %></span>
               <table class="table">
-                <% if name.eql?(@game.name) && @prices[@game.name] %>
+                <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
                   <tr>
                     <th>Vendor</th>
                     <th>Price</th>
-                    <th>Original</th>
+                    <th style="width:80px">Lowest recorded</th>
                   </tr>
 
                   <% @prices[@game.name].each do |entry| %>
                     <tr>
                       <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
                       <td><%= entry[:current_price] %> (<%= entry[:price_cut]%>)</td>
-                      <td><%= entry[:regular_price] %></td>
+                      <td><%= entry[:lowest_recorded] %></td>
                     </tr>
                   <% end %>
 
@@ -274,79 +311,31 @@
   <% end %>
 </div>
 
-<div class="row main-column description col-md-4 extra-info-container" >
-  <div class="description-container" 
-    style="max-height: 300px; overflow: hidden;">
-    <%if @game.description %>
-      <%=("<h1>About the Game</h1>" + 
+
+
+<div class="row main-column description">
+  <div class="description-container">
+    <% if @game.description %>
+      <h4>Game description</h4>
+      <!--%=("<h1>About the Game</h1>" + 
         @game.description.split('About the Game')[1..-1]
-      .join("")).html_safe%>
-    <%else %>
-      <%= @game.description%>
-    <%end%>  
+      .join("")).html_safe%-->
+      <%= @game.description.html_safe %>
+    <% else %>
+      <%= @game.description %>
+    <% end %>  
   </div>
+
+  <a class="collapse-description">Read more...</a>
 </div>
+
+
+
 <div class="row main-column reddit-reviews">
 
 </div>
-<div class="collapsed-description">
-  ...
-</div>
 <% end %>
 
-<script>
-// when clicking a game entry, make its corresponding price appear
-// (and package contents if applicable)
-$(".game-entry").click(function(e) {
-  var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
-
-  // search for currently selected entries; deselect them
-  $(".game-entry").removeClass("selected");
-  $(".pricing-entry .selected").removeClass("selected").addClass("unselected");
-
-  // search for classes matching the current selection; select them
-  $(e.target).addClass("selected");
-  $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
-
-  // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-  if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
-    console.log("Already loaded " + selected_class);
-  else {
-    $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
-    
-    $.post("/ajax/get_prices.json",
-      { input_name: $(e.target).text() },
-      function(data) {
-        var output = data.results;
-        // console.log(output);
-
-        var outputHTML = "<tr>\
-          <th>Vendor</th>\
-          <th>Price</th>\
-          <th>Original</th>\
-        </tr>";
-
-        for (var i = 0; i < output.length; i++) {
-          outputHTML += "<tr>\
-            <td><a href='" + output[i].store_url + "'>" + output[i].store + "</a></td>\
-            <td>" + output[i].current_price + " (" + output[i].price_cut + ")</td>\
-            <td>" + output[i].regular_price + "</td>\
-          </tr>"
-        }
-
-        $(".pricing-entry-inner." + selected_class + " table").append(outputHTML);
-      });
-  }
-});
-</script>
-<script>
-$(".collapsed-description").click(function(e) {
-  if ($(".description-container")[0].style.maxHeight == "300px")
-    $(".description-container")[0].style.maxHeight = "none"
-  else
-    $(".description-container")[0].style.maxHeight = "300px"
-});
-</script>
 <!--script>
 $(window).load(function() {
   var full_width = $(".info-container").parent().css("width").replace("px","");

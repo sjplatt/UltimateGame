@@ -93,7 +93,7 @@ class MainController < ApplicationController
     return google_image_links
   end
 
-  DEVELOPER_KEY = ENV['YOUTUBE_API_KEY']
+  DEVELOPER_KEY = 'AIzaSyC1mNWx-nBPQ0K1yt_KNFwQm0kq-ESks98' #ENV['YOUTUBE_API_KEY']
   YOUTUBE_API_SERVICE_NAME = 'youtube'
   YOUTUBE_API_VERSION = 'v3'
 
@@ -445,21 +445,22 @@ class MainController < ApplicationController
     end
   end
 
+  # POST '/ajax/get_prices'
   def get_prices_ajax
     input_name = params[:input_name]
-    puts input_name
     item_needed = Game.find_by(name: input_name) ||
                   Dlc.find_by(name: input_name) ||
                   Package.find_by(name: input_name)
-    itad_plain = item_needed.itad
+    if item_needed
+      itad_plain = item_needed.itad
 
-    prices = get_prices(input_name, itad_plain)
+      prices = get_prices(input_name, itad_plain)
 
-    respond_to do |format|
-      format.json {render :json => {:results => prices}}
+      respond_to do |format|
+        format.json {render :json => {:results => prices}}
+      end
     end
   end
-
 
   #Precondition: input_name is the name of the game/DLC/package
   #Precondition: associated_with is the name of the game whose page shows input_name's data
@@ -481,27 +482,60 @@ class MainController < ApplicationController
     # false,true
   end
 
-  def is_itad_url_valid(game_name)
-    formatted_game_name = encode_itad_plain(game_name)
-    detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
-    begin
-      detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
-    rescue Exception => e
-      puts "Nokogiri HTML error: #{e}"
-      return false
-    end
+  # def is_itad_url_valid(game_name)
+  #   formatted_game_name = encode_itad_plain(game_name)
+  #   detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
+  #   begin
+  #     detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
+  #   rescue Exception => e
+  #     puts "Nokogiri HTML error: #{e}"
+  #     return false
+  #   end
 
-    if detailed_deals.at("div.pageError div.pageMessageContent")
-      if detailed_deals.at("div.pageError div.pageMessageContent").text.eql?("We don't have this game in our database")
-        return false
-      end
-    end
+  #   if detailed_deals.at("div.pageError div.pageMessageContent")
+  #     if detailed_deals.at("div.pageError div.pageMessageContent").text.eql?("We don't have this game in our database")
+  #       return false
+  #     end
+  #   end
 
-    if detailed_deals.at("div#pageContent .section")
-      return true
-    end
+  #   if detailed_deals.at("div#pageContent .section")
+  #     return true
+  #   end
 
-    return false
+  #   return false
+  # end
+
+  # POST '/ajax/get_images'
+  def get_images_ajax
+    input_name = params[:input_name]
+    @google_image_links = google_image_info(input_name, Time.now, false)
+
+    respond_to do |format|
+      format.json {render :json => {:results => @google_image_links}}
+    end
+  end
+
+  # POST '/ajax/get_videos'
+  def get_videos_ajax
+    input_name = params[:input_name]
+
+    video_names1, video_links1, video_image_links1 = youtube_info(input_name, "reviews")
+    video_names2, video_links2, video_image_links2 = youtube_info(input_name, "gameplay")
+
+    respond_to do |format|
+      format.json {render :json => {
+        :reviews => {
+          :names => video_names1,
+          :links => video_links1,
+          :image_links => video_image_links1
+        },
+        :gameplay => {
+          :names => video_names2,
+          :links => video_links2,
+          :image_links => video_image_links2
+        }
+      }}
+    end
   end
 
   def index
@@ -509,6 +543,7 @@ class MainController < ApplicationController
     get_more_frontpage_info
   end
 
+  # GET '/get_game'
   def get_game
     is_dlc_string = params[:dlc]
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
@@ -544,22 +579,16 @@ class MainController < ApplicationController
         get_misc_info(@game.name, @game.itad)
         get_prices(@game.name, @game.itad)
 
-        @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f} || []
-        @lowest_regular_arr = @prices[@game.name].sort_by {|entry| entry[:regular_price].gsub("$","").to_f} || []
+        if @prices && @prices[@game.name]
+          @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
+          @lowest_regular_arr = @prices[@game.name].sort_by {|entry| entry[:regular_price].gsub("$","").to_f}
+        else
+          @lowest_current_arr = []
+          @lowest_regular_arr = []
+        end
 
         # Other prices are retrieved one by one with get_prices_ajax
-
       end
     end
-
-    # @top_ids = Game.search(params[:query]).map(&:steamid)
-    # fuzzy_string_analysis_initial(params[:query])
-
-    # input = params[:search_term][:steamid].downcase
-    # fuzzy_string_analysis_initial(input)
-
-    # if @top_ids && @top_ids != []
-    #   @game = Game.find_by(steamid:@top_ids[0])
-    # end
   end
 end
