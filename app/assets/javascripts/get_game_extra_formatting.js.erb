@@ -25,7 +25,7 @@ $(window).load(function() {
 
   function get_prices(selected, input_name_text) {
     $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
-      <%=image_tag "fancybox_loading.gif"%>\
+      <%= image_tag "fancybox_loading.gif" %>\
       Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
     </div>');*/
 
@@ -70,7 +70,7 @@ $(window).load(function() {
   function get_images() {
     $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
-        <%=image_tag "fancybox_loading.gif"%>\
+        <%= image_tag "fancybox_loading.gif" %>\
         Loading images...\
       </div>\
     </div>');
@@ -116,14 +116,15 @@ $(window).load(function() {
           $("#horiz_container_outer").horizontalScroll();
         }, 1000);
 
-        if (!$.trim($("#horiz_container").html())) {
-          $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-            <div class="img-loading-overlay-inner">\
-              Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-            </div>\
-          </div>');
-        }
-      });
+        console.log("Finished loading images");
+      }
+    ).fail(function() {
+      $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+          <div class="img-loading-overlay-inner">\
+            Sorry, image loading failed. <a class="reload-images">Reload images</a>\
+          </div>\
+        </div>');
+    });
   }
 
   get_images();
@@ -138,32 +139,36 @@ $(window).load(function() {
   function get_videos() {
     $(".videos").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
-        <%=image_tag "fancybox_loading.gif"%>\
+        <%= image_tag "fancybox_loading.gif" %>\
         Loading videos...\
       </div>\
     </div>');
 
-    $.post("/ajax/get_videos",
+    $.post(
+      "/ajax/get_videos",
       {input_name: $(".game-name").text().replace(/\n/g,"")},
       function(data) {
+        $(".videos.left-sidebar").append('<h4>Game reviews on YouTube</h4>');
+        $(".videos.right-sidebar").append('<h4>Gameplay on YouTube</h4>');
+
         for (var i = 0; i < data.reviews.names.length; i++) {
           $(".videos.left-sidebar").append('<div>\
-              <a class="fancybox-media"\
-                rel="reviews"\
-                href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
-                '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
-              </a>\
-            </div>');
+            <a class="fancybox-media"\
+              rel="reviews"\
+              href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
+              '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
+            </a>\
+          </div>');
         }
 
         for (var i = 0; i < data.gameplay.names.length; i++) {
           $(".videos.right-sidebar").append('<div>\
-              <a class="fancybox-media"\
-                rel="gameplay"\
-                href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
-                '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
-              </a>\
-            </div>');
+            <a class="fancybox-media"\
+              rel="gameplay"\
+              href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
+              '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
+            </a>\
+          </div>');
         }
 
         $(".fancybox-media").fancybox({
@@ -178,10 +183,23 @@ $(window).load(function() {
         });
 
         $(".videos .img-loading-overlay").remove();
-      });
+        console.log("Finished loading videos");
+      }
+    ).fail(function() {
+      $(".videos").prepend('<div class="img-loading-overlay">\
+        <div class="img-loading-overlay-inner">\
+          Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
+        </div>\
+      </div>');
+    });
   }
 
   get_videos();
+
+  $(".reload-videos").click(function(e) {
+    $(".videos").empty();
+    get_videos();
+  });
 
 
 
