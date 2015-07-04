@@ -15,9 +15,9 @@ $(window).load(function() {
     $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-    if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
-      console.log("Already loaded " + selected_class);
-    else {
+    //if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
+      // console.log("Already loaded " + selected_class);
+    if (!$(".pricing-entry ." + selected_class + ".ajax-loaded").length) {
       $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
     }
@@ -46,7 +46,7 @@ $(window).load(function() {
           outputHTML += '<tr>\
             <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
             <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-            <td>' + output[i].regular_price + '</td>\
+            <td>' + output[i].lowest_recorded + '</td>\
           </tr>'
         }
 
@@ -79,7 +79,7 @@ $(window).load(function() {
       {input_name: $(".game-name").text().replace("\n","")},
       function(data) {
         var images = data.results;
-        console.log(images);
+        // console.log(images);
 
         var game_name = $(".game-name").text();
         //var outputHTML = "";
@@ -109,7 +109,7 @@ $(window).load(function() {
           $("#horiz_container li").each(function(index) {
             total_width += parseInt($(this).outerWidth(true), 10);
           });
-          console.log(total_width);
+          // console.log(total_width);
 
           $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
           $("#dragBar").css("display","block");
@@ -148,25 +148,34 @@ $(window).load(function() {
       function(data) {
         for (var i = 0; i < data.reviews.names.length; i++) {
           $(".videos.left-sidebar").append('<div>\
-              <p class="video-title">\
-              <a href="' + data.reviews.links[i] + '">' + data.reviews.names[i] + '</a>\
-              </p>\
-              <a href="' + data.reviews.links[i] + '">\
-              <img class="video-img" src="' + data.reviews.image_links[i] + '" />\
+              <a class="fancybox-media"\
+                rel="reviews"\
+                href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
+                '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
               </a>\
             </div>');
         }
 
         for (var i = 0; i < data.gameplay.names.length; i++) {
           $(".videos.right-sidebar").append('<div>\
-              <p class="video-title">\
-              <a href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] + '</a>\
-              </p>\
-              <a href="' + data.gameplay.links[i] + '">\
-              <img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
+              <a class="fancybox-media"\
+                rel="gameplay"\
+                href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
+                '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
               </a>\
             </div>');
         }
+
+        $(".fancybox-media").fancybox({
+          prevEffect: "none",
+          nextEffect: "none",
+          mouseWheel: false,
+          padding: 0,
+          margin: [20, 60, 20, 60],
+          helpers: {
+            media: {}
+          }
+        });
 
         $(".videos .img-loading-overlay").remove();
       });
@@ -177,10 +186,23 @@ $(window).load(function() {
 
 
   // DESCRIPTION
-  $(".collapse-description").click(function(e) {
-    if ($(".description-container").css("max-height") === "300px")
-      $(".description-container").css("max-height","none");
-    else
-      $(".description-container").css("max-height","300px");
+  $(".collapsible").each(function(index, elem) {
+    if ($(elem).prop("scrollHeight") <= $(elem).height()) {
+      $(elem).siblings(".collapser").hide();
+    }
+  });
+
+  $(".collapser").click(function(e) {
+    var original_height = "300px";
+    var collapsible = $(e.target).siblings(".collapsible");
+
+    if (collapsible.css("max-height") === original_height) {
+      collapsible.css("max-height","none");
+      $(e.target).text("Read less...");
+    }
+    else {
+      collapsible.css("max-height",original_height);
+      $(e.target).text("Read more...");
+    }
   });
 });
