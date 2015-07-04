@@ -581,10 +581,10 @@ class MainController < ApplicationController
 
         if @prices && @prices[@game.name]
           @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
-          @lowest_regular_arr = @prices[@game.name].sort_by {|entry| entry[:regular_price].gsub("$","").to_f}
+          @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
         else
           @lowest_current_arr = []
-          @lowest_regular_arr = []
+          @lowest_recorded_arr = []
         end
 
         # Other prices are retrieved one by one with get_prices_ajax
