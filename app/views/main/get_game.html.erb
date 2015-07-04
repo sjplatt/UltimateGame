@@ -320,10 +320,10 @@
   <div class="description-container collapsible">
     <% if @game.description %>
       <h4>Game description</h4>
-      <!--%=("<h1>About the Game</h1>" + 
+      <%=("<h1>About the Game</h1>" + 
         @game.description.split('About the Game')[1..-1]
-      .join("")).html_safe%-->
-      <%= @game.description.html_safe %>
+      .join("")).html_safe%>
+      <!--<%= @game.description.html_safe %>-->
     <% else %>
       <%= @game.description %>
     <% end %>  
