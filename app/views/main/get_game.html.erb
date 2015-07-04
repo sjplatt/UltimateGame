@@ -1,5 +1,5 @@
 <!-- preload ajax images -->
-<img style="display:none" src="/assets/fancybox_loading.gif" />
+<%= image_tag "fancybox_loading.gif", style: "display:none" %>
 
 <div class="col-md-12 header">
   <div class="col-md-4 homepage-title">
@@ -100,11 +100,11 @@
 
 
 <div class="videos left-sidebar">
-  <h4>Game reviews on YouTube</h4>
+  <!-- videos are added here via ajax -->
 </div>
 
 <div class="videos right-sidebar">
-  <h4>Gameplay videos on YouTube</h4>
+  <!-- videos are added here via ajax -->
 </div>
 
 <div class="row main-column hltb-extra">
@@ -128,9 +128,9 @@
             end %>)
           </th>
 
-          <th>Price/hr (lowest original<%=
-            if @lowest_regular_arr && @lowest_regular_arr != [] then
-              ", " + @lowest_regular_arr[0][:regular_price]
+          <th>Price/hr (lowest recorded<%=
+            if @lowest_recorded_arr && @lowest_recorded_arr != [] then
+              ", " + @lowest_recorded_arr[0][:lowest_recorded]
             end %>)</th>
         </tr>
 
@@ -160,10 +160,10 @@
 
             <td><%= if
               hrs != 0 &&
-              @lowest_regular_arr &&
-              @lowest_regular_arr != []
+              @lowest_recorded_arr &&
+              @lowest_recorded_arr != []
               then
-              "$" + sprintf("%.2f", (@lowest_regular_arr[0][:regular_price].gsub("$","").to_f)/hrs)
+              "$" + sprintf("%.2f", (@lowest_recorded_arr[0][:lowest_recorded].gsub("$","").to_f)/hrs)
               else "??" end %>
             </td>
           </tr>
@@ -188,7 +188,7 @@
       
       <li>Website:
       <% if @game.website %>
-        <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub("com/","com") %></a>
+        <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub(/\.com\/$/,".com") %></a>
       <% end %>
       </li>
       
@@ -258,7 +258,8 @@
             <%= name.eql?(@game.name) ? 'selected' : 'unselected' %>
             <%= name.gsub(/[^\w\d]/,"-") %>
             <%= 'dlc' if data[:is_dlc] %>
-            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
+            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>
+            <%= 'ajax-loaded' if name.eql?(@game.name) %>">
               <span class="pricing-title"><%= name %></span>
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
@@ -314,7 +315,7 @@
 
 
 <div class="row main-column description">
-  <div class="description-container">
+  <div class="description-container collapsible">
     <% if @game.description %>
       <h4>Game description</h4>
       <%=("<h1>About the Game</h1>" + 
@@ -326,36 +327,41 @@
     <% end %>  
   </div>
 
-  <a class="collapse-description">Read more...</a>
+  <a class="collapser">Read more...</a>
 </div>
 
+<div class="row main-column sys-reqs">
+  <div class="reqs-container collapsible">
+    <h4>System requirements</h4>
+    <% if @game.minreq && @game.recreq %>
+      <div class="col-md-6">
+        <%= @game.minreq.html_safe %>
+      </div>
+      <div class="col-md-6">
+        <%= @game.recreq.html_safe %>
+      </div>
 
+    <% elsif @game.minreq %>
+      <%= @game.minreq.html_safe %>
+
+    <% elsif @game.recreq %>
+      <%= @game.recreq.html_safe %>
+
+    <% else %>
+      None found
+
+    <% end %>
+  </div>
+
+  <a class="collapser">Read more...</a>
+</div>
 
 <div class="row main-column reddit-reviews">
 
 </div>
 <% end %>
 
-<!--script>
-$(window).load(function() {
-  var full_width = $(".info-container").parent().css("width").replace("px","");
-  var img_width = $(".img-container").css("width").replace("px","");
-  $(".info-container").css("width",full_width-img_width-6 + "px");
-  $(".scores-row").css("width",full_width-img_width-30 + "px");
-
-  var circle_width = $(".score-container").css("width");
-  $(".score-container").css("height",circle_width);
-
-  /*var cx = circle_width/2;
-  var r = cx - 5;
-  $(".metascore").append("<circle></circle>");
-  $(".metascore circle").attr("cx",cx)
-  .attr("cy",cx)
-  .attr("r",r)
-  .attr("fill","#84FF38");*/
-}());
-</script-->
-
+<!--
 <% if @game %>
 <table>
   <tr><td>is_dlc: <%=@is_dlc%></td></tr>
@@ -403,3 +409,4 @@ $(window).load(function() {
   <%end%>
 </table>
 <%end%>
+-->
