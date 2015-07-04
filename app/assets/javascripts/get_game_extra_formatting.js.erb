@@ -25,7 +25,7 @@ $(window).load(function() {
 
   function get_prices(selected, input_name_text) {
     $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
-      <img src="/assets/fancybox_loading.gif" />\
+      <%=image_tag "fancybox_loading.gif"%>\
       Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
     </div>');*/
 
@@ -70,7 +70,7 @@ $(window).load(function() {
   function get_images() {
     $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
-        <img src="/assets/fancybox_loading.gif" />\
+        <%=image_tag "fancybox_loading.gif"%>\
         Loading images...\
       </div>\
     </div>');
@@ -138,7 +138,7 @@ $(window).load(function() {
   function get_videos() {
     $(".videos").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
-        <img src="/assets/fancybox_loading.gif" />\
+        <%=image_tag "fancybox_loading.gif"%>\
         Loading videos...\
       </div>\
     </div>');
