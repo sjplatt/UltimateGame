@@ -93,7 +93,7 @@ class MainController < ApplicationController
     return google_image_links
   end
 
-  DEVELOPER_KEY = 'AIzaSyC1mNWx-nBPQ0K1yt_KNFwQm0kq-ESks98' #ENV['YOUTUBE_API_KEY']
+  DEVELOPER_KEY =  ENV['YOUTUBE_API_KEY']
   YOUTUBE_API_SERVICE_NAME = 'youtube'
   YOUTUBE_API_VERSION = 'v3'
 
