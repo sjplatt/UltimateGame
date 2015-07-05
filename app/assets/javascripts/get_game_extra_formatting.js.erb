@@ -105,19 +105,21 @@ $(window).load(function() {
 
         // make sure everything is loaded before trying to set width
         var total_width = 0;
-        setTimeout(function() {
+        $("#horiz_container").imagesLoaded(function() {
           $("#horiz_container li").each(function(index) {
             total_width += parseInt($(this).outerWidth(true), 10);
           });
           // console.log(total_width);
 
           $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
-          $("#dragBar").css("display","block");
           $("#horiz_container_outer").horizontalScroll();
-        }, 1000);
+        });
 
         console.log("Finished loading images");
-        if (!$.trim($("#horiz_container").text())) {
+        
+        if (!$("#horiz_container li").length) {
+          $("#dragBar").css("display","none");
+
           $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
               <div class="img-loading-overlay-inner">\
                 Sorry, image loading failed. <a class="reload-images">Reload images</a>\
@@ -132,6 +134,9 @@ $(window).load(function() {
 
           console.log("Image load error");
         }
+        else {
+          $("#dragBar").css("display","block");
+        }
       }
     ).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
@@ -140,8 +145,6 @@ $(window).load(function() {
             Sorry, image loading failed. <a class="reload-images">Reload images</a>\
           </div>\
         </div>');
-    }).done(function() {
-
     });
 
     
