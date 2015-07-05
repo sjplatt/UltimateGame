@@ -93,8 +93,8 @@ $(window).load(function() {
         }
 
         //$("#horiz_container").append(outputHTML);
-        $(".img-loading-overlay").hide(300);
-        $(".img-loading-overlay").remove();
+        $("#horiz_container_outer .img-loading-overlay").hide(300);
+        $("#horiz_container_outer .img-loading-overlay").remove();
 
         // important: if using thumbs, note application.js where
         // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
@@ -117,20 +117,41 @@ $(window).load(function() {
         }, 1000);
 
         console.log("Finished loading images");
+        if (!$.trim($("#horiz_container").text())) {
+          $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+              <div class="img-loading-overlay-inner">\
+                Sorry, image loading failed. <a class="reload-images">Reload images</a>\
+              </div>\
+            </div>');
+
+          $(".reload-images").click(function(e) {
+            $("#horiz_container").empty();
+            $("#horiz_container_outer .img-loading-overlay").remove();
+            get_images();
+          });
+
+          console.log("Image load error");
+        }
       }
     ).fail(function() {
+      $("#horiz_container_outer .img-loading-overlay").remove();
       $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
           <div class="img-loading-overlay-inner">\
             Sorry, image loading failed. <a class="reload-images">Reload images</a>\
           </div>\
         </div>');
+    }).done(function() {
+
     });
+
+    
   }
 
   get_images();
 
   $(".reload-images").click(function(e) {
     $("#horiz_container").empty();
+    $("#horiz_container_outer .img-loading-overlay").remove();
     get_images();
   });
 
@@ -182,24 +203,27 @@ $(window).load(function() {
           }
         });
 
+        $(".videos .img-loading-overlay").hide(300);
         $(".videos .img-loading-overlay").remove();
         console.log("Finished loading videos");
       }
     ).fail(function() {
+      $(".videos").empty();
       $(".videos").prepend('<div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
           Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
         </div>\
       </div>');
+
+      $(".reload-videos").click(function(e) {
+        $(".videos").empty();
+        get_videos();
+      });
     });
   }
 
   get_videos();
 
-  $(".reload-videos").click(function(e) {
-    $(".videos").empty();
-    get_videos();
-  });
 
 
 
