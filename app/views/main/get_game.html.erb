@@ -1,3 +1,7 @@
+<% if @game %>
+<%= javascript_include_tag "get_game/get_game_extra_formatting" %>
+<% end %>
+
 <!-- preload ajax images -->
 <%= image_tag "fancybox_loading.gif", style: "display:none" %>
 
@@ -294,10 +298,24 @@
                 Contents:
                 <ul>
                 <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
-                  <% if Game.find_by(steamid: item_id) %>
+                  
+                  <% if Game.find_by(steamid: item_id) && Game.find_by(steamid: item_id).name.eql?(@game.name) %>
                     <li><%= Game.find_by(steamid: item_id).name %></li>
-                  <% elsif Dlc.find_by(steamid: item_id) %>
+
+                  <% elsif Dlc.find_by(steamid: item_id) && Dlc.find_by(steamid: item_id).name.eql?(@game.name) %>
                     <li><%= Dlc.find_by(steamid: item_id).name %></li>
+                  
+                  <% end %>
+                <% end %>
+
+                <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
+                  
+                  <% if Game.find_by(steamid: item_id) && !Game.find_by(steamid: item_id).name.eql?(@game.name)%>
+                    <li><%= Game.find_by(steamid: item_id).name %></li>
+                  
+                  <% elsif Dlc.find_by(steamid: item_id) && !Dlc.find_by(steamid: item_id).name.eql?(@game.name)%>
+                    <li><%= Dlc.find_by(steamid: item_id).name %></li>
+                  
                   <% end %>
                 <% end %>
                 </ul>

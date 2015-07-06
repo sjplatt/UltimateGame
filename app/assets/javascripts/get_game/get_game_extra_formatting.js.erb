@@ -3,7 +3,6 @@ $(window).load(function() {
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
   $(".game-entry").click(function(e) {
-
     var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
 
     // search for currently selected entries; deselect them
@@ -116,7 +115,7 @@ $(window).load(function() {
         });
 
         console.log("Finished loading images");
-        
+
         if (!$("#horiz_container li").length) {
           $("#dragBar").css("display","none");
 

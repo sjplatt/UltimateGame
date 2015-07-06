@@ -113,7 +113,7 @@ $(window).load(function() {
   var test_game_existence = $(".game-img").first();
   var test_package_existence = $(".package-img").first();
 
-  if (test_game_existence != null && test_package_existence != null) {
+  if (test_game_existence.length && test_package_existence.length) {
     var game_height = test_game_existence.css("height").replace("px","");
     var package_height = test_package_existence.css("height").replace("px","");
     var final_height = game_height-package_height + "px";
