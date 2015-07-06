@@ -558,6 +558,8 @@ class MainController < ApplicationController
         puts "ERROR: Could not find " + params[:query]
       else
         add_associated_name(@game.name, @game.name, true, false)
+        get_misc_info(@game.name, @game.itad)
+        get_prices(@game.name, @game.itad)
       end
     else
       @is_dlc = false
@@ -590,5 +592,10 @@ class MainController < ApplicationController
         # Other prices are retrieved one by one with get_prices_ajax
       end
     end
+
+    get_reddit_info(@game.id)
+    puts @post_names
+    puts @post_links
+    puts @comment_links
   end
 end

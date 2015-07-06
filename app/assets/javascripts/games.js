@@ -63,9 +63,9 @@ $(document).ready(function() {
   var typeahead_suggestion = function(is_dlc_param) {
     return function(data) {
       return data.name
-      + '<a href="'
+      /*+ '<a href="'
       + get_search_url(data.name,is_dlc_param)
-      + '">'
+      + '">'*/
       + '<span class="suggestion-link"></span>'
       + '</a>';
     }
@@ -94,7 +94,7 @@ $(document).ready(function() {
       suggestion: typeahead_suggestion(true)
     }
   }).on("typeahead:selected", function(ev, suggestion) {
-    console.log(suggestion);
+    //console.log(suggestion);
     window.location = get_search_url(suggestion.name,suggestion.is_dlc)
   });
 });
