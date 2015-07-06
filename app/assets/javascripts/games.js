@@ -1,4 +1,4 @@
-$(document).ready(function() {
+var search = function() {
   var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=DLCBOOL";
   // This will need to be changed if the search URL changes
 
@@ -71,7 +71,7 @@ $(document).ready(function() {
     }
   }
 
-  $('#game-search').typeahead({
+  $('.typeahead').typeahead({
     highlight: true,
     minLength: 2,
     autoselect: true
@@ -97,4 +97,8 @@ $(document).ready(function() {
     //console.log(suggestion);
     window.location = get_search_url(suggestion.name,suggestion.is_dlc)
   });
-});
+}
+
+$(document).ready(search);
+$(document).on("page:load", search);
+// for turbolinks to reload javascript when returning to homepage
