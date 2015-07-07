@@ -553,13 +553,25 @@ class MainController < ApplicationController
     if is_dlc_string.eql?("true")
       @is_dlc = true
       @google_image_links = []
-      @game = Dlc.find_by(name:params[:query])
+      @game = Game.find_by(id:Dlc.find_by(name:params[:query]).game_id)
       if !@game
-        puts "ERROR: Could not find " + params[:query]
+        puts "ERROR: Could not find corresponding game " + params[:query]
       else
         add_associated_name(@game.name, @game.name, true, false)
+
+        # Get misc info and prices for @game only
         get_misc_info(@game.name, @game.itad)
         get_prices(@game.name, @game.itad)
+
+        if @prices && @prices[@game.name]
+          @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
+          @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
+        else
+          @lowest_current_arr = []
+          @lowest_recorded_arr = []
+        end
+
+        # Other prices are retrieved one by one with get_prices_ajax
       end
     else
       @is_dlc = false

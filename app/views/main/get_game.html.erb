@@ -231,10 +231,8 @@
             <span class="section-title">DLCs for this game</span>
             <div class="section-view-inner">
               <table class="table">
-                <% @associated_names.each do |name,data| %>
-                  <% if data[:is_dlc] %>
-                    <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
-                  <% end %>
+                <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                  <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
                 <% end %>
               </table>
             </div>
@@ -244,10 +242,8 @@
             <span class="section-title">Packages for this game</span>
             <div class="section-view-inner">
               <table class="table">
-                <% @associated_names.each do |name,data| %>
-                  <% if data[:is_pkg] %>
-                    <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
-                  <% end %>
+                <% @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                  <tr><td class="game-entry <%= 'selected' if name.eql?(@game.name) %>"><%= name %></td></tr>
                 <% end %>
               </table>
             </div>
