@@ -369,9 +369,23 @@
   <a class="collapser">Read more...</a>
 </div>
 
-<div class="row main-column reddit-reviews">
-
+<% if @reddit_info && @reddit_info != [] %>
+<div class="row main-column reddit">
+  <h4>Reddit discussion</h4>
+  <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
+  <% @reddit_info.each do |entry| %>
+    <div>
+      <a class="reddit-entry" href=<%= entry[:link] %>><%= entry[:name] %></a> <a class="reddit-comments" href=<%= entry[:comments] %>>(comments)</a>
+    </div>
+  <% end %>
 </div>
+<% end %>
+
+
+
+
+
+
 <% end %>
 
 <!--

@@ -553,6 +553,7 @@ class MainController < ApplicationController
     if is_dlc_string.eql?("true")
       @is_dlc = true
       @google_image_links = []
+      @reddit_info = []
       @game = Game.find_by(id:Dlc.find_by(name:params[:query]).game_id)
       if !@game
         puts "ERROR: Could not find corresponding game " + params[:query]
@@ -572,10 +573,25 @@ class MainController < ApplicationController
         end
 
         # Other prices are retrieved one by one with get_prices_ajax
+      
+        # Reddit
+        # Merge arrays
+        get_reddit_info(@game.id)
+
+        if (@post_names.length != @post_links.length ||
+          @post_names.length != @comment_links.length ||
+          @post_links.length != @comment_links.length)
+          puts "ERROR: Missing reddit info"
+        else
+          (0..@post_names.length-1).each do |i|
+            @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
+          end
+        end
       end
     else
       @is_dlc = false
       @google_image_links = []
+      @reddit_info = []
       @game = Game.find_by(name:params[:query])
       if !@game
         puts "ERROR: Could not find " + params[:query]
@@ -602,12 +618,21 @@ class MainController < ApplicationController
         end
 
         # Other prices are retrieved one by one with get_prices_ajax
+      
+        # Reddit
+        # Merge arrays
+        get_reddit_info(@game.id)
+
+        if (@post_names.length != @post_links.length ||
+          @post_names.length != @comment_links.length ||
+          @post_links.length != @comment_links.length)
+          puts "ERROR: Missing reddit info"
+        else
+          (0..@post_names.length-1).each do |i|
+            @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
+          end
+        end
       end
     end
-
-    get_reddit_info(@game.id)
-    puts @post_names
-    puts @post_links
-    puts @comment_links
   end
 end
