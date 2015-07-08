@@ -51,7 +51,7 @@ var search = function() {
     if (is_dlc_param) {
       return SAMPLE_SEARCH_URL_FORMAT
           .replace("GAMENAME", name)
-          .replace("DLCBOOL", "true");
+          .replace("DLCBOOL", "true") + "#dlc-info";
     }
     else {
       return SAMPLE_SEARCH_URL_FORMAT
