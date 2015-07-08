@@ -550,87 +550,54 @@ class MainController < ApplicationController
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
     #Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
 
+    @google_image_links = []
+    @reddit_info = []
+
     if is_dlc_string.eql?("true")
       @is_dlc = true
-      @google_image_links = []
-      @reddit_info = []
       @game = Game.find_by(id:Dlc.find_by(name:params[:query]).game_id)
-      if !@game
-        puts "ERROR: Could not find corresponding game " + params[:query]
-      else
-        add_associated_name(@game.name, @game.name, true, false)
-
-        # Get misc info and prices for @game only
-        get_misc_info(@game.name, @game.itad)
-        get_prices(@game.name, @game.itad)
-
-        if @prices && @prices[@game.name]
-          @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
-          @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
-        else
-          @lowest_current_arr = []
-          @lowest_recorded_arr = []
-        end
-
-        # Other prices are retrieved one by one with get_prices_ajax
-      
-        # Reddit
-        # Merge arrays
-        get_reddit_info(@game.id)
-
-        if (@post_names.length != @post_links.length ||
-          @post_names.length != @comment_links.length ||
-          @post_links.length != @comment_links.length)
-          puts "ERROR: Missing reddit info"
-        else
-          (0..@post_names.length-1).each do |i|
-            @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
-          end
-        end
-      end
     else
       @is_dlc = false
-      @google_image_links = []
-      @reddit_info = []
       @game = Game.find_by(name:params[:query])
-      if !@game
-        puts "ERROR: Could not find " + params[:query]
+    end
+
+    if !@game
+      puts "ERROR: Could not find corresponding game " + params[:query]
+    else
+      # Populate @associated_names to get all DLCs/packages associated with @game
+      add_associated_name(@game.name, @game.name, false, false)
+      Dlc.where(game_id:@game.id).each do |dlc|
+        add_associated_name(@game.name, dlc.name, true, false)
+      end
+      Package.where(game_id:@game.id).each do |pkg|
+        add_associated_name(@game.name, pkg.name, false, true)
+      end
+
+      # Get misc info and prices for @game only
+      get_misc_info(@game.name, @game.itad)
+      get_prices(@game.name, @game.itad)
+
+      if @prices && @prices[@game.name]
+        @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
+        @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
       else
-        # Populate @associated_names to get all DLCs/packages associated with @game
-        add_associated_name(@game.name, @game.name, false, false)
-        Dlc.where(game_id:@game.id).each do |dlc|
-          add_associated_name(@game.name, dlc.name, true, false)
-        end
-        Package.where(game_id:@game.id).each do |pkg|
-          add_associated_name(@game.name, pkg.name, false, true)
-        end
+        @lowest_current_arr = []
+        @lowest_recorded_arr = []
+      end
 
-        # Get misc info and prices for @game only
-        get_misc_info(@game.name, @game.itad)
-        get_prices(@game.name, @game.itad)
+      # Other prices are retrieved one by one with get_prices_ajax
+    
+      # Reddit
+      # Merge arrays
+      get_reddit_info(@game.id)
 
-        if @prices && @prices[@game.name]
-          @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
-          @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
-        else
-          @lowest_current_arr = []
-          @lowest_recorded_arr = []
-        end
-
-        # Other prices are retrieved one by one with get_prices_ajax
-      
-        # Reddit
-        # Merge arrays
-        get_reddit_info(@game.id)
-
-        if (@post_names.length != @post_links.length ||
-          @post_names.length != @comment_links.length ||
-          @post_links.length != @comment_links.length)
-          puts "ERROR: Missing reddit info"
-        else
-          (0..@post_names.length-1).each do |i|
-            @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
-          end
+      if (@post_names.length != @post_links.length ||
+        @post_names.length != @comment_links.length ||
+        @post_links.length != @comment_links.length)
+        puts "ERROR: Missing reddit info"
+      else
+        (0..@post_names.length-1).each do |i|
+          @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
         end
       end
     end
