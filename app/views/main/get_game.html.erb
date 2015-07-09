@@ -334,10 +334,14 @@
 <div class="row main-column description">
   <div class="description-container collapsible">
     <% if @game.description %>
-      <h4>Game description</h4>
-      <%=("<h1>About the Game</h1>" + 
-        @game.description.split('About the Game')[1..-1]
-      .join("")).html_safe%>
+      <!--<h4>Game description</h4>-->
+      <%if @game.description.include?("Creation Kit and Steam Workshop")%>
+        <%=("<h1>About the Game</h1>" + 
+          @game.description.split('About the Game')[1..-1]
+          .join("")).html_safe%>
+      <%else%>
+          <%=("<h1>About the Game</h1>" + @game.description).html_safe%>
+      <%end%>
       <!--<%= @game.description.html_safe %>-->
     <% else %>
       <%= @game.description %>

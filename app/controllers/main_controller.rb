@@ -76,9 +76,9 @@ class MainController < ApplicationController
   #Postcondition: returns array filled with google image links
   def google_image_info(name,start_time,first_call)
     google_image_links = []
-    begin
-      Google::Search::Image.new(:query => (name+"imgur")).each do |image|
-        if image.uri.include?("imgur")
+     begin
+      Google::Search::Image.new(:query => (name+"gameplay")).each do |image|
+        if image.width > 700 
           google_image_links<< image.uri
         end
       end
@@ -563,7 +563,7 @@ class MainController < ApplicationController
 
     # Mostly for js to access easier
     @searched_name = params[:query]
-    
+
     if !@game
       puts "ERROR: Could not find corresponding game " + params[:query]
     else
