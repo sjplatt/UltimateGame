@@ -228,16 +228,19 @@ $(window).load(function() {
 
 
 
-
   // DESCRIPTION
+  var original_height = "300px";
+
   $(".collapsible").each(function(index, elem) {
+    $(elem).css("max-height", original_height);
+    $(elem).css("overflow", "hidden");
+    
     if ($(elem).prop("scrollHeight") <= $(elem).height()) {
       $(elem).siblings(".collapser").hide();
     }
   });
 
   $(".collapser").click(function(e) {
-    var original_height = "300px";
     var collapsible = $(e.target).siblings(".collapsible");
 
     if (collapsible.css("max-height") === original_height) {

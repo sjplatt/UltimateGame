@@ -269,8 +269,6 @@ li {
   margin-top: 40px;
 }
 .description-container {
-  max-height: 300px;
-  overflow: hidden;
   border: 1px solid yellow;
 }
 
@@ -278,8 +276,6 @@ li {
   margin-top: 40px;
 }
 .reqs-container {
-  max-height: 300px;
-  overflow: hidden;
   border: 1px solid orange;
 }
 
@@ -319,5 +315,7 @@ li {
 
 .reddit {
   margin-top: 40px;
+}
+.reddit-container {
   border: 1px solid red;
 }
