@@ -1,23 +1,23 @@
 $(window).load(function() {
   // PRICES TABLE
+
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
   $(".game-entry").click(function(e) {
-    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
+    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
 
     // search for currently selected entries; deselect them
-    $(".game-entry").removeClass("selected");
-    $(".pricing-entry .selected").removeClass("selected").addClass("unselected");
+    $(".game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
 
     // search for classes matching the current selection; select them
-    $(e.target).addClass("selected");
-    $(".pricing-entry ." + selected_class).removeClass("unselected").addClass("selected");
+    $(e.target).removeClass("unselected").addClass("selected");
+    $(".pricing-entry-inner." + selected_class).removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
     //if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
       // console.log("Already loaded " + selected_class);
-    if (!$(".pricing-entry ." + selected_class + ".ajax-loaded").length) {
-      $(".pricing-entry ." + selected_class).addClass("ajax-loaded");
+    if (!$(".pricing-entry-inner." + selected_class + ".ajax-loaded").length) {
+      $(".pricing-entry-inner." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
     }
   });

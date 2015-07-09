@@ -545,11 +545,11 @@ class MainController < ApplicationController
 
   # GET '/get_game'
   def get_game
-    is_dlc_string = params[:dlc]
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
     #Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
 
+    is_dlc_string = params[:dlc]
     @google_image_links = []
     @reddit_info = []
 
@@ -561,6 +561,9 @@ class MainController < ApplicationController
       @game = Game.find_by(name:params[:query])
     end
 
+    # Mostly for js to access easier
+    @searched_name = params[:query]
+    
     if !@game
       puts "ERROR: Could not find corresponding game " + params[:query]
     else
