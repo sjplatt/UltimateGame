@@ -20,7 +20,7 @@ module ApplicationHelper
         title = element.css(".title").text
         if !Game.find_by(steamid:id)
           Game.create(name:title,steamid:id)
-          return_array<<title
+          return_array<<id
         end
       end
       url = main_url
@@ -37,7 +37,7 @@ module ApplicationHelper
     @failures = []
     @new_dlcs_from_update = []
     new_games.each do |new_game_name|
-      game = Game.find_by(name:new_game_name)
+      game = Game.find_by(steamid:new_game_name)
       id = game.steamid
       #id = 22380
       uri = URI(base_url + id.to_s + "&filter=basic")
@@ -89,7 +89,7 @@ module ApplicationHelper
     base_url = "http://howlongtobeat.com/search_main.php?t=games&amp;page=1&amp;sorthead=popular&amp;sortd=Normal%2520Order&amp;plat=&amp;detail=0"
     uri = URI.parse(base_url)
     new_games.each do |new_game_name|
-      game = Game.find_by(name:new_game_name)
+      game = Game.find_by(steamid:new_game_name)
       #response = Net::HTTP.post_form(uri, {"queryString" => game.name})
       response = Net::HTTP.post_form(uri, {"queryString" => 
         clean_string(game.name.to_s)})
@@ -181,7 +181,7 @@ module ApplicationHelper
   end
   def set_subreddit_for_games(new_games)
     new_games.each do |new_game_name|
-      game = Game.find_by(name:new_game_name)
+      game = Game.find_by(steamid:new_game_name)
       if game.subreddit == nil
         Game.update(game.id,:subreddit => 
           refine_reddit_string(game.name))
