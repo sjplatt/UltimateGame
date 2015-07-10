@@ -265,6 +265,7 @@ li {
 }
 
 
+
 .description {
   margin-top: 40px;
 }
@@ -272,12 +273,16 @@ li {
   border: 1px solid yellow;
 }
 
+
+
 .sys-reqs {
   margin-top: 40px;
 }
 .reqs-container {
   border: 1px solid orange;
 }
+
+
 
 .left-sidebar {
   border: 1px solid pink;
@@ -296,6 +301,8 @@ li {
   text-align: right;
 }
 
+
+
 .fancybox-type-iframe .fancybox-nav {
     width: 60px;       
 }
@@ -313,9 +320,23 @@ li {
     left: -60px;
 }
 
+
+
 .reddit {
   margin-top: 40px;
 }
 .reddit-container {
   border: 1px solid red;
+}
+
+
+.dlc-display {
+  margin-top: 40px;
+}
+.dlc-display .game-entry {
+  height: 150px;
+  border: 1px solid cyan;
+}
+.dlc-display .game-entry img {
+  height: 100%;
 }

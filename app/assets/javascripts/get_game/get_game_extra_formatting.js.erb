@@ -1,13 +1,15 @@
 $(window).load(function() {
+  var game_name = $(".game-name").text().replace(/\n/g,"");
+
   // PRICES TABLE
 
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
-  $(".game-entry").click(function(e) {
+  $(".pricing .game-entry").click(function(e) {
     var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
 
     // search for currently selected entries; deselect them
-    $(".game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
+    $(".pricing .game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
 
     // search for classes matching the current selection; select them
     $(e.target).removeClass("unselected").addClass("selected");
@@ -19,7 +21,16 @@ $(window).load(function() {
     if (!$(".pricing-entry-inner." + selected_class + ".ajax-loaded").length) {
       $(".pricing-entry-inner." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
+      get_extra_info(selected_class, $(e.target).text());
     }
+  });
+
+  $(".show-original").click(function(e) {
+    var original_class = game_name.replace(/[^\w\d]/g,"-").toLowerCase();
+
+    $(".pricing .game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
+    $(".pricing .game-entry." + original_class).removeClass("unselected").addClass("selected");
+    $(".pricing-entry-inner." + original_class).removeClass("unselected").addClass("selected");
   });
 
   function get_prices(selected, input_name_text) {
@@ -30,33 +41,51 @@ $(window).load(function() {
 
     // ajax request: format the table based on hash received from data.results
     $.post("/ajax/get_prices", // get_prices.json
-      {input_name: input_name_text},
-      function(data) {
-        var output = data.results;
-        // console.log(output);
+    {input_name: input_name_text},
+    function(data) {
+      var output = data.results;
+      // console.log(output);
 
-        var outputHTML = '<tr>\
-          <th>Vendor</th>\
-          <th>Price</th>\
-          <th style="width:80px">Lowest recorded</th>\
-        </tr>';
+      var outputHTML = '<tr>\
+        <th>Vendor</th>\
+        <th>Price</th>\
+        <th style="width:80px">Lowest recorded</th>\
+      </tr>';
 
-        for (var i = 0; i < output.length; i++) {
-          outputHTML += '<tr>\
-            <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
-            <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-            <td>' + output[i].lowest_recorded + '</td>\
-          </tr>'
-        }
+      for (var i = 0; i < output.length; i++) {
+        outputHTML += '<tr>\
+          <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+          <td>' + output[i].lowest_recorded + '</td>\
+        </tr>'
+      }
 
-        $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
-        $(".pricing-entry-inner." + selected + " table").append(outputHTML);
-      });
+      $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
+      $(".pricing-entry-inner." + selected + " table").append(outputHTML);
+    });
   }
 
   $(".reload-prices").click(function(e) {
     // placeholder for possible reload price functionality
   })
+
+
+
+  function get_extra_info(selected, input_name_text) {
+    $(".dlc-display ." + selected).append('<div class="price-loading-overlay">\
+      <%= image_tag "fancybox_loading.gif" %>\
+      Loading information...<br>');
+
+    $.post("/ajax/get_extra_info",
+    {input_name: input_name_text},
+    function(data) {
+      var output = data.results;
+      //console.log(output);
+
+      $(".dlc-display ." + selected + " .price-loading-overlay").remove();
+      $(".dlc-display ." + selected).append('<img src="' + output.headerimg + '" />');
+    });
+  }
 
 
 
@@ -75,69 +104,67 @@ $(window).load(function() {
     </div>');
 
     $.post("/ajax/get_images",
-      {input_name: $(".game-name").text().replace("\n","")},
-      function(data) {
-        var images = data.results;
-        // console.log(images);
+    {input_name: game_name},
+    function(data) {
+      var images = data.results;
+      // console.log(images);
 
-        var game_name = $(".game-name").text();
-        //var outputHTML = "";
-        for (var i = 0; i < images.length; i++) {
-          $("#horiz_container").append('<li><a href="' + images[i] + '"\
-            class="fancybox"\
-            rel="game-images"\
-            title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
-            <img src="' + images[i] + '" alt="">\
-          </a></li>');
-        }
-
-        //$("#horiz_container").append(outputHTML);
-        $("#horiz_container_outer .img-loading-overlay").hide(300);
-        $("#horiz_container_outer .img-loading-overlay").remove();
-
-        // important: if using thumbs, note application.js where
-        // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
-        $(".fancybox").fancybox({
-          prevEffect: 'elastic',
-          nextEffect: 'elastic'
-        });
-
-        // make sure everything is loaded before trying to set width
-        var total_width = 0;
-        $("#horiz_container").imagesLoaded(function() {
-          $("#horiz_container li").each(function(index) {
-            total_width += parseInt($(this).outerWidth(true), 10);
-          });
-          // console.log(total_width);
-
-          $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
-          $("#horiz_container_outer").horizontalScroll();
-        });
-
-        console.log("Finished loading images");
-
-        if (!$("#horiz_container li").length) {
-          $("#dragBar").css("display","none");
-
-          $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-              <div class="img-loading-overlay-inner">\
-                Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-              </div>\
-            </div>');
-
-          $(".reload-images").click(function(e) {
-            $("#horiz_container").empty();
-            $("#horiz_container_outer .img-loading-overlay").remove();
-            get_images();
-          });
-
-          console.log("Image load error");
-        }
-        else {
-          $("#dragBar").css("display","block");
-        }
+      //var outputHTML = "";
+      for (var i = 0; i < images.length; i++) {
+        $("#horiz_container").append('<li><a href="' + images[i] + '"\
+          class="fancybox"\
+          rel="game-images"\
+          title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
+          <img src="' + images[i] + '" alt="">\
+        </a></li>');
       }
-    ).fail(function() {
+
+      //$("#horiz_container").append(outputHTML);
+      $("#horiz_container_outer .img-loading-overlay").hide(300);
+      $("#horiz_container_outer .img-loading-overlay").remove();
+
+      // important: if using thumbs, note application.js where
+      // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
+      $(".fancybox").fancybox({
+        prevEffect: 'elastic',
+        nextEffect: 'elastic'
+      });
+
+      // make sure everything is loaded before trying to set width
+      var total_width = 0;
+      $("#horiz_container").imagesLoaded(function() {
+        $("#horiz_container li").each(function(index) {
+          total_width += parseInt($(this).outerWidth(true), 10);
+        });
+        // console.log(total_width);
+
+        $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
+        $("#horiz_container_outer").horizontalScroll();
+      });
+
+      console.log("Finished loading images");
+
+      if (!$("#horiz_container li").length) {
+        $("#dragBar").css("display","none");
+
+        $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+            <div class="img-loading-overlay-inner">\
+              Sorry, image loading failed. <a class="reload-images">Reload images</a>\
+            </div>\
+          </div>');
+
+        $(".reload-images").click(function(e) {
+          $("#horiz_container").empty();
+          $("#horiz_container_outer .img-loading-overlay").remove();
+          get_images();
+        });
+
+        console.log("Image load error");
+      }
+      else {
+        $("#dragBar").css("display","block");
+      }
+    }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
       $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
           <div class="img-loading-overlay-inner">\
@@ -168,48 +195,47 @@ $(window).load(function() {
     </div>');
 
     $.post(
-      "/ajax/get_videos",
-      {input_name: $(".game-name").text().replace(/\n/g,"")},
-      function(data) {
-        $(".videos.left-sidebar").append('<h4>Game reviews on YouTube</h4>');
-        $(".videos.right-sidebar").append('<h4>Gameplay on YouTube</h4>');
+    "/ajax/get_videos",
+    {input_name: game_name},
+    function(data) {
+      $(".videos.left-sidebar").append('<h4>Game reviews on YouTube</h4>');
+      $(".videos.right-sidebar").append('<h4>Gameplay on YouTube</h4>');
 
-        for (var i = 0; i < data.reviews.names.length; i++) {
-          $(".videos.left-sidebar").append('<div>\
-            <a class="fancybox-media"\
-              rel="reviews"\
-              href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
-              '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
-            </a>\
-          </div>');
-        }
-
-        for (var i = 0; i < data.gameplay.names.length; i++) {
-          $(".videos.right-sidebar").append('<div>\
-            <a class="fancybox-media"\
-              rel="gameplay"\
-              href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
-              '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
-            </a>\
-          </div>');
-        }
-
-        $(".fancybox-media").fancybox({
-          prevEffect: "none",
-          nextEffect: "none",
-          mouseWheel: false,
-          padding: 0,
-          margin: [20, 60, 20, 60],
-          helpers: {
-            media: {}
-          }
-        });
-
-        $(".videos .img-loading-overlay").hide(300);
-        $(".videos .img-loading-overlay").remove();
-        console.log("Finished loading videos");
+      for (var i = 0; i < data.reviews.names.length; i++) {
+        $(".videos.left-sidebar").append('<div>\
+          <a class="fancybox-media"\
+            rel="reviews"\
+            href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
+            '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
+          </a>\
+        </div>');
       }
-    ).fail(function() {
+
+      for (var i = 0; i < data.gameplay.names.length; i++) {
+        $(".videos.right-sidebar").append('<div>\
+          <a class="fancybox-media"\
+            rel="gameplay"\
+            href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
+            '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
+          </a>\
+        </div>');
+      }
+
+      $(".fancybox-media").fancybox({
+        prevEffect: "none",
+        nextEffect: "none",
+        mouseWheel: false,
+        padding: 0,
+        margin: [20, 60, 20, 60],
+        helpers: {
+          media: {}
+        }
+      });
+
+      $(".videos .img-loading-overlay").hide(300);
+      $(".videos .img-loading-overlay").remove();
+      console.log("Finished loading videos");
+    }).fail(function() {
       $(".videos").empty();
       $(".videos").prepend('<div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
@@ -234,7 +260,7 @@ $(window).load(function() {
   $(".collapsible").each(function(index, elem) {
     $(elem).css("max-height", original_height);
     $(elem).css("overflow", "hidden");
-    
+
     if ($(elem).prop("scrollHeight") <= $(elem).height()) {
       $(elem).siblings(".collapser").hide();
     }

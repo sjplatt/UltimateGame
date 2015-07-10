@@ -538,6 +538,27 @@ class MainController < ApplicationController
     end
   end
 
+  # POST '/ajax/get_extra_info'
+  def get_extra_info_ajax
+    input_name = params[:input_name]
+
+    item = Dlc.find_by(name:input_name)
+    item_hash = {
+      name: item.name,
+      description: item.description,
+      website: item.website.sub("http://","").sub(/\.com\/$/,".com"),
+      releasedate: item.releasedate,
+      developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
+      multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
+      headerimg: item.headerimg,
+      legal: item.legal
+    }
+
+    respond_to do |format|
+      format.json {render :json => {:results => item_hash}}
+    end
+  end
+
   def index
     get_frontpage_deals
     get_more_frontpage_info
@@ -552,6 +573,7 @@ class MainController < ApplicationController
     is_dlc_string = params[:dlc]
     @google_image_links = []
     @reddit_info = []
+    @extra_info = []
 
     if is_dlc_string.eql?("true")
       @is_dlc = true

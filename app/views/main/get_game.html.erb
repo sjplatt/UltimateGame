@@ -44,9 +44,7 @@
 
 
 
-<div class="row main-column game-name">
-  <h3><%= @game.name %></h3>
-</div>
+<div class="row main-column game-name"><h3><%= @game.name %></h3></div>
 
 
 
@@ -214,12 +212,17 @@
   </div>
 </div>
 
-
+<div class="row main-column dlc-display">
+  <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+    <div class="game-entry
+    unselected
+    <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></div>
+  <% end %>
+</div>
 
 <div class="row main-column pricing" id="dlc-info">
   <% if !@game.itad %>
-    <p>We couldn't find any deals on </p>
-    <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
+    We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
   <% else %>
     <h4>Price information</h4>
 
@@ -263,7 +266,10 @@
             <%= 'dlc' if data[:is_dlc] %>
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>
             <%= 'ajax-loaded' if name.eql?(@game.name) %>">
-              <span class="pricing-title"><%= name %></span>
+              <span class="pricing-title"><%= name %></span> <% if !name.eql?(@game.name) %>
+              <a class="show-original">(Show original game)</a>
+              <% end %>
+
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
@@ -419,7 +425,7 @@
 
 <script>
   var redirected_by = "<%= @searched_name %>".replace(/[^\w\d]/g,"-").toLowerCase();
-  $("." + redirected_by).removeClass("unselected").addClass("selected");
+  $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
   get_prices(redirected_by, "<%= @searched_name %>");
 
   // copied from get_game_extra_formatting
