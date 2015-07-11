@@ -81,7 +81,7 @@ span.divider {
 /* Package styling */
 
 .vertical-spacer {
-  background-color: #333;
+  background-color: #222;
   text-align: center;
 }
 .vertical-spacer-text {
@@ -257,31 +257,32 @@ span.divider {
 .hl.hltb-container {
   display: inline-block;
 }
-.extra-info-container {
+.detail-container {
   padding-left: 0px;
 }
-li {
-  margin: .5em 0;
+.detail-container li {
+  margin: .2em 0;
 }
+
 
 
 .description {
   margin-top: 40px;
 }
 .description-container {
-  max-height: 300px;
-  overflow: hidden;
   border: 1px solid yellow;
 }
+
+
 
 .sys-reqs {
   margin-top: 40px;
 }
 .reqs-container {
-  max-height: 300px;
-  overflow: hidden;
   border: 1px solid orange;
 }
+
+
 
 .left-sidebar {
   border: 1px solid pink;
@@ -300,23 +301,67 @@ li {
   text-align: right;
 }
 
+
+
 .fancybox-type-iframe .fancybox-nav {
     width: 60px;       
 }
-
 .fancybox-type-iframe .fancybox-nav span {
     visibility: visible;
     opacity: 0.5;
 }
-
 .fancybox-type-iframe .fancybox-nav:hover span {
     opacity: 1;
 }
-
 .fancybox-type-iframe .fancybox-next {
     right: -60px;
 }
-
 .fancybox-type-iframe .fancybox-prev {
     left: -60px;
+}
+
+
+
+.reddit {
+  margin-top: 40px;
+}
+.reddit-container {
+  border: 1px solid red;
+}
+
+
+.extra-info {
+  margin-top: 40px;
+}
+.extra-info .game-entry {
+  height: 150px;
+  border: 1px solid cyan;
+}
+.extra-info .game-entry .headerimg {
+  text-align: center;
+}
+.extra-info .game-entry .extra-img {
+  height: 150px;
+}
+.extra-info .game-entry li {
+  margin: .2em 0;
+}
+.extra-info .game-entry h4 {
+  margin-top: .3em;
+}
+.extra-info .description-popup {
+  display: none;
+}
+.extra-info .selected {
+  display: block;
+}
+.extra-info .unselected {
+  display: none;
+}
+
+
+
+.fancybox-skin {
+  background-color: #373737;
+  color: #fff;
 }

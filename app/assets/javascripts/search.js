@@ -1,4 +1,4 @@
-$(document).ready(function() {
+var search = function() {
   var SAMPLE_SEARCH_URL_FORMAT = "/get_game?utf8=✓&query=GAMENAME&commit=Search&dlc=DLCBOOL";
   // This will need to be changed if the search URL changes
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
     if (is_dlc_param) {
       return SAMPLE_SEARCH_URL_FORMAT
           .replace("GAMENAME", name)
-          .replace("DLCBOOL", "true");
+          .replace("DLCBOOL", "true") + "#dlc-info";
     }
     else {
       return SAMPLE_SEARCH_URL_FORMAT
@@ -63,15 +63,15 @@ $(document).ready(function() {
   var typeahead_suggestion = function(is_dlc_param) {
     return function(data) {
       return data.name
-      + '<a href="'
+      /*+ '<a href="'
       + get_search_url(data.name,is_dlc_param)
-      + '">'
+      + '">'*/
       + '<span class="suggestion-link"></span>'
       + '</a>';
     }
   }
 
-  $('#game-search').typeahead({
+  $('.typeahead').typeahead({
     highlight: true,
     minLength: 2,
     autoselect: true
@@ -94,7 +94,11 @@ $(document).ready(function() {
       suggestion: typeahead_suggestion(true)
     }
   }).on("typeahead:selected", function(ev, suggestion) {
-    console.log(suggestion);
+    //console.log(suggestion);
     window.location = get_search_url(suggestion.name,suggestion.is_dlc)
   });
-});
+}
+
+$(document).ready(search);
+$(document).on("page:load", search);
+// for turbolinks to reload javascript when returning to homepage

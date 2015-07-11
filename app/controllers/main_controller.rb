@@ -76,9 +76,9 @@ class MainController < ApplicationController
   #Postcondition: returns array filled with google image links
   def google_image_info(name,start_time,first_call)
     google_image_links = []
-    begin
-      Google::Search::Image.new(:query => (name+"imgur")).each do |image|
-        if image.uri.include?("imgur")
+     begin
+      Google::Search::Image.new(:query => (name+"gameplay")).each do |image|
+        if image.width > 700 
           google_image_links<< image.uri
         end
       end
@@ -93,7 +93,7 @@ class MainController < ApplicationController
     return google_image_links
   end
 
-  DEVELOPER_KEY = ENV['YOUTUBE_API_KEY']
+  DEVELOPER_KEY = 'AIzaSyBAd8mXgQQEc0OCMwDKEhSD2PT-xubFwXc'
   YOUTUBE_API_SERVICE_NAME = 'youtube'
   YOUTUBE_API_VERSION = 'v3'
 
@@ -538,6 +538,28 @@ class MainController < ApplicationController
     end
   end
 
+  # POST '/ajax/get_extra_info'
+  def get_extra_info_ajax
+    input_name = params[:input_name]
+
+    item = Dlc.find_by(name:input_name)
+    item_hash = {
+      name: item.name,
+      steamid: item.steamid,
+      description: item.description,
+      website: item.website.sub("http://","").sub(/\.com\/$/,".com"),
+      releasedate: item.releasedate,
+      developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
+      multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
+      headerimg: item.headerimg,
+      legal: item.legal
+    }
+
+    respond_to do |format|
+      format.json {render :json => {:results => item_hash}}
+    end
+  end
+
   def index
     get_frontpage_deals
     get_more_frontpage_info
@@ -545,49 +567,64 @@ class MainController < ApplicationController
 
   # GET '/get_game'
   def get_game
-    is_dlc_string = params[:dlc]
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode Two").id,:itad=>"bioshockinfiniteburialatseaepisodeii")
     #Dlc.update(Dlc.find_by(name:"BioShock Infinite: Burial at Sea - Episode One").id,:itad=>"bioshockinfiniteburialatseaepisodei")
     #Package.update(Package.find_by(name:"Bioshock Infinite + Season Pass Bundle").id,:itad=>"bioshockinfiniteplusseasonpassbundle")
 
+    is_dlc_string = params[:dlc]
+    @google_image_links = []
+    @reddit_info = []
+    @extra_info = []
+
     if is_dlc_string.eql?("true")
       @is_dlc = true
-      @google_image_links = []
-      @game = Dlc.find_by(name:params[:query])
-      if !@game
-        puts "ERROR: Could not find " + params[:query]
-      else
-        add_associated_name(@game.name, @game.name, true, false)
-      end
+      @game = Game.find_by(id:Dlc.find_by(name:params[:query]).game_id)
     else
       @is_dlc = false
-      @google_image_links = []
       @game = Game.find_by(name:params[:query])
-      if !@game
-        puts "ERROR: Could not find " + params[:query]
+    end
+
+    # Mostly for js to access easier
+    @searched_name = params[:query]
+
+    if !@game
+      puts "ERROR: Could not find corresponding game " + params[:query]
+    else
+      # Populate @associated_names to get all DLCs/packages associated with @game
+      add_associated_name(@game.name, @game.name, false, false)
+      Dlc.where(game_id:@game.id).each do |dlc|
+        add_associated_name(@game.name, dlc.name, true, false)
+      end
+      Package.where(game_id:@game.id).each do |pkg|
+        add_associated_name(@game.name, pkg.name, false, true)
+      end
+
+      # Get misc info and prices for @game only
+      get_misc_info(@game.name, @game.itad)
+      get_prices(@game.name, @game.itad)
+
+      if @prices && @prices[@game.name]
+        @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
+        @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
       else
-        # Populate @associated_names to get all DLCs/packages associated with @game
-        add_associated_name(@game.name, @game.name, false, false)
-        Dlc.where(game_id:@game.id).each do |dlc|
-          add_associated_name(@game.name, dlc.name, true, false)
-        end
-        Package.where(game_id:@game.id).each do |pkg|
-          add_associated_name(@game.name, pkg.name, false, true)
-        end
+        @lowest_current_arr = []
+        @lowest_recorded_arr = []
+      end
 
-        # Get misc info and prices for @game only
-        get_misc_info(@game.name, @game.itad)
-        get_prices(@game.name, @game.itad)
+      # Other prices are retrieved one by one with get_prices_ajax
+    
+      # Reddit
+      # Merge arrays
+      get_reddit_info(@game.id)
 
-        if @prices && @prices[@game.name]
-          @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
-          @lowest_recorded_arr = @prices[@game.name].sort_by {|entry| entry[:lowest_recorded].gsub("$","").to_f}
-        else
-          @lowest_current_arr = []
-          @lowest_recorded_arr = []
+      if (@post_names.length != @post_links.length ||
+        @post_names.length != @comment_links.length ||
+        @post_links.length != @comment_links.length)
+        puts "ERROR: Missing reddit info"
+      else
+        (0..@post_names.length-1).each do |i|
+          @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
         end
-
-        # Other prices are retrieved one by one with get_prices_ajax
       end
     end
   end

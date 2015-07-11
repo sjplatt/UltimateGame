@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   post '/ajax/get_prices' => 'main#get_prices_ajax'
   post '/ajax/get_images' => 'main#get_images_ajax'
   post '/ajax/get_videos' => 'main#get_videos_ajax'
+  post '/ajax/get_extra_info' => 'main#get_extra_info_ajax'
 
   resources :games, only: :index do
     collection do
