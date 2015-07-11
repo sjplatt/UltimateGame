@@ -429,8 +429,15 @@
 $(document).ready(function() {
   var redirected_by = "<%= @searched_name %>".replace(/[^\w\d]/g,"-").toLowerCase();
   $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
-  get_prices(redirected_by, "<%= @searched_name %>");
-  get_extra_info(redirected_by, "<%= @searched_name %>");
+  
+  // Check if user searched for the game itself
+  // If so, don't load prices again, this was done in maincontroller's get_game
+  if ("<%= @searched_name.downcase %>" != "<%= @game.name.downcase %>")
+    get_prices(redirected_by, "<%= @searched_name %>");
+  
+  // This throws a harmless 500 Internal Server error if called on a non-dlc
+  if ("<%= @is_dlc %>" == "true")
+    get_extra_info(redirected_by, "<%= @searched_name %>");
 
   // copied from get_game_extra_formatting
   function get_prices(selected, input_name_text) {

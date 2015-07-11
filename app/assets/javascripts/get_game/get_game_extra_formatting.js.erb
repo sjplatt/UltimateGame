@@ -9,15 +9,14 @@ $(window).load(function() {
     var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
 
     // search for currently selected entries; deselect them
-    $(".pricing .game-entry.selected,\
-      .pricing .pricing-entry-inner.selected,\
-      .extra-info .game-entry.selected")
+    $(".pricing .selected,\
+      .extra-info .selected")
     .removeClass("selected").addClass("unselected");
 
     // search for classes matching the current selection; select them
     $(e.target).removeClass("unselected").addClass("selected");
-    $(".pricing .pricing-entry-inner." + selected_class + ",\
-      .extra-info .game-entry." + selected_class)
+    $(".pricing ." + selected_class + ",\
+      .extra-info ." + selected_class)
     .removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
@@ -36,14 +35,12 @@ $(window).load(function() {
   $(".show-original").click(function(e) {
     var original_class = game_name.replace(/[^\w\d]/g,"-").toLowerCase();
 
-    $(".pricing .game-entry.selected,\
-      .pricing .pricing-entry-inner.selected,\
-      .extra-info .game-entry.selected")
+    $(".pricing .selected,\
+      .extra-info .selected")
     .removeClass("selected").addClass("unselected");
     
-    $(".pricing .game-entry." + original_class + ",\
-      .pricing .pricing-entry-inner." + original_class + ",\
-      .extra-info .game-entry." + selected_class)
+    $(".pricing ." + original_class + ",\
+      .extra-info ." + original_class)
     .removeClass("unselected").addClass("selected");
   });
 
@@ -227,8 +224,6 @@ $(window).load(function() {
           </div>\
         </div>');
     });
-
-    
   }
 
   get_images();
