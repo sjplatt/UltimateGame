@@ -100,8 +100,7 @@ $(window).load(function() {
       if (output.steamid)
         var steam_link = "http://store.steampowered.com/app/" + output.steamid;
       else
-        var steam_link = "http://store.steampowered.com";
-      
+        var steam_link = "http://store.steampowered.com";      
 
       var outputHTML =
       '<div class="col-md-6 headerimg">\
@@ -111,15 +110,15 @@ $(window).load(function() {
         <h4>' + output.name + '</h4>\
         <ul>\
           <li>Released: ' + releasedate + '</li>\
-\
+          \
           <li>Website:\
             <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
           </li>\
-\
+          \
           <li>\
             <a href="' + steam_link + '">View on Steam</a>\
           </li>\
-\
+          \
           <li>\
             <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
             <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\

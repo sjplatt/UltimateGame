@@ -81,7 +81,7 @@ span.divider {
 /* Package styling */
 
 .vertical-spacer {
-  background-color: #333;
+  background-color: #222;
   text-align: center;
 }
 .vertical-spacer-text {
@@ -261,7 +261,7 @@ span.divider {
   padding-left: 0px;
 }
 .detail-container li {
-  margin: .5em 0;
+  margin: .2em 0;
 }
 
 
