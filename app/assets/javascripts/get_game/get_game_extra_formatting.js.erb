@@ -9,11 +9,16 @@ $(window).load(function() {
     var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
 
     // search for currently selected entries; deselect them
-    $(".pricing .game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
+    $(".pricing .game-entry.selected,\
+      .pricing .pricing-entry-inner.selected,\
+      .extra-info .game-entry.selected")
+    .removeClass("selected").addClass("unselected");
 
     // search for classes matching the current selection; select them
     $(e.target).removeClass("unselected").addClass("selected");
-    $(".pricing-entry-inner." + selected_class).removeClass("unselected").addClass("selected");
+    $(".pricing .pricing-entry-inner." + selected_class + ",\
+      .extra-info .game-entry." + selected_class)
+    .removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
     //if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
@@ -25,13 +30,24 @@ $(window).load(function() {
     }
   });
 
+
+
+  // (Show original game) button next to anything that isn't the original game
   $(".show-original").click(function(e) {
     var original_class = game_name.replace(/[^\w\d]/g,"-").toLowerCase();
 
-    $(".pricing .game-entry.selected, .pricing-entry-inner.selected").removeClass("selected").addClass("unselected");
-    $(".pricing .game-entry." + original_class).removeClass("unselected").addClass("selected");
-    $(".pricing-entry-inner." + original_class).removeClass("unselected").addClass("selected");
+    $(".pricing .game-entry.selected,\
+      .pricing .pricing-entry-inner.selected,\
+      .extra-info .game-entry.selected")
+    .removeClass("selected").addClass("unselected");
+    
+    $(".pricing .game-entry." + original_class + ",\
+      .pricing .pricing-entry-inner." + original_class + ",\
+      .extra-info .game-entry." + selected_class)
+    .removeClass("unselected").addClass("selected");
   });
+
+
 
   function get_prices(selected, input_name_text) {
     $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
@@ -72,7 +88,7 @@ $(window).load(function() {
 
 
   function get_extra_info(selected, input_name_text) {
-    $(".dlc-display ." + selected).append('<div class="price-loading-overlay">\
+    $(".extra-info ." + selected).append('<div class="price-loading-overlay">\
       <%= image_tag "fancybox_loading.gif" %>\
       Loading information...<br>');
 
@@ -82,8 +98,47 @@ $(window).load(function() {
       var output = data.results;
       //console.log(output);
 
-      $(".dlc-display ." + selected + " .price-loading-overlay").remove();
-      $(".dlc-display ." + selected).append('<img src="' + output.headerimg + '" />');
+      var releasedate = output.releasedate || "Unknown";
+      var website = output.website || "";
+      if (output.steamid)
+        var steam_link = "http://store.steampowered.com/app/" + output.steamid;
+      else
+        var steam_link = "http://store.steampowered.com";
+      
+
+      var outputHTML =
+      '<div class="col-md-6 headerimg">\
+        <img class="extra-img" src="' + output.headerimg + '" />\
+      </div>\
+      <div class="col-md-6 links">\
+        <h4>' + output.name + '</h4>\
+        <ul>\
+          <li>Released: ' + releasedate + '</li>\
+\
+          <li>Website:\
+            <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
+          </li>\
+\
+          <li>\
+            <a href="' + steam_link + '">View on Steam</a>\
+          </li>\
+\
+          <li>\
+            <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
+            <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
+          </li>\
+        </ul>\
+      </div>';
+
+      $(".extra-info ." + selected + " .price-loading-overlay").remove();
+      $(".extra-info ." + selected).append(outputHTML);
+
+      $(".fancybox-text").fancybox({
+        openEffect: "fade",
+        closeEffect: "fade",
+        maxWidth: 600,
+        autoWidth: false
+      });
     });
   }
 

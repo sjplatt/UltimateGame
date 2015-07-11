@@ -178,7 +178,7 @@
 
 
 
-  <div class="col-md-4 extra-info-container">
+  <div class="col-md-4 detail-container">
     <ul>
       <li>Released: <%= @game.releasedate || "Unknown" %></li>
       
@@ -212,15 +212,17 @@
   </div>
 </div>
 
-<div class="row main-column dlc-display">
+<div class="row main-column extra-info" id="dlc-info">
   <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
     <div class="game-entry
     unselected
-    <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></div>
+    <%= name.gsub(/[^\w\d]/,"-").downcase %>">
+
+    </div>
   <% end %>
 </div>
 
-<div class="row main-column pricing" id="dlc-info">
+<div class="row main-column pricing">
   <% if !@game.itad %>
     We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
   <% else %>
@@ -424,9 +426,11 @@
 <% end %>
 
 <script>
+$(document).ready(function() {
   var redirected_by = "<%= @searched_name %>".replace(/[^\w\d]/g,"-").toLowerCase();
   $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
   get_prices(redirected_by, "<%= @searched_name %>");
+  get_extra_info(redirected_by, "<%= @searched_name %>");
 
   // copied from get_game_extra_formatting
   function get_prices(selected, input_name_text) {
@@ -437,29 +441,87 @@
 
     // ajax request: format the table based on hash received from data.results
     $.post("/ajax/get_prices", // get_prices.json
-      {input_name: input_name_text},
-      function(data) {
-        var output = data.results;
-        // console.log(output);
+    {input_name: input_name_text},
+    function(data) {
+      var output = data.results;
+      // console.log(output);
 
-        var outputHTML = '<tr>\
-          <th>Vendor</th>\
-          <th>Price</th>\
-          <th style="width:80px">Lowest recorded</th>\
-        </tr>';
+      var outputHTML = '<tr>\
+        <th>Vendor</th>\
+        <th>Price</th>\
+        <th style="width:80px">Lowest recorded</th>\
+      </tr>';
 
-        for (var i = 0; i < output.length; i++) {
-          outputHTML += '<tr>\
-            <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
-            <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-            <td>' + output[i].lowest_recorded + '</td>\
-          </tr>'
-        }
+      for (var i = 0; i < output.length; i++) {
+        outputHTML += '<tr>\
+          <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+          <td>' + output[i].lowest_recorded + '</td>\
+        </tr>'
+      }
 
-        $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
-        $(".pricing-entry-inner." + selected + " table").append(outputHTML);
-      });
+      $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
+      $(".pricing-entry-inner." + selected + " table").append(outputHTML);
+    });
   }
+
+
+
+  function get_extra_info(selected, input_name_text) {
+    $(".extra-info ." + selected).append('<div class="price-loading-overlay">\
+      <%= image_tag "fancybox_loading.gif" %>\
+      Loading information...<br>');
+
+    $.post("/ajax/get_extra_info",
+    {input_name: input_name_text},
+    function(data) {
+      var output = data.results;
+      //console.log(output);
+
+      var releasedate = output.releasedate || "Unknown";
+      var website = output.website || "";
+      if (output.steamid)
+        var steam_link = "http://store.steampowered.com/app/" + output.steamid;
+      else
+        var steam_link = "http://store.steampowered.com";
+      
+
+      var outputHTML =
+      '<div class="col-md-6 headerimg">\
+        <img class="extra-img" src="' + output.headerimg + '" />\
+      </div>\
+      <div class="col-md-6 links">\
+        <h4>' + output.name + '</h4>\
+        <ul>\
+          <li>Released: ' + releasedate + '</li>\
+\
+          <li>Website:\
+            <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
+          </li>\
+\
+          <li>\
+            <a href="' + steam_link + '">View on Steam</a>\
+          </li>\
+\
+          <li>\
+            <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
+            <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
+          </li>\
+        </ul>\
+      </div>';
+
+      $(".extra-info ." + selected + " .price-loading-overlay").remove();
+      $(".extra-info ." + selected).append(outputHTML);
+
+      $(".fancybox-text").fancybox({
+        openEffect: "fade",
+        closeEffect: "fade",
+        maxWidth: 600,
+        autoWidth: false
+      });
+    });
+  }
+});
 </script>
 
 <!--

@@ -545,6 +545,7 @@ class MainController < ApplicationController
     item = Dlc.find_by(name:input_name)
     item_hash = {
       name: item.name,
+      steamid: item.steamid,
       description: item.description,
       website: item.website.sub("http://","").sub(/\.com\/$/,".com"),
       releasedate: item.releasedate,
