@@ -303,13 +303,73 @@ $(window).load(function() {
 
 
 
-  // DESCRIPTION
+  function get_reddit_info() {
+    $(".reddit-container").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading Reddit posts...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_reddit",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var source_url = "";
+        var source_text = "";
+        var is_reddit_internal = new RegExp(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//);
+        var is_external = new RegExp(/https?:\/\/(www\.)?([^\/]*)\//);
+
+        if (is_reddit_internal.test(output[i].link)) {
+          source_url = "http://www.reddit.com/r/" + output[i].link.match(is_reddit_internal)[1];
+          source_text = "(self." + output[i].link.match(is_reddit_internal)[1] + ")";
+        }
+        else if (is_external.test(output[i].link)) {
+          source_url = "http://www.reddit.com/domain/" + output[i].link.match(is_external)[2];
+          source_text = "(" + output[i].link.match(is_external)[2] + ")";
+        }
+
+        outputHTML += '<div>\
+          <a class="reddit-entry" href="' + output[i].link + '">' + output[i].name + '</a> <a class="reddit-source"\
+          href="' + source_url + '">' + source_text + '</a> <a class="reddit-comments" href="' + output[i].comments + '">(comments)</a>\
+        </div>';
+      }
+
+      $(".reddit-container .img-loading-overlay").remove();
+      $(".reddit-container").append(outputHTML);
+    });
+  }
+
+  get_reddit_info();
+
+
+
+  function get_search_results() {
+    $.post("/ajax/get_search_results",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      console.log(output);
+    })
+  }
+
+  get_search_results();
+
+
+
+  // COLLAPSIBLE CONTAINERS
   var original_height = "300px";
 
-  $(".collapsible").each(function(index, elem) {
-    $(elem).css("max-height", original_height);
-    $(elem).css("overflow", "hidden");
+  $(".collapsible")
+  .css("max-height", original_height)
+  .css("overflow", "hidden");
 
+  $(".description-container, .reqs-container").each(function(index, elem) {
     if ($(elem).prop("scrollHeight") <= $(elem).height()) {
       $(elem).siblings(".collapser").hide();
     }
@@ -326,5 +386,15 @@ $(window).load(function() {
       collapsible.css("max-height",original_height);
       $(e.target).text("Read more...");
     }
+  });
+
+
+
+  // PERCENTAGE DIALS
+  $(".dial").knob({
+    "width": 120,
+    "height": 120,
+    "thickness": 0.2,
+    "skin": "tron",
   });
 });

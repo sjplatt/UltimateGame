@@ -1,13 +1,27 @@
-.col-md-2,.col-md-3,.col-md-4,.col-md-8,.col-md-9,.col-md-12 {
-  border: 1px solid blue;
-}
-
 body {
   background-color: #373737;
   color: #fff;
 }
 
 /* Header styles */
+
+.btn-primary {
+  background-color: hsl(163, 55%, 46%);
+  border-color: hsl(163, 55%, 41%);
+}
+.btn-primary:hover {
+  background-color: hsl(163, 55%, 37%);
+  border-color: hsl(163, 55%, 32%);
+}
+h4 {
+  color: hsl(163, 55%, 80%);
+}
+a {
+  color: hsl(163, 55%, 46%);
+}
+a:hover {
+  color: hsl(163, 55%, 37%);
+}
 
 .twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
   vertical-align: middle;
@@ -40,6 +54,7 @@ body {
   height: 100px;
   margin-bottom: 10px;
   display: inline-flex;
+  background-color: hsl(163, 55%, 25%);
 }
 .homepage-title {
   padding: 5px;
@@ -125,7 +140,7 @@ span.divider {
 .circle {
   width: 100%;
   height: 100%;
-  background-color: #84FF38;
+  /*background-color: #84FF38;*/
   text-align: center;
 }
 .metascore,.steam-pct {
@@ -201,7 +216,7 @@ span.divider {
 }
 
 .pricing {
-  margin-top: 40px;
+  margin-top: 20px;
   border: 1px solid green;
 }
 .pricing div {
@@ -254,8 +269,14 @@ span.divider {
 .hltb-extra {
   margin-top: 40px;
 }
-.hl.hltb-container {
+.hltb-container {
   display: inline-block;
+}
+.hltb-container th {
+  border-top: none !important;
+}
+.hltb-container * {
+  border-color: rgba(221,221,221,0.5) !important;
 }
 .detail-container {
   padding-left: 0px;
@@ -331,9 +352,10 @@ span.divider {
 
 
 .extra-info {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 .extra-info .game-entry {
+  margin: 20px 0;
   height: 150px;
   border: 1px solid cyan;
 }
@@ -347,6 +369,7 @@ span.divider {
   margin: .2em 0;
 }
 .extra-info .game-entry h4 {
+  color: #fff;
   margin-top: .3em;
 }
 .extra-info .description-popup {

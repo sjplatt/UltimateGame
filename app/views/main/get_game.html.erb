@@ -34,13 +34,13 @@
 </div>
 
 <% else %>
-<div class="row nav-bar">
+<!--div class="row nav-bar">
   <div class="col-md-3"></div>
   <div class="col-md-2">Placeholder</div>
   <div class="col-md-2">Placeholder</div>
   <div class="col-md-2">Placeholder</div>
   <div class="col-md-3"></div>
-</div>
+</div-->
 
 
 
@@ -59,12 +59,12 @@
     <div class="center">
       <div class="score-container">
         <div class="circle">
-        <span class="metascore"><%= @game.metascore || "??" %></span>
+        <span class="metascore"><input type="text" value="<%= @game.metascore || "??" %>" class="dial"></span>
         </div>
       </div><!--
       --><div class="score-container">
         <div class="circle">
-        <span class="steam-pct"><%= @misc_info[:steam_percentage] || "??" %></span>
+        <span class="steam-pct"><input type="text" value="<%= @misc_info[:steam_percentage] || "??" %>" class="dial"></span>
         </div>
       </div>
     </div>
@@ -266,8 +266,7 @@
             unselected
             <%= name.gsub(/[^\w\d]/,"-").downcase %>
             <%= 'dlc' if data[:is_dlc] %>
-            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>
-            <%= 'ajax-loaded' if name.eql?(@game.name) %>">
+            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
               <span class="pricing-title"><%= name %></span> <% if !name.eql?(@game.name) %>
               <a class="show-original">(Show original game)</a>
               <% end %>
@@ -359,6 +358,8 @@
   <a class="collapser">Read more...</a>
 </div>
 
+
+
 <div class="row main-column sys-reqs">
   <div class="reqs-container collapsible">
     <h4>System requirements</h4>
@@ -385,38 +386,16 @@
   <a class="collapser">Read more...</a>
 </div>
 
-<% if @reddit_info && @reddit_info != [] %>
+
+
 <div class="row main-column reddit">
   <div class="reddit-container collapsible">
     <h4>Reddit discussion</h4>
     <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
-    <% @reddit_info.each do |entry| %>
-      <div>
-        <a class="reddit-entry" href="<%= entry[:link] %>"><%= entry[:name] %></a> <a class="reddit-source"
-        href="<%=
-
-        if entry[:link].match(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//)
-          "http://www.reddit.com/r/" + entry[:link].match(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//)[1]
-        elsif entry[:link].match(/https?:\/\/(www\.)?([^\/]*)\//)
-          "http://www.reddit.com/domain/" + entry[:link].match(/https?:\/\/(www\.)?([^\/]*)\//)[2]
-        end
-
-        %>"><%=
-        
-        if entry[:link].match(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//)
-          "(self." + entry[:link].match(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//)[1] + ")"
-        elsif entry[:link].match(/https?:\/\/(www\.)?([^\/]*)\//)
-          "(" + entry[:link].match(/https?:\/\/(www\.)?([^\/]*)\//)[2] + ")"
-        end
-
-        %></a> <a class="reddit-comments" href="<%= entry[:comments] %>">(comments)</a>
-      </div>
-    <% end %>
   </div>
 
   <a class="collapser">Read more...</a>
 </div>
-<% end %>
 
 
 
@@ -501,15 +480,15 @@ $(document).ready(function() {
         <h4>' + output.name + '</h4>\
         <ul>\
           <li>Released: ' + releasedate + '</li>\
-\
+          \
           <li>Website:\
             <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
           </li>\
-\
+          \
           <li>\
             <a href="' + steam_link + '">View on Steam</a>\
           </li>\
-\
+          \
           <li>\
             <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
             <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
@@ -528,6 +507,7 @@ $(document).ready(function() {
       });
     });
   }
+
 });
 </script>
 
