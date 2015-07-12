@@ -15,4 +15,4 @@
 //= require turbolinks
 //= require jquery.fancybox.pack.js
 //= require jquery.fancybox-media.js
-//= require_tree .
+//= require_directory .

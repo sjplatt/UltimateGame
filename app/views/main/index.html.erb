@@ -11,7 +11,7 @@
             <%= link_to "clear", "/", class: "btn btn-default" %>
           </div>
         <% end %>
-        <%= text_field_tag :query, params[:query], class: "form-control typeahead", id: "game-search", autocomplete: "off" %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", autocomplete: "off" %>
         <div class="input-group-btn">
           <%= submit_tag "Search", class: "submit-button btn btn-primary" %>
         </div>
@@ -30,7 +30,7 @@
         <% if Game.find_by(steamid:capsule) %>
           <div class="col-md-4 capsule">
             <% if Game.find_by(steamid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>">
+              <a href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
               <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
               </a>
             <% else %>
@@ -42,7 +42,7 @@
         <% elsif Package.find_by(packageid:capsule) %>
           <div class="col-md-4 capsule">
             <% if Package.find_by(packageid:capsule).headerimg %>
-              <a class="package-link" href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>">
+              <a class="package-link" href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).name %>&amp;commit=Search">
               <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
 
               <div class="vertical-spacer">
@@ -72,7 +72,7 @@
         <% if Game.find_by(steamid:capsule) %>
           <div class="col-md-4 capsule">
             <% if Game.find_by(steamid:capsule).headerimg %>
-              <a href="http://store.steampowered.com/app/<%= Game.find_by(steamid:capsule).steamid %>">
+              <a href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
               <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
               </a>
             <% else %>
@@ -84,7 +84,7 @@
         <% elsif Package.find_by(packageid:capsule) %>
           <div class="col-md-4 capsule">
             <% if Package.find_by(packageid:capsule).headerimg %>
-              <a class="package-link" href="http://store.steampowered.com/app/<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).steamid %>">
+              <a class="package-link" href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
               <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
 
               <div class="vertical-spacer">
@@ -104,22 +104,4 @@
   </div>
 
 </div>
-
 </div>
-
-<script>
-// hacky: this eliminates the height difference between game header img height and package image height
-$(window).load(function() {
-  var test_game_existence = $(".game-img").first();
-  var test_package_existence = $(".package-img").first();
-
-  if (test_game_existence != null && test_package_existence != null) {
-    var game_height = test_game_existence.css("height").replace("px","");
-    var package_height = test_package_existence.css("height").replace("px","");
-    var final_height = game_height-package_height + "px";
-
-    $(".vertical-spacer").css("height", final_height);
-    $(".vertical-spacer-text").css("line-height", final_height);
-  }
-});
-</script>
