@@ -58,14 +58,24 @@
 
     <div class="center">
       <div class="score-container">
-        <div class="circle">
-        <span class="metascore"><input type="text" value="<%= @game.metascore || "??" %>" class="dial"></span>
-        </div>
+        <input type="text" value="<%= @game.metascore || 0 %>" class="dial"
+        data-fgColor="<%=
+        if !@game.metascore then "rgba(255,255,255,0.2)"
+        elsif @game.metascore >= 75 then "hsl(100,60%,50%)"
+        elsif @game.metascore >= 50 then "hsl(45,80%,60%)"
+        elsif @game.metascore > 0 then "hsl(0,90%,55%)"
+        elsif @game.metascore == 0 then "rgba(255,255,255,0.2)"
+        end %>">
       </div><!--
       --><div class="score-container">
-        <div class="circle">
-        <span class="steam-pct"><input type="text" value="<%= @misc_info[:steam_percentage] || "??" %>" class="dial"></span>
-        </div>
+        <input type="text" value="<%= @misc_info[:steam_percentage] || 0 %>" class="dial"
+        data-fgColor="<%=
+        if !@misc_info[:steam_percentage] then "rgba(255,255,255,0.2)"
+        elsif @misc_info[:steam_percentage] >= 75 then "hsl(100,60%,50%)"
+        elsif @misc_info[:steam_percentage] >= 50 then "hsl(45,80%,60%)"
+        elsif @misc_info[:steam_percentage] > 0 then "hsl(0,90%,55%)"
+        elsif @misc_info[:steam_percentage] == 0 then "rgba(255,255,255,0.2)"
+        end %>">
       </div>
     </div>
 
@@ -110,7 +120,7 @@
 </div>
 
 <div class="row main-column hltb-extra">
-  <h4>Game statistics</h4>
+  <h4 class="section-heading">Game statistics</h4>
 
   <div class="col-md-8 hltb-container">
     <% if !@game.hltb %>
@@ -226,7 +236,7 @@
   <% if !@game.itad %>
     We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
   <% else %>
-    <h4>Price information</h4>
+    <h4 class="section-heading">Price information</h4>
 
     <table>
       <tr>
@@ -362,7 +372,7 @@
 
 <div class="row main-column sys-reqs">
   <div class="reqs-container collapsible">
-    <h4>System requirements</h4>
+    <h4 class="section-heading">System requirements</h4>
     <% if @game.minreq && @game.recreq %>
       <div class="col-md-6">
         <%= @game.minreq.html_safe %>
@@ -390,7 +400,7 @@
 
 <div class="row main-column reddit">
   <div class="reddit-container collapsible">
-    <h4>Reddit discussion</h4>
+    <h4 class="section-heading">Reddit discussion</h4>
     <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
   </div>
 

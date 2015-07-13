@@ -44,7 +44,7 @@ $(window).load(function() {
     .removeClass("unselected").addClass("selected");
   });
 
-  
+
 
   $(".reload-prices").click(function(e) {
     // placeholder for possible reload price functionality
@@ -307,8 +307,15 @@ $(window).load(function() {
     "width": 120,
     "height": 120,
     "thickness": 0.2,
-    "skin": "tron",
+    "bgColor": "rgba(255,255,255,0.2)",
+    "readOnly": true,
   });
+
+  $(".dial")
+  .css("font-size", "40pt")
+  .css("height", "120px")
+  .css("width", "120px")
+  .css("margin", "0 0 0 -120px");
 });
 
 

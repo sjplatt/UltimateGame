@@ -550,7 +550,7 @@ class MainController < ApplicationController
       name: item.name,
       steamid: item.steamid,
       description: item.description,
-      website: item.website.sub("http://","").sub(/\.com\/$/,".com"),
+      website: item.website,
       releasedate: item.releasedate,
       developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
       multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
