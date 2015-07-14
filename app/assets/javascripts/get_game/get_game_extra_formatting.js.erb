@@ -159,8 +159,8 @@ $(window).load(function() {
     "/ajax/get_videos",
     {input_name: game_name},
     function(data) {
-      $(".videos.left-sidebar").append('<h4>Game reviews on YouTube</h4>');
-      $(".videos.right-sidebar").append('<h4>Gameplay on YouTube</h4>');
+      $(".videos.left-sidebar").append('<h4 class="section-heading">Game reviews on YouTube</h4>');
+      $(".videos.right-sidebar").append('<h4 class="section-heading">Gameplay on YouTube</h4>');
 
       for (var i = 0; i < data.reviews.names.length; i++) {
         $(".videos.left-sidebar").append('<div>\
