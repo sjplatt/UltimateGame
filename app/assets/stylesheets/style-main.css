@@ -1,26 +1,43 @@
 body {
-  background-color: #373737;
+  background-color: hsl(163, 70%, 8%);
   color: #fff;
 }
 
 /* Header styles */
 
 .btn-primary {
-  background-color: hsl(163, 55%, 46%);
-  border-color: hsl(163, 55%, 41%);
+  background-color: hsl(163, 63%, 46%);
+  border-color: hsl(163, 63%, 41%);
 }
 .btn-primary:hover {
-  background-color: hsl(163, 55%, 37%);
-  border-color: hsl(163, 55%, 32%);
+  background-color: hsl(163, 63%, 37%);
+  border-color: hsl(163, 63%, 32%);
+}
+.btn-primary:focus {
+  background-color: hsl(163, 63%, 33%);
 }
 .section-heading {
-  color: hsl(163, 55%, 80%);
+  color: hsl(163, 63%, 80%);
+  width: 100%;
 }
+.section-heading .title {
+  font-size: 18px;
+  padding: 0 10px;
+} 
+.section-heading span {
+  border-bottom: 1px solid hsl(163, 63%, 46%);
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+}
+
 a {
-  color: hsl(163, 55%, 46%);
+  color: hsl(163, 63%, 46%);
 }
 a:hover {
-  color: hsl(163, 55%, 37%);
+  color: hsl(163, 63%, 37%);
+}
+a:focus {
+  color: hsl(163, 63%, 33%);
 }
 
 .twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
@@ -54,7 +71,7 @@ a:hover {
   height: 100px;
   margin-bottom: 10px;
   display: inline-flex;
-  background-color: hsl(163, 55%, 25%);
+  background-color: #282828;
 }
 .homepage-title {
   padding: 5px;
@@ -88,7 +105,7 @@ h3.divider {
   line-height: 0.1em;
   margin: 10px 0 20px;
 } 
-span.divider {
+h3 span.divider {
   background: #373737;
   padding: 0 10px;
 }
@@ -111,6 +128,16 @@ span.divider {
 }
 
 /* Second page styling */
+
+.underlay {
+  width: 900px;
+  height: 10000px;
+  margin: 0 auto;
+  left: 225px;
+  position: absolute;
+  z-index: -1000;
+  background-color: rgba(255,255,255,0.1);
+}
 
 .vital-data * {
   padding: 0;

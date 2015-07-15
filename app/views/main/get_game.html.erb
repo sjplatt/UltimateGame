@@ -42,6 +42,8 @@
   <div class="col-md-3"></div>
 </div-->
 
+<div class="underlay"></div>
+
 
 
 <div class="row main-column game-name"><h3><%= @game.name %></h3></div>
@@ -119,8 +121,13 @@
   <!-- videos are added here via ajax -->
 </div>
 
+
+
 <div class="row main-column hltb-extra">
-  <h4 class="section-heading">Game statistics</h4>
+  <div class="section-heading">
+    <span class="title">Game statistics</span>
+    <span class="line"></span>
+  </div>
 
   <div class="col-md-8 hltb-container">
     <% if !@game.hltb %>
@@ -397,18 +404,26 @@
 </div>
 
 
-
+<% if @game.subreddit %>
 <div class="row main-column reddit">
   <div class="reddit-container collapsible">
     <h4 class="section-heading">Reddit discussion</h4>
     <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
+    <!-- items are added here via ajax -->
   </div>
 
   <a class="collapser">Read more...</a>
 </div>
+<% end %>
 
-
-
+<div class="row main-column search-results">
+  <div class="search-results-container collapsible">
+    <h4 class="section-heading">Gaming site reviews</h4>
+    <ul>
+    <!-- items are added here via ajax -->
+    </ul>
+  </div>
+</div>
 
 
 

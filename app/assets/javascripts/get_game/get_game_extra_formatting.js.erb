@@ -262,11 +262,34 @@ $(window).load(function() {
 
 
   function get_search_results() {
+    $(".search-results-container").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading search results...\
+      </div>\
+    </div>');
+
     $.post("/ajax/get_search_results",
     {input_name: game_name},
     function(data) {
       output = data.results;
-      console.log(output);
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var link = output[i];
+        var shortened = new RegExp(/http:\/\/www.([^\/]*)\//);
+
+        if (shortened.test(link)) {
+          var text = link.match(shortened)[1];
+
+          outputHTML += '<li><a href="' + link + '">' + text + '</a></li>';
+        }
+      }
+
+      $(".search-results-container .img-loading-overlay").remove();
+      $(".search-results-container ul").append(outputHTML);
     })
   }
 
@@ -316,7 +339,19 @@ $(window).load(function() {
   .css("height", "120px")
   .css("width", "120px")
   .css("margin", "0 0 0 -120px");
+
+
+
+  // SECTION HEADING LINES
+  $(".section-heading").each(function(index, elem) {
+    var line = $(elem).children("span").first();
+    line.css("width", 800-$(elem).children(".title").first().width() + "px");
+  });
 });
+
+
+
+/* END OF FUNCTION THAT WILL BE CALLED ON PAGE LOAD */
 
 
 
