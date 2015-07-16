@@ -123,13 +123,13 @@
 
 
 
-<div class="row main-column hltb-extra">
+<div class="row main-column hltb-detail">
   <div class="section-heading">
-    <span class="title">Game statistics</span>
-    <span class="line"></span>
+    <span class="left title">Game statistics</span>
+    <a class="right" href="http://howlongtobeat.com/<%= @game.hltb %>">(View on HowLongToBeat)</a>
   </div>
 
-  <div class="col-md-8 hltb-container">
+  <div class="col-md-8 hltb-container content">
     <% if !@game.hltb %>
       We couldn't find gameplay information on <a href="http://howlongtobeat.com">HowLongToBeat.</a>
     <% else %>
@@ -188,14 +188,12 @@
         <% end %>
 
       </table>
-
-      <a href="http://howlongtobeat.com/<%= @game.hltb %>">(View on HowLongToBeat)</a>
     <% end %>
   </div>
 
 
 
-  <div class="col-md-4 detail-container">
+  <div class="col-md-4 detail-container content">
     <ul>
       <li>Released: <%= @game.releasedate || "Unknown" %></li>
       
@@ -206,7 +204,7 @@
       
       <li>Website:
       <% if @game.website %>
-        <a href="<%= @game.website %>"><%= @game.website.sub("http://","").sub(/\.com\/$/,".com") %></a>
+        <a href="<%= @game.website %>"><%= @game.website.sub(/https?:\/\/(www\.)?/,"").sub(/\.com\/$/,".com") %></a>
       <% end %>
       </li>
       
@@ -243,33 +241,39 @@
   <% if !@game.itad %>
     We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
   <% else %>
-    <h4 class="section-heading">Price information</h4>
+    <div class="section-heading">
+      <span>Price information</span>
+    </div>
 
     <table>
       <tr>
         <td class="col-md-6">
 
-          <div class="section-view">
+          <div class="section-view content">
             <span class="section-title">DLCs for this game</span>
             <div class="section-view-inner">
               <table class="table">
-                <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
                   <tr><td class="game-entry
                   unselected
                   <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></td></tr>
+                <% end.empty? %>
+                  <tr><td class="empty">(none found)</td></tr>
                 <% end %>
               </table>
             </div>
           </div>
 
-          <div class="section-view">
+          <div class="section-view content">
             <span class="section-title">Packages for this game</span>
             <div class="section-view-inner">
               <table class="table">
-                <% @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
                   <tr><td class="game-entry
                   unselected
                   <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></td></tr>
+                <% end.empty? %>
+                  <tr><td class="empty">(none found)</td></tr>
                 <% end %>
               </table>
             </div>
@@ -277,7 +281,7 @@
 
         </td>
 
-        <td class="col-md-6 pricing-entry">
+        <td class="col-md-6 pricing-entry content">
           <% @associated_names.each do |name,data| %>
             <div class="pricing-entry-inner
             unselected

@@ -1,9 +1,9 @@
 body {
-  background-color: hsl(163, 70%, 8%);
+  background-color: #373737;
   color: #fff;
 }
 
-/* Header styles */
+/* Colors */
 
 .btn-primary {
   background-color: hsl(163, 63%, 46%);
@@ -16,18 +16,19 @@ body {
 .btn-primary:focus {
   background-color: hsl(163, 63%, 33%);
 }
+
 .section-heading {
   color: hsl(163, 63%, 80%);
-  width: 100%;
-}
-.section-heading .title {
-  font-size: 18px;
-  padding: 0 10px;
-} 
-.section-heading span {
   border-bottom: 1px solid hsl(163, 63%, 46%);
-  line-height: 0.1em;
-  margin: 10px 0 20px;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+.section-heading .title { font-size: 18px; }
+.section-heading .left { text-align: left; }
+.section-heading .right {
+  float: right;
+  text-align: right;
+  bottom: 0;
 }
 
 a {
@@ -39,6 +40,15 @@ a:hover {
 a:focus {
   color: hsl(163, 63%, 33%);
 }
+.header {
+  background-color: hsl(163, 55%, 25%);
+}
+.content {
+  background-color: rgba(30,30,30,0.4);
+}
+
+
+
 
 .twitter-typeahead,.tt-hint,.tt-input,.tt-dropdown-menu {
   vertical-align: middle;
@@ -71,7 +81,6 @@ a:focus {
   height: 100px;
   margin-bottom: 10px;
   display: inline-flex;
-  background-color: #282828;
 }
 .homepage-title {
   padding: 5px;
@@ -86,7 +95,9 @@ a:focus {
   border-bottom: 1px solid #ccc;
 }
 
-/* Body styles */
+
+
+/* Index styles */
 
 .listing-container,.capsule {
   padding: 5px;
@@ -95,6 +106,8 @@ a:focus {
 .game-img,.package-img {
   width: 100%;
 }
+
+
 
 /* New Deals line styling */
 
@@ -109,6 +122,8 @@ h3 span.divider {
   background: #373737;
   padding: 0 10px;
 }
+
+
 
 /* Package styling */
 
@@ -127,9 +142,11 @@ h3 span.divider {
   text-decoration: none;
 }
 
-/* Second page styling */
 
-.underlay {
+
+/* Game page styling */
+
+/*.underlay {
   width: 900px;
   height: 10000px;
   margin: 0 auto;
@@ -137,7 +154,7 @@ h3 span.divider {
   position: absolute;
   z-index: -1000;
   background-color: rgba(255,255,255,0.1);
-}
+}*/
 
 .vital-data * {
   padding: 0;
@@ -147,6 +164,8 @@ h3 span.divider {
   width: 800px;
   margin: 0 auto;
 }
+
+
 
 .img-container {
   display: inline-block;
@@ -175,6 +194,7 @@ h3 span.divider {
   height: 10pt;
   line-height: 10pt;
 }
+
 
 
 .pics * {
@@ -211,6 +231,7 @@ h3 span.divider {
   border-radius: 5px;
 }
 #horiz_container_outer {
+  border-color: rgba(204,204,204,0.4);
   width: 100%;
   height: 170px; /* 150+10+10 */
 }
@@ -232,6 +253,8 @@ h3 span.divider {
 #dragBar {
   display: none; /* made visible in ajax call */
 }
+
+
 
 .pricing {
   margin-top: 20px;
@@ -255,6 +278,10 @@ h3 span.divider {
 }
 .pricing .game-entry.selected {
   background-color: rgba(255,255,255,0.3);
+}
+.pricing .empty {
+  font-style: italic;
+  color: #999;
 }
 .pricing .pricing-entry {
   vertical-align: top;
@@ -284,23 +311,34 @@ h3 span.divider {
 
 
 
-.hltb-extra {
+.hltb-detail {
   margin-top: 40px;
 }
 .hltb-container {
   display: inline-block;
 }
+.hltb-container table {
+  margin-bottom: 10px;
+}
 .hltb-container th {
   border-top: none !important;
 }
 .hltb-container * {
-  border-color: rgba(221,221,221,0.5) !important;
+  border-color: rgba(221,221,221,0.2) !important;
 }
 .detail-container {
-  padding-left: 0px;
+  padding-right: 0px;
+  padding-left: 10px;
+  background-clip: content-box;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.detail-container ul {
+  padding-right: 10px;
 }
 .detail-container li {
-  margin: .2em 0;
+  margin: .3em 0;
 }
 
 

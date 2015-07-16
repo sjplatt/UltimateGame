@@ -347,6 +347,9 @@ $(window).load(function() {
     var line = $(elem).children("span").first();
     line.css("width", 800-$(elem).children(".title").first().width() + "px");
   });
+
+  // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
+  $(".detail-container").css("height", $(".hltb-container").css("height"));
 });
 
 
