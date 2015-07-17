@@ -227,6 +227,8 @@
   </div>
 </div>
 
+
+
 <div class="row main-column extra-info" id="dlc-info">
   <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
     <div class="game-entry
@@ -237,21 +239,29 @@
   <% end %>
 </div>
 
+
+
 <div class="row main-column pricing">
   <% if !@game.itad %>
     We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
   <% else %>
+    
     <div class="section-heading">
-      <span>Price information</span>
+      <span class="left title">Price information</span>
+      <a class="right" href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
     </div>
 
     <table>
       <tr>
-        <td class="col-md-6">
+        <td class="col-md-6 dlc-pkg-select">
 
-          <div class="section-view content">
-            <span class="section-title">DLCs for this game</span>
-            <div class="section-view-inner">
+          <div class="subsection content dlcs">
+
+            <div class="subsection-heading">
+              <span class="title">DLCs for this game</span>
+            </div>
+
+            <div class="subsection-inner">
               <table class="table">
                 <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
                   <tr><td class="game-entry
@@ -264,9 +274,13 @@
             </div>
           </div>
 
-          <div class="section-view content">
-            <span class="section-title">Packages for this game</span>
-            <div class="section-view-inner">
+          <div class="subsection content pkgs">
+
+            <div class="subsection-heading">
+              <span class="title">Packages for this game</span>
+            </div>
+
+            <div class="subsection-inner">
               <table class="table">
                 <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
                   <tr><td class="game-entry
@@ -281,16 +295,18 @@
 
         </td>
 
-        <td class="col-md-6 pricing-entry content">
+        <td class="col-md-6 price-list content">
           <% @associated_names.each do |name,data| %>
-            <div class="pricing-entry-inner
+            <div class="price-list-inner
             unselected
             <%= name.gsub(/[^\w\d]/,"-").downcase %>
             <%= 'dlc' if data[:is_dlc] %>
             <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
-              <span class="pricing-title"><%= name %></span> <% if !name.eql?(@game.name) %>
-              <a class="show-original">(Show original game)</a>
-              <% end %>
+              <div class="price-list-heading">
+                <span class="title"><%= name %></span> <% if !name.eql?(@game.name) %>
+                <a class="show-original">(Show original game)</a>
+                <% end %>
+              </div>
 
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
@@ -319,7 +335,7 @@
 
           <% @associated_names.each do |name,data| %>
             <% if data[:is_pkg] %>
-              <div class="pricing-entry-pkg-contents
+              <div class="price-list-pkg-contents
               unselected
               <%= name.gsub(/[^\w\d]/,"-").downcase %>">
                 Contents:
@@ -353,7 +369,6 @@
       </tr>
     </table>
 
-    <a href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
   <% end %>
 </div>
 

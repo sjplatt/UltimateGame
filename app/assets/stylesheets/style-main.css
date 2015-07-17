@@ -17,19 +17,34 @@ body {
   background-color: hsl(163, 63%, 33%);
 }
 
+
+
 .section-heading {
-  color: hsl(163, 63%, 80%);
+  color: hsl(163, 63%, 86%);
   border-bottom: 1px solid hsl(163, 63%, 46%);
   padding-bottom: 6px;
   margin-bottom: 10px;
 }
-.section-heading .title { font-size: 18px; }
+.section-heading .title { font-size: 20px; }
 .section-heading .left { text-align: left; }
 .section-heading .right {
   float: right;
   text-align: right;
   bottom: 0;
 }
+.subsection-heading, .price-list-heading {
+  font-size: 16px;
+  color: hsl(163, 63%, 70%);
+  height: 40px;
+  padding: 10px;
+  /*border-bottom: 1px solid hsl(163, 63%, 36%);*/
+}
+.price-list-heading a {
+  font-size: 14px;
+  float: right;
+}
+
+
 
 a {
   color: hsl(163, 63%, 46%);
@@ -89,7 +104,7 @@ a:focus {
 .search-bar {
   margin: auto;
 }
-.section-header {
+.category-heading {
   margin: 5px 20px;
   padding: 3px 0;
   border-bottom: 1px solid #ccc;
@@ -258,23 +273,38 @@ h3 span.divider {
 
 .pricing {
   margin-top: 20px;
-  border: 1px solid green;
+  /*border: 1px solid green;*/
 }
-.pricing div {
+/*.pricing div {
   border: 1px solid green;
-}
+}*/
 .pricing table {
   width: 100%;
+  margin-bottom: 10px;
 }
-.section-view {
+.pricing td {
+  padding: 0;
+}
+.pricing .dlc-pkg-select td {
+  border: none;
+}
+.pricing .subsection {
   height: 250px;
+  padding: 0 10px;
+  background-clip: content-box;
 }
-.pricing .section-view-inner {
-  height: 220px;
+.pricing .subsection.pkgs {
+  margin-top: 10px;
+  height: 240px;
+}
+.pricing .subsection-inner {
+  height: 210px; /* 250-40 */
   overflow-y: auto;
+  padding: 0 10px;
+  border-top: 1px solid rgba(221,221,221,0.2);
 }
 .pricing .game-entry:hover {
-  background-color: rgba(255,255,255,0.1)
+  background-color: rgba(255,255,255,0.1);
 }
 .pricing .game-entry.selected {
   background-color: rgba(255,255,255,0.3);
@@ -283,25 +313,25 @@ h3 span.divider {
   font-style: italic;
   color: #999;
 }
-.pricing .pricing-entry {
+.pricing .price-list {
   vertical-align: top;
 }
-.pricing .pricing-entry .pricing-entry-inner {
+.pricing .price-list .price-list-inner {
   height: 350px;
   overflow-y: auto;
 }
-.pricing .pricing-entry .pricing-entry-inner.dlc,
-.pricing .pricing-entry .pricing-entry-inner.unlisted {
+.pricing .price-list .price-list-inner.dlc,
+.pricing .price-list .price-list-inner.unlisted {
   height: 500px;
 }
-.pricing .pricing-entry .pricing-entry-pkg-contents {
+.pricing .price-list .price-list-pkg-contents {
   height: 150px;
   overflow-y: auto;
 }
-.pricing .pricing-entry .selected {
+.pricing .price-list .selected {
   display: block;
 }
-.pricing .pricing-entry .unselected {
+.pricing .price-list .unselected {
   display: none;
 }
 .pricing .price-loading-overlay {

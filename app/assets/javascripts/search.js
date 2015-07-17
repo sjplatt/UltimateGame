@@ -80,7 +80,7 @@ var search = function() {
     displayKey: 'name',
     source: games_object.ttAdapter(),
     templates: {
-      header: "<h4 class='section-header'>Standalone games</h4>",
+      header: "<h4 class='category-heading'>Standalone games</h4>",
       empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
       suggestion: typeahead_suggestion(false)
     }
@@ -89,7 +89,7 @@ var search = function() {
     displayKey: 'name',
     source: dlcs_object.ttAdapter(),
     templates: {
-      header: "<h4 class='section-header'>DLCs</h4>",
+      header: "<h4 class='category-heading'>DLCs</h4>",
       empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
       suggestion: typeahead_suggestion(true)
     }
