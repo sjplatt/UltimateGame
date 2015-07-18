@@ -306,7 +306,7 @@ $(window).load(function() {
   .css("overflow", "hidden");
 
   $(".description-container, .reqs-container").each(function(index, elem) {
-    if ($(elem).prop("scrollHeight") <= $(elem).height()) {
+    if ($(elem).prop("scrollHeight") <= $(elem).outerHeight()) {
       $(elem).siblings(".collapser").hide();
     }
   });
@@ -351,6 +351,17 @@ $(window).load(function() {
 
   // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
   $(".detail-container").css("height", $(".hltb-container").css("height"));
+
+  // Add "(none)" to package contents if there are none
+  $(".price-list-pkg-contents .list-container").each(function(index, elem) {
+    if ($(elem).children("ul").text().replace(/\s*/,"") == "")
+      $(elem).prepend('<tr><td class="empty" style="padding-left:10px;">(none)</td></tr>');
+  });
+
+  // Wrap img tags in description with img-container so images can be centered
+  $(".description-container img").each(function(index, elem) {
+    $(elem).wrap('<div class="img-container"></div>');
+  });
 });
 
 

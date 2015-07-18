@@ -19,13 +19,16 @@ body {
 
 
 
+.game-name h3 {
+  font-size: 28px;
+}
 .section-heading {
   color: hsl(163, 63%, 86%);
   border-bottom: 1px solid hsl(163, 63%, 48%);
   padding-bottom: 6px;
   margin-bottom: 10px;
 }
-.section-heading .title { font-size: 20px; }
+.section-heading .title { font-size: 22px; }
 .section-heading .left { text-align: left; }
 .section-heading .right {
   float: right;
@@ -33,14 +36,14 @@ body {
   bottom: 0;
 }
 .subsection-heading, .price-list-heading, .pkg-contents-heading {
-  font-size: 16px;
+  font-size: 18px;
   color: hsl(163, 63%, 86%);
   height: 40px;
   padding: 10px;
   /*border-bottom: 1px solid hsl(163, 63%, 36%);*/
 }
 .price-list-heading {
-  color: hsl(163, 63%, 63%);
+  color: hsl(163, 63%, 68%);
 }
 .price-list-heading a {
   font-size: 14px;
@@ -48,6 +51,28 @@ body {
 }
 .pkg-contents-heading {
   color: hsl(163, 63%, 86%);
+}
+.description h1 {
+  color: hsl(163, 63%, 68%);
+  border-bottom: 1px solid rgba(221,221,221,0.5);
+  font-size: 18px;
+  margin-top: 10px;
+}
+.description h2 {
+  color: hsl(163, 63%, 68%);
+  font-size: 18px;
+}
+.description h3,
+.description h4,
+.description h5,
+.description h6 {
+  color: hsl(163, 63%, 68%);
+  font-size: 16px;
+}
+.reqs-container div > strong {
+  color: hsl(163, 63%, 68%);
+  font-size: 18px;
+  font-weight: normal;
 }
 
 
@@ -337,9 +362,9 @@ h3 span.divider {
 .pricing .price-list .price-list-inner table td {
   border: none;
 }
-.pricing .price-list .price-list-inner.dlc,
-.pricing .price-list .price-list-inner.unlisted {
-  height: 500px;
+.pricing .price-list .price-list-inner.dlc .table-container,
+.pricing .price-list .price-list-inner.unlisted .table-container {
+  height: 460px; /* 500-40=460 */
 }
 .pricing .price-list .price-list-pkg-contents .pkg-contents-heading {
   border-top: 1px solid rgba(221,221,221,0.2);
@@ -400,7 +425,11 @@ h3 span.divider {
   margin-top: 40px;
 }
 .description-container {
-  border: 1px solid yellow;
+  padding: 10px 80px;
+}
+.description .img-container {
+  display: block;
+  text-align: center;
 }
 
 
@@ -408,8 +437,15 @@ h3 span.divider {
 .sys-reqs {
   margin-top: 40px;
 }
+.reqs-container .col-md-6,
+.reqs-container .col-md-12 {
+  padding: 0;
+}
+.reqs-container ul {
+  margin: 0;
+}
 .reqs-container {
-  border: 1px solid orange;
+  padding: 10px;
 }
 
 
@@ -456,8 +492,8 @@ h3 span.divider {
   margin-top: 40px;
 }
 .reddit-container {
-  border: 1px solid red;
 }
+
 
 
 .extra-info {

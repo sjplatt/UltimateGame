@@ -336,43 +336,39 @@
             </div>
           <% end %>
 
-          <% @associated_names.each do |name,data| %>
-            <% if data[:is_pkg] %>
-              <div class="price-list-pkg-contents
-              unselected
-              <%= name.gsub(/[^\w\d]/,"-").downcase %>">
-                <div class="pkg-contents-heading">
-                  <span class="title">Contents:</span>
-                </div>
-
-                <div class="list-container">
-                <ul>
-                <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
-                  
-                  <% if Game.find_by(steamid: item_id) && Game.find_by(steamid: item_id).name.eql?(@game.name) %>
-                    <li><%= Game.find_by(steamid: item_id).name %></li>
-
-                  <% elsif Dlc.find_by(steamid: item_id) && Dlc.find_by(steamid: item_id).name.eql?(@game.name) %>
-                    <li><%= Dlc.find_by(steamid: item_id).name %></li>
-                  
-                  <% end %>
-                <% end %>
-
-                <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
-                  
-                  <% if Game.find_by(steamid: item_id) && !Game.find_by(steamid: item_id).name.eql?(@game.name)%>
-                    <li><%= Game.find_by(steamid: item_id).name %></li>
-                  
-                  <% elsif Dlc.find_by(steamid: item_id) && !Dlc.find_by(steamid: item_id).name.eql?(@game.name)%>
-                    <li><%= Dlc.find_by(steamid: item_id).name %></li>
-                  
-                  <% end %>
-                <% end %>
-                </ul>
-                </div>
-
+          <% @associated_names.select{|_,data| data[:is_pkg]}.map do |name,data| %>
+            <div class="price-list-pkg-contents
+            unselected
+            <%= name.gsub(/[^\w\d]/,"-").downcase %>">
+              <div class="pkg-contents-heading">
+                <span class="title">Contents:</span>
               </div>
-            <% end %>
+
+              <div class="list-container">
+              <ul>
+              <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
+                
+                <% if Game.find_by(steamid: item_id) && Game.find_by(steamid: item_id).name.eql?(@game.name) %>
+                  <li><%= Game.find_by(steamid: item_id).name %></li>
+
+                <% elsif Dlc.find_by(steamid: item_id) && Dlc.find_by(steamid: item_id).name.eql?(@game.name) %>
+                  <li><%= Dlc.find_by(steamid: item_id).name %></li>
+
+                <% end %>
+
+                <% if Game.find_by(steamid: item_id) && !Game.find_by(steamid: item_id).name.eql?(@game.name)%>
+                  <li><%= Game.find_by(steamid: item_id).name %></li>
+                
+                <% elsif Dlc.find_by(steamid: item_id) && !Dlc.find_by(steamid: item_id).name.eql?(@game.name)%>
+                  <li><%= Dlc.find_by(steamid: item_id).name %></li>
+                
+                <% end %>
+
+              <% end %>
+              </ul>
+              </div>
+
+            </div>
           <% end %>
         </td>
       </tr>
@@ -384,9 +380,14 @@
 
 
 <div class="row main-column description">
-  <div class="description-container collapsible">
+  <div class="section-heading">
+    <span class="title">Game description</span>
+  </div>
+
+  <div class="description-container content collapsible">
     <% if @game.description %>
-      <!--<h4>Game description</h4>-->
+      <%= @game.description.html_safe %>
+      <!--
       <%if @game.description.include?("Creation Kit and Steam Workshop")%>
         <%=("<h1>About the Game</h1>" + 
           @game.description.split('About the Game')[1..-1]
@@ -394,7 +395,7 @@
       <%else%>
           <%=("<h1>About the Game</h1>" + @game.description).html_safe%>
       <%end%>
-      <!--<%= @game.description.html_safe %>-->
+      -->
     <% else %>
       <%= @game.description %>
     <% end %>  
@@ -406,8 +407,11 @@
 
 
 <div class="row main-column sys-reqs">
-  <div class="reqs-container collapsible">
-    <h4 class="section-heading">System requirements</h4>
+  <div class="section-heading">
+    <span class="title">System requirements</span>
+  </div>
+
+  <div class="reqs-container content collapsible">
     <% if @game.minreq && @game.recreq %>
       <div class="col-md-6">
         <%= @game.minreq.html_safe %>
@@ -417,13 +421,19 @@
       </div>
 
     <% elsif @game.minreq %>
-      <%= @game.minreq.html_safe %>
+      <div class="col-md-12">
+        <%= @game.minreq.html_safe %>
+      </div>
 
     <% elsif @game.recreq %>
-      <%= @game.recreq.html_safe %>
+      <div class="col-md-12">
+        <%= @game.recreq.html_safe %>
+      </div>
 
     <% else %>
-      <p class="empty">(none found)</p>
+      <div class="col-md-12">
+        <p class="empty">(none found)</p>
+      </div>
 
     <% end %>
   </div>
@@ -434,8 +444,8 @@
 
 <% if @game.subreddit %>
 <div class="row main-column reddit">
-  <div class="reddit-container collapsible">
-    <h4 class="section-heading">Reddit discussion</h4>
+  <h4 class="section-heading">Reddit discussion</h4>
+  <div class="reddit-container content collapsible">
     <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
     <!-- items are added here via ajax -->
   </div>
