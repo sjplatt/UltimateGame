@@ -20,12 +20,13 @@ $(window).load(function() {
     .removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-    //if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
+    //if ($(".price-list ." + selected_class + ".ajax-loaded").length)
       // console.log("Already loaded " + selected_class);
-    if (!$(".pricing-entry-inner." + selected_class + ".ajax-loaded").length) {
-      $(".pricing-entry-inner." + selected_class).addClass("ajax-loaded");
+    if (!$(".price-list-inner." + selected_class + ".ajax-loaded").length) {
+      $(".price-list-inner." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
-      get_extra_info(selected_class, $(e.target).text());
+      if ($(e.target).hasClass("dlc"))
+        get_extra_info(selected_class, $(e.target).text());
     }
   });
 
@@ -359,7 +360,7 @@ $(window).load(function() {
 
 
 function get_prices(selected, input_name_text) {
-  $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
+  $(".price-list-inner." + selected + " .table-container").append('<div class="price-loading-overlay">\
     <%= image_tag "fancybox_loading.gif" %>\
     Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
   </div>');*/
@@ -371,22 +372,27 @@ function get_prices(selected, input_name_text) {
     var output = data.results;
     // console.log(output);
 
-    var outputHTML = '<tr>\
-      <th>Vendor</th>\
-      <th>Price</th>\
-      <th style="width:80px">Lowest recorded</th>\
-    </tr>';
+    if (output.length == 0) {
+      var outputHTML = '<tr><td class="empty">(none found)</td></tr>';
+    }
+    else {
+      var outputHTML = '<tr>\
+        <th>Vendor</th>\
+        <th>Price</th>\
+        <th style="width:80px">Lowest recorded</th>\
+      </tr>';
 
-    for (var i = 0; i < output.length; i++) {
-      outputHTML += '<tr>\
-        <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
-        <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-        <td>' + output[i].lowest_recorded + '</td>\
-      </tr>'
+      for (var i = 0; i < output.length; i++) {
+        outputHTML += '<tr>\
+          <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+          <td>' + output[i].lowest_recorded + '</td>\
+        </tr>'
+      }
     }
 
-    $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
-    $(".pricing-entry-inner." + selected + " table").append(outputHTML);
+    $(".price-list-inner." + selected + " .price-loading-overlay").remove();
+    $(".price-list-inner." + selected + " table").append(outputHTML);
   });
 }
 

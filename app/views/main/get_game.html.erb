@@ -308,6 +308,7 @@
                 <% end %>
               </div>
 
+              <div class="table-container">
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
@@ -330,6 +331,8 @@
                 else this data is appended to the appropriate element by jquery/ajax -->
 
               </table>
+              </div>
+
             </div>
           <% end %>
 
@@ -338,7 +341,11 @@
               <div class="price-list-pkg-contents
               unselected
               <%= name.gsub(/[^\w\d]/,"-").downcase %>">
-                Contents:
+                <div class="pkg-contents-heading">
+                  <span class="title">Contents:</span>
+                </div>
+
+                <div class="list-container">
                 <ul>
                 <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
                   
@@ -362,6 +369,8 @@
                   <% end %>
                 <% end %>
                 </ul>
+                </div>
+
               </div>
             <% end %>
           <% end %>
@@ -414,7 +423,7 @@
       <%= @game.recreq.html_safe %>
 
     <% else %>
-      None found
+      <p class="empty">(none found)</p>
 
     <% end %>
   </div>

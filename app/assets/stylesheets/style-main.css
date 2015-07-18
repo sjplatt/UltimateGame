@@ -6,22 +6,22 @@ body {
 /* Colors */
 
 .btn-primary {
-  background-color: hsl(163, 63%, 46%);
+  background-color: hsl(163, 63%, 43%);
   border-color: hsl(163, 63%, 41%);
 }
 .btn-primary:hover {
-  background-color: hsl(163, 63%, 37%);
+  background-color: hsl(163, 63%, 35%);
   border-color: hsl(163, 63%, 32%);
 }
 .btn-primary:focus {
-  background-color: hsl(163, 63%, 33%);
+  background-color: hsl(163, 63%, 31%);
 }
 
 
 
 .section-heading {
   color: hsl(163, 63%, 86%);
-  border-bottom: 1px solid hsl(163, 63%, 46%);
+  border-bottom: 1px solid hsl(163, 63%, 48%);
   padding-bottom: 6px;
   margin-bottom: 10px;
 }
@@ -32,28 +32,34 @@ body {
   text-align: right;
   bottom: 0;
 }
-.subsection-heading, .price-list-heading {
+.subsection-heading, .price-list-heading, .pkg-contents-heading {
   font-size: 16px;
-  color: hsl(163, 63%, 70%);
+  color: hsl(163, 63%, 86%);
   height: 40px;
   padding: 10px;
   /*border-bottom: 1px solid hsl(163, 63%, 36%);*/
+}
+.price-list-heading {
+  color: hsl(163, 63%, 63%);
 }
 .price-list-heading a {
   font-size: 14px;
   float: right;
 }
+.pkg-contents-heading {
+  color: hsl(163, 63%, 86%);
+}
 
 
 
 a {
-  color: hsl(163, 63%, 46%);
+  color: hsl(163, 63%, 43%);
 }
 a:hover {
-  color: hsl(163, 63%, 37%);
+  color: hsl(163, 63%, 35%);
 }
 a:focus {
-  color: hsl(163, 63%, 33%);
+  color: hsl(163, 63%, 31%);
 }
 .header {
   background-color: hsl(163, 55%, 25%);
@@ -290,7 +296,7 @@ h3 span.divider {
 }
 .pricing .subsection {
   height: 250px;
-  padding: 0 10px;
+  padding-right: 10px;
   background-clip: content-box;
 }
 .pricing .subsection.pkgs {
@@ -316,18 +322,35 @@ h3 span.divider {
 .pricing .price-list {
   vertical-align: top;
 }
-.pricing .price-list .price-list-inner {
-  height: 350px;
+/* 500-40-40=420 distributed b/w table and pkg contents */
+.pricing .price-list .price-list-inner .table-container {
+  height: 310px; /* actual height 330+40=370 */
   overflow-y: auto;
+  padding: 0 10px;
+  border-top: 1px solid rgba(221,221,221,0.2);
+}
+.pricing .price-list .price-list-inner table th {
+  vertical-align: bottom;
+  border-top: none;
+  border-bottom: 1px solid rgba(221,221,221,0.2);
+}
+.pricing .price-list .price-list-inner table td {
+  border: none;
 }
 .pricing .price-list .price-list-inner.dlc,
 .pricing .price-list .price-list-inner.unlisted {
   height: 500px;
 }
-.pricing .price-list .price-list-pkg-contents {
-  height: 150px;
+.pricing .price-list .price-list-pkg-contents .pkg-contents-heading {
+  border-top: 1px solid rgba(221,221,221,0.2);
+  border-bottom: 1px solid rgba(221,221,221,0.2);
+}
+.pricing .price-list .price-list-pkg-contents .list-container {
+  height: 110px; /* actual height 90+40=130 */
+  padding-top: 10px;
   overflow-y: auto;
 }
+
 .pricing .price-list .selected {
   display: block;
 }
