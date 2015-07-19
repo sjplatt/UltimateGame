@@ -70,13 +70,15 @@
         end %>">
       </div><!--
       --><div class="score-container">
-        <input type="text" value="<%= @misc_info[:steam_percentage] || 0 %>" class="dial"
+        <input type="text" value="<%=
+        if @misc_info[:steam_percentage] then @misc_info[:steam_percentage].to_i
+        else 0 end %>" class="dial"
         data-fgColor="<%=
         if !@misc_info[:steam_percentage] then "rgba(255,255,255,0.2)"
-        elsif @misc_info[:steam_percentage] >= 75 then "hsl(100,60%,50%)"
-        elsif @misc_info[:steam_percentage] >= 50 then "hsl(45,80%,60%)"
-        elsif @misc_info[:steam_percentage] > 0 then "hsl(0,90%,55%)"
-        elsif @misc_info[:steam_percentage] == 0 then "rgba(255,255,255,0.2)"
+        elsif @misc_info[:steam_percentage].to_i >= 75 then "hsl(100,60%,50%)"
+        elsif @misc_info[:steam_percentage].to_i >= 50 then "hsl(45,80%,60%)"
+        elsif @misc_info[:steam_percentage].to_i > 0 then "hsl(0,90%,55%)"
+        elsif @misc_info[:steam_percentage].to_i == 0 then "rgba(255,255,255,0.2)"
         end %>">
       </div>
     </div>
@@ -113,11 +115,23 @@
 
 
 
-<div class="videos left-sidebar">
+<div class="videos left sidebar">
   <!-- videos are added here via ajax -->
 </div>
 
-<div class="videos right-sidebar">
+<div class="search-results-container left sidebar">
+  <div class="section-heading">
+    <span class="title">Critic reviews</span>
+  </div>
+
+  <div class="content">
+    <ul>
+    <!-- items are added here via ajax -->
+    </ul>
+  </div>
+</div>
+
+<div class="videos right sidebar">
   <!-- videos are added here via ajax -->
 </div>
 
@@ -233,8 +247,9 @@
   <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
     <div class="game-entry
     unselected
+    content
     <%= name.gsub(/[^\w\d]/,"-").downcase %>">
-
+      <!-- info added here via ajax -->
     </div>
   <% end %>
 </div>
@@ -284,6 +299,7 @@
               <table class="table">
                 <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
                   <tr><td class="game-entry
+                  pkg
                   unselected
                   <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></td></tr>
                 <% end.empty? %>
@@ -444,24 +460,17 @@
 
 <% if @game.subreddit %>
 <div class="row main-column reddit">
-  <h4 class="section-heading">Reddit discussion</h4>
+  <div class="section-heading">
+    <span class="left title">Reddit discussion</span>
+    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
+  </div>
   <div class="reddit-container content collapsible">
-    <a href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
     <!-- items are added here via ajax -->
   </div>
 
   <a class="collapser">Read more...</a>
 </div>
 <% end %>
-
-<div class="row main-column search-results">
-  <div class="search-results-container collapsible">
-    <h4 class="section-heading">Gaming site reviews</h4>
-    <ul>
-    <!-- items are added here via ajax -->
-    </ul>
-  </div>
-</div>
 
 
 

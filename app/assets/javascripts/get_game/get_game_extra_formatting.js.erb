@@ -25,7 +25,7 @@ $(window).load(function() {
     if (!$(".price-list-inner." + selected_class + ".ajax-loaded").length) {
       $(".price-list-inner." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
-      if ($(e.target).hasClass("dlc"))
+      if (!$(e.target).hasClass("pkg"))
         get_extra_info(selected_class, $(e.target).text());
     }
   });
@@ -149,38 +149,52 @@ $(window).load(function() {
 
 
   function get_videos() {
-    $(".videos").append('<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        <%= image_tag "fancybox_loading.gif" %>\
-        Loading videos...\
+    $(".videos.left.sidebar").append(
+      '<div class="loading-container content">\
+      <div class="img-loading-overlay">\
+        <div class="img-loading-overlay-inner">\
+          <%= image_tag "fancybox_loading.gif" %>\
+          Loading videos...\
+        </div>\
       </div>\
-    </div>');
+      </div>');
 
     $.post(
     "/ajax/get_videos",
     {input_name: game_name},
     function(data) {
-      $(".videos.left-sidebar").append('<h4 class="section-heading">Game reviews on YouTube</h4>');
-      $(".videos.right-sidebar").append('<h4 class="section-heading">Gameplay on YouTube</h4>');
+      $(".videos.left.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube reviews</span>\
+        </div>\
+        <div class="content video-container"></div>');
+      $(".videos.right.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube gameplay</span>\
+        </div>\
+        <div class="content video-container"></div>');
+
+      function get_sidebar_html(link,name,image_link) {
+        return '<a class="fancybox-media"\
+          rel="reviews"\
+          href="' + link + '">\
+          <div class="video">'
+             + name + '<br>\
+            <div class="video-img-container">\
+              <img class="video-img" src="' + image_link + '" />\
+            </div>\
+          </div>\
+        </a>';
+      }
 
       for (var i = 0; i < data.reviews.names.length; i++) {
-        $(".videos.left-sidebar").append('<div>\
-          <a class="fancybox-media"\
-            rel="reviews"\
-            href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
-            '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
-          </a>\
-        </div>');
+        $(".videos.left.sidebar .video-container").append(
+          get_sidebar_html(data.reviews.links[i], data.reviews.names[i], data.reviews.image_links[i]));
       }
 
       for (var i = 0; i < data.gameplay.names.length; i++) {
-        $(".videos.right-sidebar").append('<div>\
-          <a class="fancybox-media"\
-            rel="gameplay"\
-            href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
-            '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
-          </a>\
-        </div>');
+        $(".videos.right.sidebar .video-container").append(
+          get_sidebar_html(data.gameplay.links[i], data.gameplay.names[i], data.gameplay.image_links[i]));
       }
 
       $(".fancybox-media").fancybox({
@@ -194,21 +208,31 @@ $(window).load(function() {
         }
       });
 
-      $(".videos .img-loading-overlay").hide(300);
-      $(".videos .img-loading-overlay").remove();
+      $(".videos .img-loading-overlay").parent().remove();
       console.log("Finished loading videos");
     }).fail(function() {
       $(".videos").empty();
-      $(".videos").prepend('<div class="img-loading-overlay">\
+      $(".videos.left.sidebar").prepend(
+      '<div class="content">\
+      <div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
           Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
         </div>\
+      </div>\
       </div>');
 
       $(".reload-videos").click(function(e) {
         $(".videos").empty();
+        $(".search-results-container").css("display","none");
         get_videos();
       });
+    }).always(function() {
+      // Make the critic reviews visible and properly positioned
+      setTimeout(function() {
+        $(".search-results-container")
+        .css("display","block")
+        .css("margin-top",$(".videos.left.sidebar").css("height"));
+      }, 2000);
     });
   }
 
@@ -248,8 +272,9 @@ $(window).load(function() {
         }
 
         outputHTML += '<div>\
-          <a class="reddit-entry" href="' + output[i].link + '">' + output[i].name + '</a> <a class="reddit-source"\
-          href="' + source_url + '">' + source_text + '</a> <a class="reddit-comments" href="' + output[i].comments + '">(comments)</a>\
+          <a class="reddit-entry" href="' + output[i].link + '">' + output[i].name + '</a>\
+          <a class="source" href="' + source_url + '">' + source_text + '</a>\
+          <a class="comments" href="' + output[i].comments + '">(comments)</a>\
         </div>';
       }
 
@@ -263,10 +288,10 @@ $(window).load(function() {
 
 
   function get_search_results() {
-    $(".search-results-container").append('<div class="img-loading-overlay">\
+    $(".search-results-container .content").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
-        Loading search results...\
+        Loading results...\
       </div>\
     </div>');
 
@@ -343,11 +368,12 @@ $(window).load(function() {
 
 
 
-  // SECTION HEADING LINES
-  $(".section-heading").each(function(index, elem) {
+  // MISCELLANEOUS
+
+  /*$(".section-heading").each(function(index, elem) {
     var line = $(elem).children("span").first();
     line.css("width", 800-$(elem).children(".title").first().width() + "px");
-  });
+  });*/
 
   // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
   $(".detail-container").css("height", $(".hltb-container").css("height"));
@@ -371,7 +397,7 @@ $(window).load(function() {
 
 
 function get_prices(selected, input_name_text) {
-  $(".price-list-inner." + selected + " .table-container").append('<div class="price-loading-overlay">\
+  $(".price-list-inner." + selected + " .table-container").append('<div class="img-loading-overlay">\
     <%= image_tag "fancybox_loading.gif" %>\
     Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
   </div>');*/
@@ -402,7 +428,7 @@ function get_prices(selected, input_name_text) {
       }
     }
 
-    $(".price-list-inner." + selected + " .price-loading-overlay").remove();
+    $(".price-list-inner." + selected + " .img-loading-overlay").remove();
     $(".price-list-inner." + selected + " table").append(outputHTML);
   });
 }
@@ -410,9 +436,12 @@ function get_prices(selected, input_name_text) {
 
 
 function get_extra_info(selected, input_name_text) {
-  $(".extra-info ." + selected).append('<div class="price-loading-overlay">\
-    <%= image_tag "fancybox_loading.gif" %>\
-    Loading information...<br>');
+  $(".extra-info ." + selected).append('<div class="img-loading-overlay">\
+    <div class="img-loading-overlay-inner">\
+      <%= image_tag "fancybox_loading.gif" %>\
+      Loading information...\
+    </div>\
+  </div>');
 
   $.post("/ajax/get_extra_info",
   {input_name: input_name_text},
@@ -451,7 +480,7 @@ function get_extra_info(selected, input_name_text) {
       </ul>\
     </div>';
 
-    $(".extra-info ." + selected + " .price-loading-overlay").remove();
+    $(".extra-info ." + selected + " .img-loading-overlay").remove();
     $(".extra-info ." + selected).append(outputHTML);
 
     $(".fancybox-text").fancybox({
