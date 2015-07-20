@@ -13,7 +13,7 @@ body {
   background-color: hsl(163, 63%, 35%);
   border-color: hsl(163, 63%, 32%);
 }
-.btn-primary:focus {
+.btn-primary:focus, .btn-primary:active {
   background-color: hsl(163, 63%, 31%);
 }
 .btn.has-icon img {
@@ -24,6 +24,18 @@ body {
 
 .game-name h3 {
   font-size: 28px;
+}
+.extra-info .title {
+  font-size: 18px;
+  color: hsl(163, 63%, 68%);
+  margin-bottom: 10px;
+}
+.extra-info .btn a,
+.extra-info .btn a:hover,
+.extra-info .btn a:focus,
+.extra-info .btn a:active {
+  text-decoration: none;
+  color: #fff;
 }
 .section-heading {
   color: hsl(163, 63%, 86%);
@@ -48,7 +60,6 @@ body {
   color: hsl(163, 63%, 68%);
   padding: 10px 10px 5px 10px;
 }
-
 .pkg-contents-heading {
   color: hsl(163, 63%, 86%);
 }
@@ -77,6 +88,10 @@ body {
 
 .pricing .game-entry:hover {
   background-color: hsla(163, 70%, 20%, 0.4);
+  color: hsl(163, 63%, 68%);
+}
+.pricing .game-entry.selected:hover {
+  color: #fff;
 }
 .pricing .game-entry.selected {
   background-color: rgba(255,255,255,0.18);
@@ -86,7 +101,7 @@ body {
   background-color: hsla(163, 70%, 20%, 0.4);
 }
 .video-container a:hover {
-  color: hsl(163, 63%, 43%);
+  color: hsl(163, 63%, 68%);
 }
 
 
@@ -340,7 +355,7 @@ h3 span.divider {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: default;
+  cursor: pointer;
 }
 .pricing .subsection {
   height: 250px;
@@ -463,6 +478,7 @@ h3 span.divider {
 }
 .reqs-container {
   padding: 10px;
+  padding-right: 40px;
 }
 
 
@@ -560,6 +576,7 @@ h3 span.divider {
 }
 .reddit-container {
   padding: 10px;
+  padding-right: 40px;
 }
 .reddit-container div {
   margin-top: 5px;
@@ -628,4 +645,14 @@ h3 span.divider {
 .fancybox-skin {
   background-color: #373737;
   color: #fff;
+}
+
+
+
+.collapser {
+  width: 40px;
+  height: 30px;
+  margin-top: -30px;
+  margin-left: 50px;
+  float: right;
 }

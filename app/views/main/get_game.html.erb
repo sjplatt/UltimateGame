@@ -468,7 +468,9 @@
 <div class="row main-column reddit">
   <div class="section-heading">
     <span class="left title">Reddit discussion</span>
-    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>">(r/<%= @game.subreddit %>)</a>
+    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>">
+      <span class="btn btn-primary btn-sm has-icon">/r/<%= @game.subreddit %> <%= image_tag "new-window.png" %></span>
+    </a>
   </div>
   <div class="reddit-container content collapsible">
     <!-- items are added here via ajax -->

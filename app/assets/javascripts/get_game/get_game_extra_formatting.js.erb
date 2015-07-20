@@ -389,11 +389,15 @@ $(window).load(function() {
   });
 
   // Adjust height of prices display to account for unknown height of selected game name
-  // Total height must be 350px
-  $(".game-entry.pkg, .show-original").click(function() {
+  var pkg_height = 350;
+  var dlc_height = 500;
+
+  $(".game-entry, .show-original").click(function() {
+    $(".dlc .table-container").each(function(index, elem) {
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    });
     $(".pkg .table-container").each(function(index, elem) {
-      console.log($(elem).siblings(".price-list-heading").first());
-      $(elem).css("height", 350 - $(elem).siblings(".price-list-heading").first().outerHeight() + "px");
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
     });
   });
 });
@@ -469,7 +473,10 @@ function get_extra_info(selected, input_name_text) {
       <img class="extra-img" src="' + output.headerimg + '" />\
     </div>\
     <div class="col-md-6 links">\
-      <h4>' + output.name + '</h4>\
+      <span class="title">' + output.name + '</span>\
+      <br><span class="btn btn-primary btn-sm">\
+        <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
+      </span>\
       <ul>\
         <li>Released: ' + releasedate + '</li>\
         \
@@ -480,12 +487,8 @@ function get_extra_info(selected, input_name_text) {
         <li>\
           <a href="' + steam_link + '">View on Steam</a>\
         </li>\
-        \
-        <li>\
-          <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
-          <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
-        </li>\
       </ul>\
+      <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
     </div>';
 
     $(".extra-info ." + selected + " .img-loading-overlay").remove();
