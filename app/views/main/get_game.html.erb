@@ -140,7 +140,9 @@
 <div class="row main-column hltb-detail">
   <div class="section-heading">
     <span class="left title">Game statistics</span>
-    <a class="right" href="http://howlongtobeat.com/<%= @game.hltb %>">(View on HowLongToBeat)</a>
+    <a class="right" href="http://howlongtobeat.com/<%= @game.hltb %>" target="_blank">
+      <span class="btn btn-primary btn-sm has-icon">View on HowLongToBeat <%= image_tag "new-window.png" %></span>
+    </a>
   </div>
 
   <div class="col-md-8 hltb-container content">
@@ -263,7 +265,9 @@
     
     <div class="section-heading">
       <span class="left title">Price information</span>
-      <a class="right" href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>">(View on IsThereAnyDeal)</a>
+      <a class="right" href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>" target="_blank">
+        <span class="btn btn-primary btn-sm has-icon">View on IsThereAnyDeal <%= image_tag "new-window.png" %></span>
+      </a>
     </div>
 
     <table>
@@ -316,12 +320,14 @@
             <div class="price-list-inner
             unselected
             <%= name.gsub(/[^\w\d]/,"-").downcase %>
-            <%= 'dlc' if data[:is_dlc] %>
-            <%= 'unlisted' if !data[:is_dlc] && !data[:is_pkg] %>">
+            <%= if data[:is_dlc] then "dlc"
+              elsif data[:is_pkg] then "pkg" end%>
+            <%= "unlisted" if !data[:is_dlc] && !data[:is_pkg] %>">
               <div class="price-list-heading">
-                <span class="title"><%= name %></span> <% if !name.eql?(@game.name) %>
-                <a class="show-original">(Show original game)</a>
+                <% if !name.eql?(@game.name) %>
+                  <a class="show-original"><span class="btn btn-primary btn-xs has-icon"><%= image_tag "left-arrow.png" %></a>
                 <% end %>
+                <span class="title"><%= name %></span>
               </div>
 
               <div class="table-container">
@@ -417,7 +423,7 @@
     <% end %>  
   </div>
 
-  <a class="collapser">Read more...</a>
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
 </div>
 
 
@@ -454,7 +460,7 @@
     <% end %>
   </div>
 
-  <a class="collapser">Read more...</a>
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
 </div>
 
 
@@ -468,7 +474,7 @@
     <!-- items are added here via ajax -->
   </div>
 
-  <a class="collapser">Read more...</a>
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
 </div>
 <% end %>
 

@@ -16,6 +16,9 @@ body {
 .btn-primary:focus {
   background-color: hsl(163, 63%, 31%);
 }
+.btn.has-icon img {
+  height: 12px;
+}
 
 
 
@@ -35,20 +38,17 @@ body {
   text-align: right;
   bottom: 0;
 }
-.subsection-heading, .price-list-heading, .pkg-contents-heading {
+.subsection-heading, .pkg-contents-heading {
   font-size: 18px;
   color: hsl(163, 63%, 86%);
-  height: 40px;
-  padding: 10px;
-  /*border-bottom: 1px solid hsl(163, 63%, 36%);*/
+  padding: 10px 10px 5px 10px;
 }
 .price-list-heading {
+  font-size: 18px;
   color: hsl(163, 63%, 68%);
+  padding: 10px 10px 5px 10px;
 }
-.price-list-heading a {
-  font-size: 14px;
-  float: right;
-}
+
 .pkg-contents-heading {
   color: hsl(163, 63%, 86%);
 }
@@ -79,7 +79,7 @@ body {
   background-color: hsla(163, 70%, 20%, 0.4);
 }
 .pricing .game-entry.selected {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255,255,255,0.18);
 }
 
 .video-container a > div:hover {
@@ -334,7 +334,13 @@ h3 span.divider {
 }
 .pricing .dlc-pkg-select td {
   border: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  cursor: default;
 }
 .pricing .subsection {
   height: 250px;
@@ -485,6 +491,9 @@ h3 span.divider {
 .video-container {
   padding: 10px;
 }
+.video-container a {
+  color: #fff;
+}
 .video-container a:hover {
   text-decoration: none;
 }
@@ -509,6 +518,7 @@ h3 span.divider {
 }
 .video-img-container {
   margin: 0 auto;
+  margin-top: 4px;
 }
 
 

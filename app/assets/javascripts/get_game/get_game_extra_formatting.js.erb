@@ -213,7 +213,7 @@ $(window).load(function() {
     }).fail(function() {
       $(".videos").empty();
       $(".videos.left.sidebar").prepend(
-      '<div class="content">\
+      '<div class="loading-container content">\
       <div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
           Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
@@ -310,7 +310,7 @@ $(window).load(function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<li><a href="' + link + '">' + text + '</a></li>';
+          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
         }
       }
 
@@ -336,16 +336,20 @@ $(window).load(function() {
     }
   });
 
+  //$(".collapser img").click(function(e) {$(e.target).parent().trigger("click");});
+
   $(".collapser").click(function(e) {
     var collapsible = $(e.target).siblings(".collapsible");
+    if (!collapsible.length)
+      collapsible = $(e.target).parent().siblings(".collapsible"); // clicked img
 
     if (collapsible.css("max-height") === original_height) {
       collapsible.css("max-height","none");
-      $(e.target).text("Read less...");
+      collapsible.siblings(".collapser").html('<%= image_tag "collapse-top.png" %>');
     }
     else {
       collapsible.css("max-height",original_height);
-      $(e.target).text("Read more...");
+      collapsible.siblings(".collapser").html('<%= image_tag "expand.png" %>');
     }
   });
 
@@ -370,11 +374,6 @@ $(window).load(function() {
 
   // MISCELLANEOUS
 
-  /*$(".section-heading").each(function(index, elem) {
-    var line = $(elem).children("span").first();
-    line.css("width", 800-$(elem).children(".title").first().width() + "px");
-  });*/
-
   // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
   $(".detail-container").css("height", $(".hltb-container").css("height"));
 
@@ -387,6 +386,15 @@ $(window).load(function() {
   // Wrap img tags in description with img-container so images can be centered
   $(".description-container img").each(function(index, elem) {
     $(elem).wrap('<div class="img-container"></div>');
+  });
+
+  // Adjust height of prices display to account for unknown height of selected game name
+  // Total height must be 350px
+  $(".game-entry.pkg, .show-original").click(function() {
+    $(".pkg .table-container").each(function(index, elem) {
+      console.log($(elem).siblings(".price-list-heading").first());
+      $(elem).css("height", 350 - $(elem).siblings(".price-list-heading").first().outerHeight() + "px");
+    });
   });
 });
 
