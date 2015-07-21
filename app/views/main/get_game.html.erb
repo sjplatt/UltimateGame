@@ -147,7 +147,7 @@
 
   <div class="col-md-8 hltb-container content">
     <% if !@game.hltb %>
-      We couldn't find gameplay information on <a href="http://howlongtobeat.com">HowLongToBeat.</a>
+      We couldn't find gameplay information on <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat.</a>
     <% else %>
       <table class="table">
 
@@ -220,23 +220,23 @@
       
       <li>Website:
       <% if @game.website %>
-        <a href="<%= @game.website %>"><%= @game.website.sub(/https?:\/\/(www\.)?/,"").sub(/\.com\/$/,".com") %></a>
+        <a href="<%= @game.website %>" target="_blank"><%= @game.website.sub(/https?:\/\/(www\.)?/,"").sub(/\.com\/$/,".com") %></a>
       <% end %>
       </li>
       
       <li>
       <% if @game.steamid %>
-        <a href="http://store.steampowered.com/app/<%= @game.steamid %>">View on Steam</a>
+        <a href="http://store.steampowered.com/app/<%= @game.steamid %>" target="_blank">View on Steam</a>
       <% else %>
-        <a href="http://store.steampowered.com">View on Steam</a>
+        <a href="http://store.steampowered.com" target="_blank">View on Steam</a>
       <% end %>
       </li>
 
       <li>
       <% if @game.metaurl %>
-        <a href="<%= @game.metaurl %>">View on Metacritic</a>
+        <a href="<%= @game.metaurl %>" target="_blank">View on Metacritic</a>
       <% else %>
-        <a href="http://metacritic.com">View on Metacritic</a>
+        <a href="http://metacritic.com" target="_blank">View on Metacritic</a>
       <% end %>
       </li>
     </ul>
@@ -260,7 +260,7 @@
 
 <div class="row main-column pricing">
   <% if !@game.itad %>
-    We couldn't find any deals on <a href="http://isthereanydeal.com">IsThereAnyDeal.</a>
+    We couldn't find any deals on <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal.</a>
   <% else %>
     
     <div class="section-heading">
@@ -342,7 +342,7 @@
 
                   <% @prices[@game.name].each do |entry| %>
                     <tr>
-                      <td><a href="<%= entry[:store_url] %>"><%= entry[:store] %></a></td>
+                      <td><a href="<%= entry[:store_url] %>" target="_blank"><%= entry[:store] %></a></td>
                       <td><%= entry[:current_price] %> (<%= entry[:price_cut]%>)</td>
                       <td><%= entry[:lowest_recorded] %></td>
                     </tr>
@@ -409,6 +409,9 @@
   <div class="description-container content collapsible">
     <% if @game.description %>
       <%= @game.description.html_safe %>
+      <br>
+      <h1></h1>
+      <p class="legal"><%= @game.legal %></p>
       <!--
       <%if @game.description.include?("Creation Kit and Steam Workshop")%>
         <%=("<h1>About the Game</h1>" + 
@@ -420,6 +423,7 @@
       -->
     <% else %>
       <%= @game.description %>
+      <p class="legal"><%= @game.legal %></p>
     <% end %>  
   </div>
 

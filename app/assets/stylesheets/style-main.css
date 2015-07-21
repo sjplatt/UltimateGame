@@ -63,20 +63,26 @@ body {
 .pkg-contents-heading {
   color: hsl(163, 63%, 86%);
 }
-.description h1 {
+.description h1,
+.description-popup h1 {
   color: hsl(163, 63%, 68%);
   border-bottom: 1px solid rgba(221,221,221,0.5);
   font-size: 18px;
   margin-top: 10px;
 }
-.description h2 {
+.description h2,
+.description-popup h2 {
   color: hsl(163, 63%, 68%);
   font-size: 18px;
 }
 .description h3,
 .description h4,
 .description h5,
-.description h6 {
+.description h6,
+.description-popup h3,
+.description-popup h4,
+.description-popup h5,
+.description-popup h6 {
   color: hsl(163, 63%, 68%);
   font-size: 16px;
 }
@@ -342,7 +348,6 @@ h3 span.divider {
 }*/
 .pricing table {
   width: 100%;
-  margin-bottom: 10px;
 }
 .pricing td {
   padding: 0;
@@ -462,6 +467,14 @@ h3 span.divider {
 .description .img-container {
   display: block;
   text-align: center;
+}
+
+
+
+.legal {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 0;
 }
 
 

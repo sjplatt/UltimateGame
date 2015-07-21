@@ -90,7 +90,6 @@ $(window).load(function() {
       }
 
       //$("#horiz_container").append(outputHTML);
-      $("#horiz_container_outer .img-loading-overlay").hide(300);
       $("#horiz_container_outer .img-loading-overlay").remove();
 
       // important: if using thumbs, note application.js where
@@ -274,9 +273,9 @@ $(window).load(function() {
         }
 
         outputHTML += '<div>\
-          <a class="reddit-entry" href="' + output[i].link + '">' + output[i].name + '</a>\
-          <a class="source" href="' + source_url + '">' + source_text + '</a>\
-          <a class="comments" href="' + output[i].comments + '">(comments)</a>\
+          <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
+          <a class="source" target="_blank" href="' + source_url + '">' + source_text + '</a>\
+          <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
         </div>';
       }
 
@@ -343,8 +342,6 @@ $(window).load(function() {
       $(elem).siblings(".collapser").hide();
     }
   });
-
-  //$(".collapser img").click(function(e) {$(e.target).parent().trigger("click");});
 
   $(".collapser").click(function(e) {
     var collapsible = $(e.target).siblings(".collapsible");
@@ -441,7 +438,7 @@ function get_prices(selected, input_name_text) {
 
       for (var i = 0; i < output.length; i++) {
         outputHTML += '<tr>\
-          <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td><a target="_blank" href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
           <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
           <td>' + output[i].lowest_recorded + '</td>\
         </tr>'
@@ -489,14 +486,15 @@ function get_extra_info(selected, input_name_text) {
         <li>Released: ' + releasedate + '</li>\
         \
         <li>Website:\
-          <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
+          <a target="_blank" href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
         </li>\
         \
         <li>\
-          <a href="' + steam_link + '">View on Steam</a>\
+          <a target="_blank" href="' + steam_link + '">View on Steam</a>\
         </li>\
       </ul>\
-      <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
+      <div class="description-popup" id="' + selected + '-description">' +
+      output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
     </div>';
 
     $(".extra-info ." + selected + " .img-loading-overlay").remove();
