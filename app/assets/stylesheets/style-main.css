@@ -503,11 +503,11 @@ h3 span.divider {
 }
 .left.sidebar {
   left: 0;
-  padding: 40px 0 0 10px;
+  padding-left: 10px;
 }
 .right.sidebar {
   right: 0;
-  padding: 40px 10px 0 0;
+  padding-right: 10px;
 }
 .left.sidebar .section-heading {text-align: left;}
 .right.sidebar .section-heading {text-align: right;}
