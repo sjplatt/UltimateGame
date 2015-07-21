@@ -60,6 +60,12 @@ $(window).load(function() {
   });*/
   
   function get_images() {
+    var failedHTML = '<div class="img-loading-overlay">\
+          <div class="img-loading-overlay-inner">\
+            Sorry, image loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+          </div>\
+        </div>'
+
     $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
@@ -109,15 +115,12 @@ $(window).load(function() {
       console.log("Finished loading images");
 
       if (!$("#horiz_container li").length) {
-        $("#dragBar").css("display","none");
+        $("#dragBar").hide();
 
-        $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-            <div class="img-loading-overlay-inner">\
-              Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-            </div>\
-          </div>');
+        $("#horiz_container_outer").prepend(failedHTML);
 
-        $(".reload-images").click(function(e) {
+        $(".pics .reload-inline").click(function(e) { // .reload-images is not visible at this point
+          $(".reload-images").hide();
           $("#horiz_container").empty();
           $("#horiz_container_outer .img-loading-overlay").remove();
           get_images();
@@ -127,20 +130,19 @@ $(window).load(function() {
       }
       else {
         $("#dragBar").css("display","block");
+        $(".reload-images").css("display","block");
       }
     }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
-      $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-          <div class="img-loading-overlay-inner">\
-            Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-          </div>\
-        </div>');
+      $("#horiz_container_outer").prepend(failedHTML);
     });
   }
 
   get_images();
 
   $(".reload-images").click(function(e) {
+    $(".reload-images").hide();
+    $("#dragBar").hide();
     $("#horiz_container").empty();
     $("#horiz_container_outer .img-loading-overlay").remove();
     get_images();
@@ -216,14 +218,14 @@ $(window).load(function() {
       '<div class="loading-container content">\
       <div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
-          Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
+          Sorry, video loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
         </div>\
       </div>\
       </div>');
 
-      $(".reload-videos").click(function(e) {
+      $(".videos .reload-inline").click(function(e) {
         $(".videos").empty();
-        $(".search-results-container").css("display","none");
+        $(".search-results-container").hide();
         get_videos();
       });
     }).always(function() {
@@ -280,6 +282,9 @@ $(window).load(function() {
 
       $(".reddit-container .img-loading-overlay").remove();
       $(".reddit-container").append(outputHTML);
+    }).fail(function() {
+      $(".reddit-container").empty();
+      $(".reddit-container").append("Sorry, we couldn't fetch Reddit activity.");
     });
   }
 
@@ -316,7 +321,10 @@ $(window).load(function() {
 
       $(".search-results-container .img-loading-overlay").remove();
       $(".search-results-container ul").append(outputHTML);
-    })
+    }).fail(function() {
+      $(".search-results-container .content").empty();
+      $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
+    });
   }
 
   get_search_results();
@@ -500,5 +508,5 @@ function get_extra_info(selected, input_name_text) {
       maxWidth: 600,
       autoWidth: false
     });
-  });
+  }).fail();
 }

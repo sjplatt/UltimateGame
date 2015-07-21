@@ -649,10 +649,27 @@ h3 span.divider {
 
 
 
-.collapser {
-  width: 40px;
+.collapser,
+.reload-images,
+.reload-inline {
+  border: none;
+  width: 30px;
   height: 30px;
+  padding: 5px;
+}
+.collapser img,
+.reload-images img,
+.reload-inline img {
+  margin: 0 auto;
+  width: 20px;
+  height: 20px;
+}
+.collapser {
   margin-top: -30px;
-  margin-left: 50px;
   float: right;
+}
+.reload-images {
+  margin: -48px -35px 0 0;
+  float: right;
+  display: none;
 }
