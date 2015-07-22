@@ -1,4 +1,4 @@
-$(window).load(function() {
+/*$(window).load(function() {
   // hacky: this eliminates the height difference between game header img height and package image height
 
   $(".listing-container").imagesLoaded(function() {
@@ -14,4 +14,4 @@ $(window).load(function() {
       $(".vertical-spacer-text").css("line-height", final_height);
     }
   });
-});
+});*/

@@ -20,12 +20,13 @@ $(window).load(function() {
     .removeClass("unselected").addClass("selected");
 
     // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-    //if ($(".pricing-entry ." + selected_class + ".ajax-loaded").length)
+    //if ($(".price-list ." + selected_class + ".ajax-loaded").length)
       // console.log("Already loaded " + selected_class);
-    if (!$(".pricing-entry-inner." + selected_class + ".ajax-loaded").length) {
-      $(".pricing-entry-inner." + selected_class).addClass("ajax-loaded");
+    if (!$(".price-list-inner." + selected_class + ".ajax-loaded").length) {
+      $(".price-list-inner." + selected_class).addClass("ajax-loaded");
       get_prices(selected_class, $(e.target).text());
-      get_extra_info(selected_class, $(e.target).text());
+      if (!$(e.target).hasClass("pkg"))
+        get_extra_info(selected_class, $(e.target).text());
     }
   });
 
@@ -46,97 +47,9 @@ $(window).load(function() {
 
 
 
-  function get_prices(selected, input_name_text) {
-    $(".pricing-entry-inner." + selected).append('<div class="price-loading-overlay">\
-      <%= image_tag "fancybox_loading.gif" %>\
-      Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
-    </div>');*/
-
-    // ajax request: format the table based on hash received from data.results
-    $.post("/ajax/get_prices", // get_prices.json
-    {input_name: input_name_text},
-    function(data) {
-      var output = data.results;
-      // console.log(output);
-
-      var outputHTML = '<tr>\
-        <th>Vendor</th>\
-        <th>Price</th>\
-        <th style="width:80px">Lowest recorded</th>\
-      </tr>';
-
-      for (var i = 0; i < output.length; i++) {
-        outputHTML += '<tr>\
-          <td><a href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
-          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-          <td>' + output[i].lowest_recorded + '</td>\
-        </tr>'
-      }
-
-      $(".pricing-entry-inner." + selected + " .price-loading-overlay").remove();
-      $(".pricing-entry-inner." + selected + " table").append(outputHTML);
-    });
-  }
-
   $(".reload-prices").click(function(e) {
     // placeholder for possible reload price functionality
   })
-
-
-
-  function get_extra_info(selected, input_name_text) {
-    $(".extra-info ." + selected).append('<div class="price-loading-overlay">\
-      <%= image_tag "fancybox_loading.gif" %>\
-      Loading information...<br>');
-
-    $.post("/ajax/get_extra_info",
-    {input_name: input_name_text},
-    function(data) {
-      var output = data.results;
-      //console.log(output);
-
-      var releasedate = output.releasedate || "Unknown";
-      var website = output.website || "";
-      if (output.steamid)
-        var steam_link = "http://store.steampowered.com/app/" + output.steamid;
-      else
-        var steam_link = "http://store.steampowered.com";      
-
-      var outputHTML =
-      '<div class="col-md-6 headerimg">\
-        <img class="extra-img" src="' + output.headerimg + '" />\
-      </div>\
-      <div class="col-md-6 links">\
-        <h4>' + output.name + '</h4>\
-        <ul>\
-          <li>Released: ' + releasedate + '</li>\
-          \
-          <li>Website:\
-            <a href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
-          </li>\
-          \
-          <li>\
-            <a href="' + steam_link + '">View on Steam</a>\
-          </li>\
-          \
-          <li>\
-            <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
-            <div class="description-popup" id="' + selected + '-description">' + output.description + '</div>\
-          </li>\
-        </ul>\
-      </div>';
-
-      $(".extra-info ." + selected + " .price-loading-overlay").remove();
-      $(".extra-info ." + selected).append(outputHTML);
-
-      $(".fancybox-text").fancybox({
-        openEffect: "fade",
-        closeEffect: "fade",
-        maxWidth: 600,
-        autoWidth: false
-      });
-    });
-  }
 
 
 
@@ -147,6 +60,12 @@ $(window).load(function() {
   });*/
   
   function get_images() {
+    var failedHTML = '<div class="img-loading-overlay">\
+          <div class="img-loading-overlay-inner">\
+            Sorry, image loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+          </div>\
+        </div>'
+
     $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
@@ -171,7 +90,6 @@ $(window).load(function() {
       }
 
       //$("#horiz_container").append(outputHTML);
-      $("#horiz_container_outer .img-loading-overlay").hide(300);
       $("#horiz_container_outer .img-loading-overlay").remove();
 
       // important: if using thumbs, note application.js where
@@ -196,15 +114,12 @@ $(window).load(function() {
       console.log("Finished loading images");
 
       if (!$("#horiz_container li").length) {
-        $("#dragBar").css("display","none");
+        $("#dragBar").hide();
 
-        $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-            <div class="img-loading-overlay-inner">\
-              Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-            </div>\
-          </div>');
+        $("#horiz_container_outer").prepend(failedHTML);
 
-        $(".reload-images").click(function(e) {
+        $(".pics .reload-inline").click(function(e) { // .reload-images is not visible at this point
+          $(".reload-images").hide();
           $("#horiz_container").empty();
           $("#horiz_container_outer .img-loading-overlay").remove();
           get_images();
@@ -214,20 +129,19 @@ $(window).load(function() {
       }
       else {
         $("#dragBar").css("display","block");
+        $(".reload-images").css("display","block");
       }
     }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
-      $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-          <div class="img-loading-overlay-inner">\
-            Sorry, image loading failed. <a class="reload-images">Reload images</a>\
-          </div>\
-        </div>');
+      $("#horiz_container_outer").prepend(failedHTML);
     });
   }
 
   get_images();
 
   $(".reload-images").click(function(e) {
+    $(".reload-images").hide();
+    $("#dragBar").hide();
     $("#horiz_container").empty();
     $("#horiz_container_outer .img-loading-overlay").remove();
     get_images();
@@ -236,38 +150,52 @@ $(window).load(function() {
 
 
   function get_videos() {
-    $(".videos").append('<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        <%= image_tag "fancybox_loading.gif" %>\
-        Loading videos...\
+    $(".videos.left.sidebar").append(
+      '<div class="loading-container content">\
+      <div class="img-loading-overlay">\
+        <div class="img-loading-overlay-inner">\
+          <%= image_tag "fancybox_loading.gif" %>\
+          Loading videos...\
+        </div>\
       </div>\
-    </div>');
+      </div>');
 
     $.post(
     "/ajax/get_videos",
     {input_name: game_name},
     function(data) {
-      $(".videos.left-sidebar").append('<h4>Game reviews on YouTube</h4>');
-      $(".videos.right-sidebar").append('<h4>Gameplay on YouTube</h4>');
+      $(".videos.left.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube reviews</span>\
+        </div>\
+        <div class="content video-container"></div>');
+      $(".videos.right.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube gameplay</span>\
+        </div>\
+        <div class="content video-container"></div>');
+
+      function get_sidebar_html(link,name,image_link) {
+        return '<a class="fancybox-media"\
+          rel="reviews"\
+          href="' + link + '">\
+          <div class="video">'
+             + name + '<br>\
+            <div class="video-img-container">\
+              <img class="video-img" src="' + image_link + '" />\
+            </div>\
+          </div>\
+        </a>';
+      }
 
       for (var i = 0; i < data.reviews.names.length; i++) {
-        $(".videos.left-sidebar").append('<div>\
-          <a class="fancybox-media"\
-            rel="reviews"\
-            href="' + data.reviews.links[i] + '">' + data.reviews.names[i] +
-            '<br><img class="video-img" src="' + data.reviews.image_links[i] + '" />\
-          </a>\
-        </div>');
+        $(".videos.left.sidebar .video-container").append(
+          get_sidebar_html(data.reviews.links[i], data.reviews.names[i], data.reviews.image_links[i]));
       }
 
       for (var i = 0; i < data.gameplay.names.length; i++) {
-        $(".videos.right-sidebar").append('<div>\
-          <a class="fancybox-media"\
-            rel="gameplay"\
-            href="' + data.gameplay.links[i] + '">' + data.gameplay.names[i] +
-            '<br><img class="video-img" src="' + data.gameplay.image_links[i] + '" />\
-          </a>\
-        </div>');
+        $(".videos.right.sidebar .video-container").append(
+          get_sidebar_html(data.gameplay.links[i], data.gameplay.names[i], data.gameplay.image_links[i]));
       }
 
       $(".fancybox-media").fancybox({
@@ -281,21 +209,31 @@ $(window).load(function() {
         }
       });
 
-      $(".videos .img-loading-overlay").hide(300);
-      $(".videos .img-loading-overlay").remove();
+      $(".videos .img-loading-overlay").parent().remove();
       console.log("Finished loading videos");
     }).fail(function() {
       $(".videos").empty();
-      $(".videos").prepend('<div class="img-loading-overlay">\
+      $(".videos.left.sidebar").prepend(
+      '<div class="loading-container content">\
+      <div class="img-loading-overlay">\
         <div class="img-loading-overlay-inner">\
-          Sorry, video loading failed. <a class="reload-videos">Reload videos</a>\
+          Sorry, video loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
         </div>\
+      </div>\
       </div>');
 
-      $(".reload-videos").click(function(e) {
+      $(".videos .reload-inline").click(function(e) {
         $(".videos").empty();
+        $(".search-results-container").hide();
         get_videos();
       });
+    }).always(function() {
+      // Make the critic reviews visible and properly positioned
+      setTimeout(function() {
+        $(".search-results-container")
+        .css("display","block")
+        .css("margin-top",$(".videos.left.sidebar").css("height"));
+      }, 2000);
     });
   }
 
@@ -303,28 +241,275 @@ $(window).load(function() {
 
 
 
-  // DESCRIPTION
+  function get_reddit_info() {
+    $(".reddit-container").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading Reddit posts...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_reddit",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var source_url = "";
+        var source_text = "";
+        var is_reddit_internal = new RegExp(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//);
+        var is_external = new RegExp(/https?:\/\/(www\.)?([^\/]*)\//);
+
+        if (is_reddit_internal.test(output[i].link)) {
+          source_url = "http://www.reddit.com/r/" + output[i].link.match(is_reddit_internal)[1];
+          source_text = "(self." + output[i].link.match(is_reddit_internal)[1] + ")";
+        }
+        else if (is_external.test(output[i].link)) {
+          source_url = "http://www.reddit.com/domain/" + output[i].link.match(is_external)[2];
+          source_text = "(" + output[i].link.match(is_external)[2] + ")";
+        }
+
+        outputHTML += '<div>\
+          <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
+          <a class="source" target="_blank" href="' + source_url + '">' + source_text + '</a>\
+          <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
+        </div>';
+      }
+
+      $(".reddit-container .img-loading-overlay").remove();
+      $(".reddit-container").append(outputHTML);
+    }).fail(function() {
+      $(".reddit-container").empty();
+      $(".reddit-container").append("Sorry, we couldn't fetch Reddit activity.");
+    });
+  }
+
+  get_reddit_info();
+
+
+
+  function get_search_results() {
+    $(".search-results-container .content").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading results...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_search_results",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var link = output[i];
+        var shortened = new RegExp(/http:\/\/www.([^\/]*)\//);
+
+        if (shortened.test(link)) {
+          var text = link.match(shortened)[1];
+
+          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
+        }
+      }
+
+      $(".search-results-container .img-loading-overlay").remove();
+      $(".search-results-container ul").append(outputHTML);
+    }).fail(function() {
+      $(".search-results-container .content").empty();
+      $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
+    });
+  }
+
+  get_search_results();
+
+
+
+  // COLLAPSIBLE CONTAINERS
   var original_height = "300px";
 
-  $(".collapsible").each(function(index, elem) {
-    $(elem).css("max-height", original_height);
-    $(elem).css("overflow", "hidden");
+  $(".collapsible")
+  .css("max-height", original_height)
+  .css("overflow", "hidden");
 
-    if ($(elem).prop("scrollHeight") <= $(elem).height()) {
+  $(".description-container, .reqs-container").each(function(index, elem) {
+    if ($(elem).prop("scrollHeight") <= $(elem).outerHeight()) {
       $(elem).siblings(".collapser").hide();
     }
   });
 
   $(".collapser").click(function(e) {
     var collapsible = $(e.target).siblings(".collapsible");
+    if (!collapsible.length)
+      collapsible = $(e.target).parent().siblings(".collapsible"); // clicked img
 
     if (collapsible.css("max-height") === original_height) {
       collapsible.css("max-height","none");
-      $(e.target).text("Read less...");
+      collapsible.siblings(".collapser").html('<%= image_tag "collapse-top.png" %>');
     }
     else {
       collapsible.css("max-height",original_height);
-      $(e.target).text("Read more...");
+      collapsible.siblings(".collapser").html('<%= image_tag "expand.png" %>');
     }
   });
+
+
+
+  // PERCENTAGE DIALS
+  $(".dial").knob({
+    "width": 120,
+    "height": 120,
+    "thickness": 0.2,
+    "bgColor": "rgba(255,255,255,0.2)",
+    "readOnly": true,
+  });
+
+  $(".dial")
+  .css("font-size", "40pt")
+  .css("height", "120px")
+  .css("width", "120px")
+  .css("margin", "0 0 0 -120px");
+
+
+
+  // MISCELLANEOUS
+
+  // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
+  $(".detail-container").css("height", $(".hltb-container").css("height"));
+
+  // Add "(none)" to package contents if there are none
+  $(".price-list-pkg-contents .list-container").each(function(index, elem) {
+    if ($(elem).children("ul").text().replace(/\s*/,"") == "")
+      $(elem).prepend('<tr><td class="empty" style="padding-left:10px;">(none)</td></tr>');
+  });
+
+  // Wrap img tags in description with img-container so images can be centered
+  $(".description-container img").each(function(index, elem) {
+    $(elem).wrap('<div class="img-container"></div>');
+  });
+
+  // Adjust height of prices display to account for unknown height of selected game name
+  // It only works when they are in display, so we trigger the resize on click
+  var pkg_height = 350;
+  var dlc_height = 500;
+
+  $(".unlisted .table-container").each(function(index, elem) {
+    $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+  });
+
+  $(".game-entry, .show-original").click(function() {
+    $(".dlc .table-container, .unlisted .table-container").each(function(index, elem) {
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    });
+    $(".pkg .table-container").each(function(index, elem) {
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    });
+  });
 });
+
+
+
+/* END OF FUNCTION THAT WILL BE CALLED ON PAGE LOAD */
+
+
+
+function get_prices(selected, input_name_text) {
+  $(".price-list-inner." + selected + " .table-container").append('<div class="img-loading-overlay">\
+    <%= image_tag "fancybox_loading.gif" %>\
+    Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
+  </div>');*/
+
+  // ajax request: format the table based on hash received from data.results
+  $.post("/ajax/get_prices", // get_prices.json
+  {input_name: input_name_text},
+  function(data) {
+    var output = data.results;
+    // console.log(output);
+
+    if (output.length == 0) {
+      var outputHTML = '<tr><td class="empty">(none found)</td></tr>';
+    }
+    else {
+      var outputHTML = '<tr>\
+        <th>Vendor</th>\
+        <th>Price</th>\
+        <th style="width:80px">Lowest recorded</th>\
+      </tr>';
+
+      for (var i = 0; i < output.length; i++) {
+        outputHTML += '<tr>\
+          <td><a target="_blank" href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+          <td>' + output[i].lowest_recorded + '</td>\
+        </tr>'
+      }
+    }
+
+    $(".price-list-inner." + selected + " .img-loading-overlay").remove();
+    $(".price-list-inner." + selected + " table").append(outputHTML);
+  });
+}
+
+
+
+function get_extra_info(selected, input_name_text) {
+  $(".extra-info ." + selected).append('<div class="img-loading-overlay">\
+    <div class="img-loading-overlay-inner">\
+      <%= image_tag "fancybox_loading.gif" %>\
+      Loading information...\
+    </div>\
+  </div>');
+
+  $.post("/ajax/get_extra_info",
+  {input_name: input_name_text},
+  function(data) {
+    var output = data.results;
+    //console.log(output);
+
+    var releasedate = output.releasedate || "Unknown";
+    var website = output.website || "";
+    if (output.steamid)
+      var steam_link = "http://store.steampowered.com/app/" + output.steamid;
+    else
+      var steam_link = "http://store.steampowered.com";      
+
+    var outputHTML =
+    '<div class="col-md-6 headerimg">\
+      <img class="extra-img" src="' + output.headerimg + '" />\
+    </div>\
+    <div class="col-md-6 links">\
+      <span class="title">' + output.name + '</span>\
+      <br><span class="btn btn-primary btn-sm">\
+        <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
+      </span>\
+      <ul>\
+        <li>Released: ' + releasedate + '</li>\
+        \
+        <li>Website:\
+          <a target="_blank" href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
+        </li>\
+        \
+        <li>\
+          <a target="_blank" href="' + steam_link + '">View on Steam</a>\
+        </li>\
+      </ul>\
+      <div class="description-popup" id="' + selected + '-description">' +
+      output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
+    </div>';
+
+    $(".extra-info ." + selected + " .img-loading-overlay").remove();
+    $(".extra-info ." + selected).append(outputHTML);
+
+    $(".fancybox-text").fancybox({
+      openEffect: "fade",
+      closeEffect: "fade",
+      maxWidth: 600,
+      autoWidth: false
+    });
+  }).fail();
+}
