@@ -29,39 +29,64 @@
 
       <% if Game.find_by(steamid:capsule) %>
         <div class="col-xs-4 capsule">
-          <div class="stretchy">
-          <div class="inner">
-            <% if Game.find_by(steamid:capsule).headerimg %>
-              <a href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
-              <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
-              </a>
-            <% else %>
-              <%= image_tag "steamlogo.jpg", class: "game-img" %>
-              <!--p><%= Game.find_by(steamid:capsule).name %></p-->
-            <% end %>
-          </div>
-          </div>
+          <% if Game.find_by(steamid:capsule).headerimg %>
+            <a href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
+
+              <div class="stretchy">
+                <div class="inner">
+
+                  <img src="<%= Game.find_by(steamid:capsule).headerimg %>" class="game-img" />
+
+                </div>
+              </div>
+            
+            </a>
+
+          <% else %>
+
+            <div class="stretchy">
+              <div class="inner">
+                <a href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(steamid:capsule).name %>&amp;commit=Search">
+                  <%= image_tag "steamlogo.jpg", class: "game-img" %>
+                  <!--p><%= Game.find_by(steamid:capsule).name %></p-->
+                </a>
+              </div>
+            </div>
+
+          <% end %>
         </div>
 
       <% elsif Package.find_by(packageid:capsule) %>
         <div class="col-xs-4 capsule">
-          <div class="stretchy">
-          <div class="inner">
-            <% if Package.find_by(packageid:capsule).headerimg %>
-              <a class="package-link" href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).name %>&amp;commit=Search">
-              <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
+          <% if Package.find_by(packageid:capsule).headerimg %>
+            <a class="package-link" href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).name %>&amp;commit=Search">
 
-              <div class="vertical-spacer">
-                <div class="vertical-spacer-text">PACKAGE</div>
+              <div class="stretchy">
+                <div class="inner package">
+              
+                  <img src="<%= Package.find_by(packageid:capsule).headerimg %>" class="package-img" />
+
+                  <div class="vertical-spacer">
+                    <div class="vertical-spacer-text">PACKAGE</div>
+                  </div>
+
+                </div>
               </div>
-              </a>
 
-            <% else %>
-              <%= image_tag "steamlogo.jpg", class: "package-img" %>
-              <!--p><%= Package.find_by(packageid:capsule).name %></p-->
-            <% end %>
-          </div>
-          </div>
+            </a>
+
+          <% else %>
+
+            <div class="stretchy">
+              <div class="inner package">
+                <a class="package-link" href="/get_game?utf8=%E2%9C%93&amp;query=<%= Game.find_by(id:Package.find_by(packageid:capsule).game_id).name %>&amp;commit=Search">
+                  <%= image_tag "steamlogo.jpg", class: "package-img" %>
+                  <!--p><%= Package.find_by(packageid:capsule).name %></p-->
+                </a>
+              </div>
+            </div>
+
+          <% end %>
         </div>
       <% end %>
 
