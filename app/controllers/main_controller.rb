@@ -4,17 +4,18 @@ require 'trollop'
 
 class MainController < ApplicationController
   
-  #Precondition: id is a id of a game. ID MUST BE VALID
-  #PostCondition: creates instance variable @post_links for the links of
-  #the reddit posts and @post_names for the titles, @comment_links
-  #for the link to the comments
-  def get_reddit_info(id)
+  #Precondition: name is the name of the game. MUST BE VALID
+  #Postcondition: creates instance variables
+  # @post_links for the links of the reddit posts
+  # @post_names for the titles
+  # @comment_links for the link to the comments
+  def get_reddit_info(name)
     @post_names = []
     @post_links = []
     @comment_links = []
     base_url = "http://www.reddit.com/r/"
-    game = Game.find_by(id:id)
-    base_url+= game.subreddit + "/top?sort=top&t=month"
+    game = Game.find_by(name:name)
+    base_url += game.subreddit + "/top?sort=top&t=month"
 
     page = Nokogiri::HTML.parse(open(base_url))
     if page.css('#noresults') && page.css('#noresults') == []
@@ -52,9 +53,11 @@ class MainController < ApplicationController
     google_links = []
     count = 0
     begin
-      Google::Search::Web.new(:query => (name + "reviews")).each do |web|
-        if !web.uri.include?("reddit") && !web.uri.include?("wikipedia") && 
-          !web.uri.include?("youtube") && count<10
+      Google::Search::Web.new(:query => (name + " reviews")).each do |web|
+        if !web.uri.include?("reddit") &&
+          !web.uri.include?("wikipedia") && 
+          !web.uri.include?("youtube") &&
+          !web.uri.include?("metacritic") && count<10
           google_links << web.uri
           count+=1
         end
@@ -77,7 +80,7 @@ class MainController < ApplicationController
   def google_image_info(name,start_time,first_call)
     google_image_links = []
      begin
-      Google::Search::Image.new(:query => (name+"gameplay")).each do |image|
+      Google::Search::Image.new(:query => (name+" gameplay")).each do |image|
         if image.width > 700 
           google_image_links<< image.uri
         end
@@ -508,10 +511,10 @@ class MainController < ApplicationController
   # POST '/ajax/get_images'
   def get_images_ajax
     input_name = params[:input_name]
-    @google_image_links = google_image_info(input_name, Time.now, false)
+    google_image_links = google_image_info(input_name, Time.now, false)
 
     respond_to do |format|
-      format.json {render :json => {:results => @google_image_links}}
+      format.json {render :json => {:results => google_image_links}}
     end
   end
 
@@ -551,7 +554,7 @@ class MainController < ApplicationController
       name: item.name,
       steamid: item.steamid,
       description: item.description,
-      website: item.website.sub("http://","").sub(/\.com\/$/,".com"),
+      website: item.website,
       releasedate: item.releasedate,
       developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
       multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
@@ -561,6 +564,39 @@ class MainController < ApplicationController
 
     respond_to do |format|
       format.json {render :json => {:results => item_hash}}
+    end
+  end
+
+  # POST '/ajax/get_reddit'
+  def get_reddit_ajax
+    input_name = params[:input_name]
+
+    get_reddit_info(input_name)
+    reddit_info = []
+
+    if (@post_names.length != @post_links.length ||
+      @post_names.length != @comment_links.length ||
+      @post_links.length != @comment_links.length)
+      puts "ERROR: Missing reddit info"
+    else
+      (0..@post_names.length-1).each do |i|
+        reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
+      end
+    end
+
+    respond_to do |format|
+      format.json {render :json => {:results => reddit_info}}
+    end
+  end
+
+  # POST '/ajax/get_search_results'
+  def get_search_results_ajax
+    input_name = params[:input_name]
+
+    google_search_links = google_info(input_name, Time.now, false)
+
+    respond_to do |format|
+      format.json {render :json => {:results => google_search_links}}
     end
   end
 
@@ -578,8 +614,6 @@ class MainController < ApplicationController
 
     is_dlc_string = params[:dlc]
     @google_image_links = []
-    @reddit_info = []
-    @extra_info = []
 
     if is_dlc_string.eql?("true")
       @is_dlc = true
@@ -598,7 +632,9 @@ class MainController < ApplicationController
       # Populate @associated_names to get all DLCs/packages associated with @game
       add_associated_name(@game.name, @game.name, false, false)
       Dlc.where(game_id:@game.id).each do |dlc|
-        add_associated_name(@game.name, dlc.name, true, false)
+        if (!dlc.name.downcase.eql?(@game.name.downcase))
+          add_associated_name(@game.name, dlc.name, true, false)
+        end
       end
       Package.where(game_id:@game.id).each do |pkg|
         add_associated_name(@game.name, pkg.name, false, true)
@@ -617,20 +653,6 @@ class MainController < ApplicationController
       end
 
       # Other prices are retrieved one by one with get_prices_ajax
-    
-      # Reddit
-      # Merge arrays
-      get_reddit_info(@game.id)
-
-      if (@post_names.length != @post_links.length ||
-        @post_names.length != @comment_links.length ||
-        @post_links.length != @comment_links.length)
-        puts "ERROR: Missing reddit info"
-      else
-        (0..@post_names.length-1).each do |i|
-          @reddit_info << {name: @post_names[i], link: @post_links[i], comments: @comment_links[i]}
-        end
-      end
     end
   end
 end
