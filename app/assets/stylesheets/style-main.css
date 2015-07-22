@@ -38,6 +38,9 @@ body {
   text-decoration: none;
   color: #fff;
 }
+h3.divider {
+  border-bottom: 1px solid hsl(163, 63%, 48%);
+}
 .section-heading {
   color: hsl(163, 63%, 86%);
   border-bottom: 1px solid hsl(163, 63%, 48%);
@@ -112,6 +115,7 @@ body {
 }
 
 
+
 a {
   color: hsl(163, 63%, 43%);
 }
@@ -124,10 +128,12 @@ a:focus {
 .header {
   background-color: hsl(163, 55%, 25%);
 }
-.content {
+.content, .footer {
   background-color: rgba(30,30,30,0.4);
 }
-
+.footer {
+  background-color: rgba(30,30,30,0.7);
+}
 
 
 
@@ -195,7 +201,6 @@ a:focus {
 h3.divider {
   width: 100%;
   text-align: center;
-  border-bottom: 1px solid #000;
   line-height: 0.1em;
   margin: 10px 0 20px;
 } 
@@ -686,4 +691,15 @@ h3 span.divider {
   margin: -48px -35px 0 0;
   float: right;
   display: none;
+}
+
+
+
+.footer {
+  height: 100px;
+  margin-top: 60px;
+  padding-top: 20px;
+  display: inline-flex;
+  font-size: 11px;
+  text-align: right;
 }
