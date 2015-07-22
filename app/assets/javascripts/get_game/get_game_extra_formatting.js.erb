@@ -394,11 +394,16 @@ $(window).load(function() {
   });
 
   // Adjust height of prices display to account for unknown height of selected game name
+  // It only works when they are in display, so we trigger the resize on click
   var pkg_height = 350;
   var dlc_height = 500;
 
+  $(".unlisted .table-container").each(function(index, elem) {
+    $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+  });
+
   $(".game-entry, .show-original").click(function() {
-    $(".dlc .table-container").each(function(index, elem) {
+    $(".dlc .table-container, .unlisted .table-container").each(function(index, elem) {
       $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
     });
     $(".pkg .table-container").each(function(index, elem) {

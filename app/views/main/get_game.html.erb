@@ -6,11 +6,11 @@
 <%= image_tag "fancybox_loading.gif", style: "display:none" %>
 
 <div class="col-md-12 header">
-  <div class="col-md-4 homepage-title">
+  <div class="col-xs-4 homepage-title">
     <h1>The Name Goes Here</h1>
   </div>
 
-  <div class="col-md-8 search-bar">
+  <div class="col-xs-8 search-bar">
     <%= form_tag "/get_game", method: :get do %>
       <div class="input-group">
         <% if params[:query].present? %>
