@@ -83,6 +83,11 @@
       </div>
     </div>
 
+    <div class="score-labels">
+      <div class="label">METASCORE</div><!--
+      --><div class="label">STEAM %POSITIVE</div>
+    </div>
+
     <div class="recs-container">
       <span class="recs-num"><%= @game.recommendations || "??" %></span>
       <p class="recs-word">recommendations</p>
@@ -414,7 +419,9 @@
       <%= @game.description.html_safe %>
       <br>
       <h1></h1>
-      <p class="legal"><%= @game.legal %></p>
+      <% if @game.legal && @game.legal != "" %>
+        <p class="legal"><%= @game.legal.html_safe.gsub(/<br(\s*\/?)>/,"") %></p>
+      <% end %>
       <!--
       <%if @game.description.include?("Creation Kit and Steam Workshop")%>
         <%=("<h1>About the Game</h1>" + 
@@ -426,7 +433,9 @@
       -->
     <% else %>
       <%= @game.description %>
-      <p class="legal"><%= @game.legal %></p>
+      <% if @game.legal && @game.legal != "" %>
+        <p class="legal"><%= @game.legal.html_safe %></p>
+      <% end %>
     <% end %>  
   </div>
 

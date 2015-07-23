@@ -19,6 +19,7 @@ body {
 }
 .btn.has-icon img {
   height: 12px;
+  margin-left: 3px;
 }
 
 
@@ -285,7 +286,9 @@ h3 span.divider {
 }
 .info-container {
   display: inline-block;
+  position: relative;
   width: 300px;
+  height: 215px;
   float: right;
 }
 .score-container {
@@ -296,12 +299,22 @@ h3 span.divider {
   line-height: 120px;
   white-space: nowrap;
 }
+.score-labels {
+  width: 100%;
+}
+.score-labels .label {
+  display: inline-block;
+  width: 50%;
+  text-align: center;
+}
 .recs-num {
   font-size: 24pt;
 }
 .recs-container {
-  margin-top: 20px;
   text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
 }
 .recs-word {
   height: 10pt;
@@ -643,6 +656,9 @@ h3 span.divider {
 }
 .reddit-container .comments {
   font-weight: bold;
+}
+.reddit .collapser {
+  display: none;
 }
 
 

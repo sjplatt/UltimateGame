@@ -232,7 +232,7 @@ $(window).load(function() {
       setTimeout(function() {
         $(".search-results-container")
         .css("display","block")
-        .css("margin-top",$(".videos.left.sidebar").css("height"));
+        .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
       }, 2000);
     });
   }
@@ -242,6 +242,7 @@ $(window).load(function() {
 
 
   function get_reddit_info() {
+    $(".reddit-container").css("padding-right","10px");
     $(".reddit-container").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
@@ -280,10 +281,27 @@ $(window).load(function() {
       }
 
       $(".reddit-container .img-loading-overlay").remove();
-      $(".reddit-container").append(outputHTML);
+
+      if (outputHTML != "") {
+        $(".reddit-container").append(outputHTML);
+        $(".reddit .collapser").css("display","block");
+        $(".reddit-container").css("padding-right","10px");
+      }
+      else {
+        $(".reddit-container").append(
+        '<div class="img-loading-overlay">\
+          <div class="img-loading-overlay-inner">\
+            Sorry, we couldn\'t fetch Reddit activity at this time.\
+            <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+            <a href="http://www.reddit.com/search?q=' + game_name + '" target="_blank">\
+              <span class="btn btn-primary btn-sm has-icon">Search on Reddit <%= image_tag "new-window.png" %></span>\
+            </a>\
+          </div>\
+        </div>');
+      }
     }).fail(function() {
       $(".reddit-container").empty();
-      $(".reddit-container").append("Sorry, we couldn't fetch Reddit activity.");
+      $(".reddit-container").append("Sorry, we couldn't fetch Reddit activity at this time.");
     });
   }
 
@@ -314,12 +332,14 @@ $(window).load(function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
+          outputHTML += '<li><a class="fancybox-search-results" data-fancybox-type="iframe" href="' + link + '" target="_blank">' + text + '</a></li>';
         }
       }
 
       $(".search-results-container .img-loading-overlay").remove();
       $(".search-results-container ul").append(outputHTML);
+
+      $(".fancybox-search-results").fancybox();
     }).fail(function() {
       $(".search-results-container .content").empty();
       $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
