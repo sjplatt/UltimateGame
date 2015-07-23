@@ -1,4 +1,4 @@
-$(window).load(function() {
+var ready = function() {
   var game_name = $(".game-name").text().replace(/\n/g,"");
 
   // PRICES TABLE
@@ -164,6 +164,8 @@ $(window).load(function() {
     "/ajax/get_videos",
     {input_name: game_name},
     function(data) {
+      //console.log(data);
+
       $(".videos.left.sidebar").append(
         '<div class="section-heading">\
           <span class="title">YouTube reviews</span>\
@@ -198,6 +200,11 @@ $(window).load(function() {
           get_sidebar_html(data.gameplay.links[i], data.gameplay.names[i], data.gameplay.image_links[i]));
       }
 
+      if (data.reviews.names.length == 0)
+        $(".videos.left.sidebar .video-container").append('<span class="empty">No videos found</span>');
+      if (data.gameplay.names.length == 0)
+        $(".videos.right.sidebar .video-container").append('<span class="empty">No videos found</span>');
+      
       $(".fancybox-media").fancybox({
         prevEffect: "none",
         nextEffect: "none",
@@ -242,6 +249,17 @@ $(window).load(function() {
 
 
   function get_reddit_info() {
+    var failedHTML =
+    '<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        Sorry, we couldn\'t fetch Reddit activity at this time.\
+        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+        <a href="http://www.reddit.com/search?q=' + game_name + '" target="_blank">\
+          <span class="btn btn-primary btn-sm has-icon">Search on Reddit <%= image_tag "new-window.png" %></span>\
+        </a>\
+      </div>\
+    </div>';
+
     $(".reddit-container").css("padding-right","10px");
     $(".reddit-container").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
@@ -288,20 +306,15 @@ $(window).load(function() {
         $(".reddit-container").css("padding-right","10px");
       }
       else {
-        $(".reddit-container").append(
-        '<div class="img-loading-overlay">\
-          <div class="img-loading-overlay-inner">\
-            Sorry, we couldn\'t fetch Reddit activity at this time.\
-            <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
-            <a href="http://www.reddit.com/search?q=' + game_name + '" target="_blank">\
-              <span class="btn btn-primary btn-sm has-icon">Search on Reddit <%= image_tag "new-window.png" %></span>\
-            </a>\
-          </div>\
-        </div>');
+        $(".reddit-container").append(failedHTML);
+        $(".reddit-container .reload-inline").click(function(e) {
+          $(".reddit-container").empty();
+          get_reddit_info();
+        })
       }
     }).fail(function() {
       $(".reddit-container").empty();
-      $(".reddit-container").append("Sorry, we couldn't fetch Reddit activity at this time.");
+      $(".reddit-container").append(failedHTML);
     });
   }
 
@@ -310,6 +323,7 @@ $(window).load(function() {
 
 
   function get_search_results() {
+    $(".search-results-container .content").css("padding-left","0");
     $(".search-results-container .content").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
@@ -332,16 +346,15 @@ $(window).load(function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<li><a class="fancybox-search-results" data-fancybox-type="iframe" href="' + link + '" target="_blank">' + text + '</a></li>';
+          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
         }
       }
 
       $(".search-results-container .img-loading-overlay").remove();
       $(".search-results-container ul").append(outputHTML);
-
-      $(".fancybox-search-results").fancybox();
     }).fail(function() {
       $(".search-results-container .content").empty();
+      $(".search-results-container .content").css("padding-left","10px");
       $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
     });
   }
@@ -430,7 +443,12 @@ $(window).load(function() {
       $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
     });
   });
-});
+};
+
+
+
+$(document).on("page:load", ready);
+$(window).load(ready);
 
 
 

@@ -550,8 +550,8 @@ class MainController < ApplicationController
   def get_videos_ajax
     input_name = params[:input_name]
 
-    video_names1, video_links1, video_image_links1 = youtube_info(input_name, "reviews")
-    video_names2, video_links2, video_image_links2 = youtube_info(input_name, "gameplay")
+    video_names1, video_links1, video_image_links1 = youtube_info(input_name, " reviews")
+    video_names2, video_links2, video_image_links2 = youtube_info(input_name, " gameplay")
 
     respond_to do |format|
       format.json {render :json => {
