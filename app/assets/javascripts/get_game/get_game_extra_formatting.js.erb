@@ -204,7 +204,7 @@ var ready = function() {
         $(".videos.left.sidebar .video-container").append('<span class="empty">No videos found</span>');
       if (data.gameplay.names.length == 0)
         $(".videos.right.sidebar .video-container").append('<span class="empty">No videos found</span>');
-      
+
       $(".fancybox-media").fancybox({
         prevEffect: "none",
         nextEffect: "none",
@@ -235,12 +235,14 @@ var ready = function() {
         get_videos();
       });
     }).always(function() {
+      adjust_height();
+
       // Make the critic reviews visible and properly positioned
       setTimeout(function() {
         $(".search-results-container")
         .css("display","block")
         .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
-      }, 2000);
+      }, 1000);
     });
   }
 
@@ -303,7 +305,7 @@ var ready = function() {
       if (outputHTML != "") {
         $(".reddit-container").append(outputHTML);
         $(".reddit .collapser").css("display","block");
-        $(".reddit-container").css("padding-right","10px");
+        $(".reddit-container").css("padding-right","30px");
       }
       else {
         $(".reddit-container").append(failedHTML);
@@ -312,10 +314,12 @@ var ready = function() {
           get_reddit_info();
         })
       }
+
+      console.log("Finished loading reddit");
     }).fail(function() {
       $(".reddit-container").empty();
       $(".reddit-container").append(failedHTML);
-    });
+    }).always(adjust_height);
   }
 
   get_reddit_info();
@@ -352,14 +356,34 @@ var ready = function() {
 
       $(".search-results-container .img-loading-overlay").remove();
       $(".search-results-container ul").append(outputHTML);
+      console.log("Finished loading search results");
     }).fail(function() {
       $(".search-results-container .content").empty();
       $(".search-results-container .content").css("padding-left","10px");
       $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
-    });
+    }).always(adjust_height);
   }
 
   get_search_results();
+
+
+
+  // Adjust footer position
+
+  function adjust_height() {
+    function bottom_position(elem) {
+      return elem.offset().top + elem[0].offsetHeight;
+    }
+
+    // Move footer below bottom-most element
+    var body_bottom = bottom_position($("body"));
+    var left_sidebar_bottom = bottom_position($(".search-results-container"));
+    var right_sidebar_bottom = bottom_position($(".right.sidebar"))
+    var bottommost = Math.max(body_bottom, left_sidebar_bottom, right_sidebar_bottom);
+
+    $(".footer").css("position","absolute");
+    $(".footer").css("top",bottommost + "px");
+  }
 
 
 
