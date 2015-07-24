@@ -90,7 +90,6 @@ var ready = function() {
       }
 
       //$("#horiz_container").append(outputHTML);
-      $("#horiz_container_outer .img-loading-overlay").remove();
 
       // important: if using thumbs, note application.js where
       // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
@@ -99,20 +98,30 @@ var ready = function() {
         nextEffect: 'elastic'
       });
 
+      // Success code
+
       // make sure everything is loaded before trying to set width
       var total_width = 0;
       $("#horiz_container").imagesLoaded(function() {
-        $("#horiz_container li").each(function(index) {
+        $("#horiz_container_outer .img-loading-overlay").remove();
+
+        $("#horiz_container li").each(function(index, elem) {
           total_width += parseInt($(this).outerWidth(true), 10);
+
+          $(elem).children("a").css("visibility","visible");
         });
         // console.log(total_width);
 
-        $("#horiz_container").css("width",(total_width+12)+"px"); // +10 for 5px padding on each side
+        $("#dragBar").css("display","block");
+        $(".reload-images").css("display","block");
+
+        $("#horiz_container").css("width",(total_width+13)+"px"); // +10 for 5px padding on each side
         $("#horiz_container_outer").horizontalScroll();
       });
 
       console.log("Finished loading images");
 
+      // Fail code
       if (!$("#horiz_container li").length) {
         $("#dragBar").hide();
 
@@ -127,17 +136,11 @@ var ready = function() {
 
         console.log("Image load error");
       }
-      else {
-        $("#dragBar").css("display","block");
-        $(".reload-images").css("display","block");
-      }
     }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
       $("#horiz_container_outer").prepend(failedHTML);
     });
   }
-
-  get_images();
 
   $(".reload-images").click(function(e) {
     $(".reload-images").hide();
@@ -146,6 +149,8 @@ var ready = function() {
     $("#horiz_container_outer .img-loading-overlay").remove();
     get_images();
   });
+
+  get_images();
 
 
 

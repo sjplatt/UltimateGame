@@ -5,27 +5,8 @@
 <!-- preload ajax images -->
 <%= image_tag "fancybox_loading.gif", style: "display:none" %>
 
-<div class="col-md-12 header">
-  <div class="col-xs-4 homepage-title">
-    <h1>The Name Goes Here</h1>
-  </div>
+<%= render "header" %>
 
-  <div class="col-xs-8 search-bar">
-    <%= form_tag "/get_game", method: :get do %>
-      <div class="input-group">
-        <% if params[:query].present? %>
-          <div class="input-group-btn">
-            <%= link_to "clear", "/", class: "btn btn-default" %>
-          </div>
-        <% end %>
-        <%= text_field_tag :query, params[:query], class: "form-control typeahead", autocomplete: "off" %>
-        <div class="input-group-btn">
-          <%= submit_tag "Search", class: "submit-button btn btn-primary" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
 
 
 <% if !@game %>
@@ -153,7 +134,7 @@
     </a>
   </div>
 
-  <div class="col-md-8 hltb-container content">
+  <div class="col-xs-8 hltb-container content">
     <% if !@game.hltb %>
       We couldn't find gameplay information on <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat.</a>
     <% else %>
@@ -217,7 +198,7 @@
 
 
 
-  <div class="col-md-4 detail-container content">
+  <div class="col-xs-4 detail-container content">
     <ul>
       <li>Released: <%= @game.releasedate || "Unknown" %></li>
       
@@ -280,7 +261,7 @@
 
     <table>
       <tr>
-        <td class="col-md-6 dlc-pkg-select">
+        <td class="col-xs-6 dlc-pkg-select">
 
           <div class="subsection content dlcs">
 
@@ -323,7 +304,7 @@
 
         </td>
 
-        <td class="col-md-6 price-list content">
+        <td class="col-xs-6 price-list content">
           <% @associated_names.each do |name,data| %>
             <div class="price-list-inner
             unselected
@@ -451,25 +432,25 @@
 
   <div class="reqs-container content collapsible">
     <% if @game.minreq && @game.recreq %>
-      <div class="col-md-6">
+      <div class="col-xs-6">
         <%= @game.minreq.html_safe %>
       </div>
-      <div class="col-md-6">
+      <div class="col-xs-6">
         <%= @game.recreq.html_safe %>
       </div>
 
     <% elsif @game.minreq %>
-      <div class="col-md-12">
+      <div class="col-xs-12">
         <%= @game.minreq.html_safe %>
       </div>
 
     <% elsif @game.recreq %>
-      <div class="col-md-12">
+      <div class="col-xs-12">
         <%= @game.recreq.html_safe %>
       </div>
 
     <% else %>
-      <div class="col-md-12">
+      <div class="col-xs-12">
         <p class="empty">(none found)</p>
       </div>
 
@@ -500,13 +481,7 @@
 
 
 
-<div class="col-xs-12 footer">
-  <div class="row main-column">
-    Game statistics are copyright <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat.</a>
-    <br>Game prices are copyright <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal.</a>
-    <br><a href="http://metacritic.com" target="_blank">Metacritic</a> and <a href="http://store.steampowered.com" target="_blank">Steam</a> statistics are copyright by their respective companies.
-  </div>
-</div>
+<%= render "footer" %>
 
 
 

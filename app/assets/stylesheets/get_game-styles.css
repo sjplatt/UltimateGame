@@ -189,89 +189,7 @@ a:focus {
 
 
 
-/* Index styles */
-
-.listing-container {
-  padding: 5px;
-}
-.capsule {
-  padding: 0;
-}
-.stretchy {
-  width: 100%;
-  padding-bottom: calc((225/470)*100%);
-  /* normal game image is 215*460, +10 each dimension for padding */
-}
-.stretchy .inner {
-  position: absolute;
-  top: 0; bottom: 0; left: 0; right: 0;
-}
-.game-img, .package-img {
-  width: 100%;
-  z-index: 1;
-  padding: 5px;
-}
-
-.vertical-spacer {
-  background-color: #202020;
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-}
-.stretchy .inner.package .vertical-spacer {
-  background-clip: content-box;
-  padding: 5px;
-}
-.vertical-spacer-text {
-  color: rgba(255,255,255,0.5);
-  text-align: center;
-  position: absolute;
-  width: 100%;
-  height: calc((1 - (87*460)/(231*215)) * 100%);
-  /* some math, since pkg img is 231*87 and normal img is 215*460 */
-  padding-top: 1.5%;
-  bottom: 0;
-}
-.package-link:hover,
-.package-link:focus,
-.package-link:active {
-  text-decoration: none;
-}
-
-
-
-/* New Deals line styling */
-
-.divider-container {
-  margin-top: 40px;
-  margin-bottom: 10px;
-}
-h3.divider {
-  width: 100%;
-  text-align: center;
-  line-height: 0.1em;
-  margin: 10px 0 20px;
-} 
-h3 span.divider {
-  background: #373737;
-  padding: 0 10px;
-}
-
-
-
 /* Game page styling */
-
-/*.underlay {
-  width: 900px;
-  height: 10000px;
-  margin: 0 auto;
-  left: 225px;
-  position: absolute;
-  z-index: -1000;
-  background-color: rgba(255,255,255,0.1);
-}*/
 
 .vital-data * {
   padding: 0;
@@ -301,6 +219,9 @@ h3 span.divider {
   height: 120px;
   line-height: 120px;
   white-space: nowrap;
+}
+.score-container input {
+  background-color: #373737;
 }
 .score-labels {
   width: 100%;
@@ -358,29 +279,32 @@ h3 span.divider {
   background-color: white;
 }*/
 
+#horiz_container a {
+  visibility: hidden; /* shown once all are loaded */
+}
 #horiz_container img {
   height: 150px;
   border-radius: 5px;
 }
 #horiz_container_outer {
-  border-color: rgba(204,204,204,0.4);
+  border-color: rgba(204,204,204,0.3);
   width: 100%;
-  height: 170px; /* 150+10+10 */
+  height: 170px !important; /* 150+10+10 */
 }
 #horiz_container_inner {
   margin: 0;
-  padding: 0;
+  padding: 0 !important;
 }
 #horiz_container {
-  height: 170px;
-  padding-left: 5px; /* 10/2 */
-  padding-right: 5px;
+  height: 170px !important;
+  padding-left: 5px !important; /* 10/2 */
+  padding-right: 5px !important;
 }
 #horiz_container li {
-  margin: 10px 5px;
+  margin: 10px 5px !important;
 }
 #scrollbar, #track {
-  width: 100%;
+  width: 100% !important;
 }
 #dragBar {
   display: none; /* made visible in ajax call */

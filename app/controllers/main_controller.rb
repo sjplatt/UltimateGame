@@ -86,7 +86,7 @@ class MainController < ApplicationController
         end
       end
     rescue
-      if Time.now<start_time+5.seconds && !first_call
+      if Time.now<start_time+8.seconds && !first_call
         sleep(0.2)
         google_image_info(name,start_time,false)
       else 
