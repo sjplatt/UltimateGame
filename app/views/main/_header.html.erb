@@ -1,0 +1,21 @@
+<div class="col-md-12 header">
+  <div class="col-xs-4 homepage-title">
+    <h1>The Name Goes Here</h1>
+  </div>
+
+  <div class="col-xs-8 search-bar">
+    <%= form_tag "/get_game", method: :get do %>
+      <div class="input-group">
+        <% if params[:query].present? %>
+          <div class="input-group-btn">
+            <%= link_to "clear", "/", class: "btn btn-default" %>
+          </div>
+        <% end %>
+        <%= text_field_tag :query, params[:query], class: "form-control typeahead", autocomplete: "off" %>
+        <div class="input-group-btn">
+          <%= submit_tag "Search", class: "submit-button btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

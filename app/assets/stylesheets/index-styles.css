@@ -1,0 +1,67 @@
+.listing-container {
+  padding: 5px;
+}
+.capsule {
+  padding: 0;
+}
+.stretchy {
+  width: 100%;
+  padding-bottom: calc((225/470)*100%);
+  /* normal game image is 215*460, +10 each dimension for padding */
+}
+.stretchy .inner {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+}
+.game-img, .package-img {
+  width: 100%;
+  z-index: 1;
+  padding: 5px;
+}
+
+.vertical-spacer {
+  background-color: #202020;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.stretchy .inner.package .vertical-spacer {
+  background-clip: content-box;
+  padding: 5px;
+}
+.vertical-spacer-text {
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  height: calc((1 - (87*460)/(231*215)) * 100%);
+  /* some math, since pkg img is 231*87 and normal img is 215*460 */
+  padding-top: 1.5%;
+  bottom: 0;
+}
+.package-link:hover,
+.package-link:focus,
+.package-link:active {
+  text-decoration: none;
+}
+
+
+
+/* New Deals line styling */
+
+.divider-container {
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+h3.divider {
+  width: 100%;
+  text-align: center;
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+} 
+h3 span.divider {
+  background: #373737;
+  padding: 0 10px;
+}

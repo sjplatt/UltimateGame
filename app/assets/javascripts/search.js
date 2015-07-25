@@ -90,7 +90,7 @@ var search = function() {
     source: dlcs_object.ttAdapter(),
     templates: {
       header: "<h4 class='category-heading'>DLCs</h4>",
-      empty: "<span class='empty-suggestions'>(no suggestions found)</span>",
+      empty: "<span class='empty empty-suggestions'>(no suggestions found)</span>",
       suggestion: typeahead_suggestion(true)
     }
   }).on("typeahead:selected", function(ev, suggestion) {
