@@ -16,13 +16,6 @@ default: &default
 development:
   #<<: *default
   #database: gamedevelopment
-  adapter: postgresql
-  encoding: unicode
-  database: <%= ENV['RDS_DB_NAME']  %>
-  username: <%= ENV['RDS_USERNAME'] %>
-  password: <%= ENV['RDS_PASSWORD'] %>
-  host: <%= ENV['RDS_HOSTNAME'] %>
-  port: <%= ENV['RDS_PORT'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -34,3 +27,8 @@ test:
 production:
   adapter: postgresql
   encoding: unicode
+  database: <%= ENV['RDS_DB_NAME']  %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  host: <%= ENV['RDS_HOSTNAME'] %>
+  port: <%= ENV['RDS_PORT'] %>
