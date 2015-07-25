@@ -220,8 +220,8 @@ a:focus {
   line-height: 120px;
   white-space: nowrap;
 }
-.score-container input {
-  background-color: #373737;
+.score-container .dial {
+  visibility: hidden; /* js displays this, if it loads */
 }
 .score-labels {
   width: 100%;
@@ -230,6 +230,9 @@ a:focus {
   display: inline-block;
   width: 50%;
   text-align: center;
+}
+.score-labels .label:last-child {
+  word-spacing: 0.5em;
 }
 
 .recs-container {

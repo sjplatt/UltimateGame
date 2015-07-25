@@ -4,6 +4,10 @@ require 'trollop'
 
 class MainController < ApplicationController
   
+  DEVELOPER_KEY = ""
+  YOUTUBE_API_SERVICE_NAME = 'youtube'
+  YOUTUBE_API_VERSION = 'v3'
+  
   #Precondition: name is the name of the game. MUST BE VALID
   #Postcondition: creates instance variables
   # @post_links for the links of the reddit posts
@@ -95,10 +99,6 @@ class MainController < ApplicationController
     end
     return google_image_links
   end
-
-  DEVELOPER_KEY = 'AIzaSyBlPwT7wEP91jGmCl-IAaynE3SFEdCfkyU'
-  YOUTUBE_API_SERVICE_NAME = 'youtube'
-  YOUTUBE_API_VERSION = 'v3'
 
   def get_service
     client = Google::APIClient.new(

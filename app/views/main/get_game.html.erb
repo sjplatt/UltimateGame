@@ -399,9 +399,10 @@
     <% if @game.description %>
       <%= @game.description.html_safe %>
       <br>
+      <br>
       <h1></h1>
       <% if @game.legal && @game.legal != "" %>
-        <p class="legal"><%= @game.legal.html_safe.gsub(/<br(\s*\/?)>/,"") %></p>
+        <p class="legal"><%= @game.legal.html_safe.gsub(/<br\s*\/?>/,"") %></p>
       <% end %>
       <!--
       <%if @game.description.include?("Creation Kit and Steam Workshop")%>
