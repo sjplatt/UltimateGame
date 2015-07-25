@@ -12,7 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
+// require turbolinks
 //= require jquery.fancybox.pack.js
 //= require jquery.fancybox-media.js
 //= require_directory .

@@ -86,7 +86,7 @@ class MainController < ApplicationController
         end
       end
     rescue
-      if Time.now<start_time+5.seconds && !first_call
+      if Time.now<start_time+8.seconds && !first_call
         sleep(0.2)
         google_image_info(name,start_time,false)
       else 
@@ -325,13 +325,14 @@ class MainController < ApplicationController
   #Precondition: itad_plain is the part after plain= in corresponding ITAD URL
   #Postcondition: @misc_info hash is created if it doesn't exist
   #Postcondition: It is populated with metascore, metacritic_link, steam_percentage, wiki_link
-  def get_misc_info(input_name, itad_plain)
+  def get_misc_info_and_prices(input_name, itad_plain)
     # default outputs
     metascore = "??"
     metacritic_link = "http://metacritic.com"
     steam_percentage = "??"
     wiki_search_string = URI.encode(input_name)
     wiki_link = "http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=#{wiki_search_string}&button="
+    prices = []
 
     if !input_name
       puts "[CRITICAL] Could not find the input_name (must be exact!)"
@@ -382,6 +383,33 @@ class MainController < ApplicationController
             wiki_link = detailed_deals.at("div.wiki.link a")[:href]
           end
         end
+
+        # Prices
+        if detailed_deals.at("div.buy table")
+          price_table = detailed_deals.at("div.buy table")
+          price_rows = price_table.css("tr.row")
+          price_rows.each do |row|
+            store = row.css("td")[0].at("a").text
+            store_url = row.css("td")[0].at("a")[:href]
+            price_cut = row.at("td.cut").text
+            current_price = row.at("td.new").text
+            lowest_recorded = row.at("td.low").text
+            regular_price = row.at("td.old").text
+            prices.push({store: store,
+                         store_url: store_url,
+                         price_cut: price_cut,
+                         current_price: current_price,
+                         lowest_recorded: lowest_recorded,
+                         regular_price: regular_price})
+          end
+        end
+
+        if !@prices
+          @prices = {}
+        end
+        @prices[input_name] = prices
+        # e.g. @prices = {"Bioshock Infinite"=>[{price entry 1}, {price entry 2}, ...], ...}
+
       end
     end
 
@@ -522,8 +550,8 @@ class MainController < ApplicationController
   def get_videos_ajax
     input_name = params[:input_name]
 
-    video_names1, video_links1, video_image_links1 = youtube_info(input_name, "reviews")
-    video_names2, video_links2, video_image_links2 = youtube_info(input_name, "gameplay")
+    video_names1, video_links1, video_image_links1 = youtube_info(input_name, " reviews")
+    video_names2, video_links2, video_image_links2 = youtube_info(input_name, " gameplay")
 
     respond_to do |format|
       format.json {render :json => {
@@ -641,8 +669,7 @@ class MainController < ApplicationController
       end
 
       # Get misc info and prices for @game only
-      get_misc_info(@game.name, @game.itad)
-      get_prices(@game.name, @game.itad)
+      get_misc_info_and_prices(@game.name, @game.itad)
 
       if @prices && @prices[@game.name]
         @lowest_current_arr = @prices[@game.name].sort_by {|entry| entry[:current_price].gsub("$","").to_f}
