@@ -3,7 +3,7 @@ require 'google/api_client'
 require 'trollop'
 
 class MainController < ApplicationController
-  
+
   DEVELOPER_KEY = ""
   YOUTUBE_API_SERVICE_NAME = 'youtube'
   YOUTUBE_API_VERSION = 'v3'
@@ -574,20 +574,26 @@ class MainController < ApplicationController
     input_name = params[:input_name]
 
     item = Dlc.find_by(name:input_name)
-    item_hash = {
-      name: item.name,
-      steamid: item.steamid,
-      description: item.description,
-      website: item.website,
-      releasedate: item.releasedate,
-      developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
-      multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
-      headerimg: item.headerimg,
-      legal: item.legal
-    }
+    if (item)
+      item_hash = {
+        name: item.name,
+        steamid: item.steamid,
+        description: item.description,
+        website: item.website,
+        releasedate: item.releasedate,
+        developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
+        multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
+        headerimg: item.headerimg,
+        legal: item.legal
+      }
 
-    respond_to do |format|
-      format.json {render :json => {:results => item_hash}}
+      respond_to do |format|
+        format.json {render :json => {:results => item_hash}}
+      end
+    else
+      respond_to do |format|
+        format.json {render :json => {:results => {}}}
+      end
     end
   end
 
