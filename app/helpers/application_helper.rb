@@ -196,6 +196,9 @@ module ApplicationHelper
     how_long_to_beat_dlc(@new_dlcs_from_update)
     set_subreddit_for_games(new_games)
     puts new_games.inspect
-    File.open("new_games.txt", 'w') { |file| file.write(new_games.inspect) }
+    s3 = Aws::S3::Client.new
+    bucket = Aws::S3::Resource.new(client: s3).bucket('elasticbeanstalk-us-east-1-528053344435')
+    object = bucket.object('database_update')
+    object.put(body:new_games.inspect)
   end
 end

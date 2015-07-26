@@ -1,7 +1,7 @@
 require 'fuzzystringmatch'
 require 'google/api_client'
 require 'trollop'
-
+require 'yaml'
 class MainController < ApplicationController
   
   #Precondition: name is the name of the game. MUST BE VALID
@@ -271,14 +271,6 @@ class MainController < ApplicationController
     set_subreddit_for_games
   end
 
-  #def index
-    #get_reddit_info(292030)
-    #google_info("Witcher 3")
-    #google_image_info("Witcher 3: Wild Hunt")
-    #get_frontpage_deals
-    #fuzzy_string_analysis_initial("fallout new vegas")
-    #puts @top_ids
-  #end
   def get_timestamp()
     base_url = "http://isthereanydeal.com/#/page:game/info?plain=bogus"
     page = Nokogiri::HTML.parse(open(base_url))
@@ -513,29 +505,6 @@ class MainController < ApplicationController
     # false,true
   end
 
-  # def is_itad_url_valid(game_name)
-  #   formatted_game_name = encode_itad_plain(game_name)
-  #   detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{formatted_game_name}"
-  #   begin
-  #     detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
-  #   rescue Exception => e
-  #     puts "Nokogiri HTML error: #{e}"
-  #     return false
-  #   end
-
-  #   if detailed_deals.at("div.pageError div.pageMessageContent")
-  #     if detailed_deals.at("div.pageError div.pageMessageContent").text.eql?("We don't have this game in our database")
-  #       return false
-  #     end
-  #   end
-
-  #   if detailed_deals.at("div#pageContent .section")
-  #     return true
-  #   end
-
-  #   return false
-  # end
-
   # POST '/ajax/get_images'
   def get_images_ajax
     input_name = params[:input_name]
@@ -570,9 +539,11 @@ class MainController < ApplicationController
   end
 
   def set_new_releases
-    @new_releases = 
-    [385220, 372200, 382700, 382690, 372720, 384670, 370600, 380230, 380231, 382680, 364050, 381200, 381201, 370540, 348460, 370920, 367950, 360510, 373980, 341980, 335190, 269630, 294190, 299580, 385200, 322160, 351480, 369080, 377280, 275060, 385020, 375910, 336510, 293160, 368890, 368080, 351250, 378480, 356910, 384980, 377290, 377660, 382240, 378660, 246920, 316890, 293260, 380120, 355810, 374450, 379320, 377330, 350610, 365820, 355330, 373390, 349140, 365260, 351050, 384000, 352160, 383670, 374830, 377220, 359350, 382180, 379600, 373750, 371120, 252130, 380690, 366810, 383230, 375550, 356550, 360850, 364500, 351640, 44310, 286570, 373800, 334750, 361930, 362810, 340170, 383580, 383620, 378590, 383100, 378850, 370590, 382570, 374970, 374140, 254820, 254840, 378110, 236870, 381220, 361560, 375400, 380550, 354910, 280360, 383010, 381870, 352400, 324790, 346220, 381620, 383520, 294040, 377450, 374630, 379960, 298050, 383030, 345260, 366970, 354620, 380000, 324760, 364840, 368750, 385230, 275850, 367020, 368730, 363110, 378370, 371010, 369580, 295910, 367570, 371360, 375250, 368760, 377500, 340960, 378280, 378270, 355670, 351510, 296970, 333490, 364960, 382920, 374380, 367550, 384950, 269690, 344440, 370050, 350150, 372740, 359940, 366640, 367700, 345240, 381120, 381590, 364670, 367600, 369070, 373820, 367080, 380580, 380560, 366860, 383330, 352700, 383190, 379290, 341550, 375120, 377150, 359160, 372360, 377600, 381090, 341870, 375710, 382080, 382380, 281640, 349220, 356400, 340270, 365590, 375900, 364510, 338930, 375930, 291210, 375210, 345440, 367050, 375190, 380130, 372380, 327510, 316370]
+    s3 = Aws::S3::Client.new
+    resp = s3.get_object(bucket:'elasticbeanstalk-us-east-1-528053344435', key:'database_update')
+    @new_releases = YAML.load(resp.body.read).flatten
   end
+
   # POST '/ajax/get_extra_info'
   def get_extra_info_ajax
     input_name = params[:input_name]
