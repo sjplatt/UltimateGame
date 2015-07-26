@@ -10,8 +10,35 @@
 
 
 <% if !@game %>
-<div class="not-found">
-  <h4>The game requested was not found in the database</h4>
+<div class="row main-column not-found">
+  <h4>The game requested was not found.</h4>
+  <p>Currently, only games available on Steam are in the database. For best results, use the suggestion dropdown to choose a game.</p>
+
+  <script>
+  $(document).ready(function() {
+    // If window is big enough that it doesn't need to scroll, snap footer to bottom
+    var place_footer = function() {
+      var view_height = document.body.scrollHeight;
+      var content_height = document.body.clientHeight + $(".footer").outerHeight(true);
+      var no_vscroll_needed = view_height > content_height;
+      //console.log(view_height + " " + content_height);
+      
+      if (no_vscroll_needed) {
+        $(".footer")
+        .css("position","absolute")
+        .css("bottom",0);
+      }
+      else {
+        $(".footer")
+        .css("position","")
+        .css("bottom","");
+      }
+    };
+
+    place_footer();
+    $(window).resize(place_footer);
+  });
+  </script>
 </div>
 
 <% else %>
@@ -488,9 +515,13 @@
 
 
 
+<% if @game %>
 <script>
 $(document).ready(function() {
-  var redirected_by = "<%= @searched_name %>".replace(/[^\w\d]/g,"-").toLowerCase();
+  function html_decode(str) {
+    return (typeof str === "undefined") ? "" : $("<div/>").html(str).text();
+  }
+  var redirected_by = html_decode("<%= @searched_name %>").replace(/[^\w\d]/g,"-").toLowerCase();
   $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
   
   // Check if user searched for the game itself
@@ -503,3 +534,4 @@ $(document).ready(function() {
     get_extra_info(redirected_by, "<%= @searched_name %>");
 });
 </script>
+<% end %>
