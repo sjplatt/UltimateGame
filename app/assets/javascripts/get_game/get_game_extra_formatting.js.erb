@@ -1,4 +1,5 @@
 var ready = function() {
+  console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
 
   // PRICES TABLE
@@ -206,9 +207,9 @@ var ready = function() {
       }
 
       if (data.reviews.names.length == 0)
-        $(".videos.left.sidebar .video-container").append('<span class="empty">No videos found</span>');
+        $(".videos.left.sidebar .video-container").append('<span class="empty">(none found)</span>');
       if (data.gameplay.names.length == 0)
-        $(".videos.right.sidebar .video-container").append('<span class="empty">No videos found</span>');
+        $(".videos.right.sidebar .video-container").append('<span class="empty">(none found)</span>');
 
       $(".fancybox-media").fancybox({
         prevEffect: "none",
@@ -424,6 +425,9 @@ var ready = function() {
 
 
   // PERCENTAGE DIALS
+
+  $(".dial").css("visibility","visible");
+
   $(".dial").knob({
     "width": 120,
     "height": 120,

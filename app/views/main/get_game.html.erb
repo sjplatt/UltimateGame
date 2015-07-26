@@ -357,6 +357,7 @@
 
               <div class="list-container">
               <ul>
+              <% if Package.find_by(name: name).apps %>
               <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
                 
                 <% if Game.find_by(steamid: item_id) && Game.find_by(steamid: item_id).name.eql?(@game.name) %>
@@ -375,6 +376,7 @@
                 
                 <% end %>
 
+              <% end %>
               <% end %>
               </ul>
               </div>
@@ -399,9 +401,10 @@
     <% if @game.description %>
       <%= @game.description.html_safe %>
       <br>
+      <br>
       <h1></h1>
       <% if @game.legal && @game.legal != "" %>
-        <p class="legal"><%= @game.legal.html_safe.gsub(/<br(\s*\/?)>/,"") %></p>
+        <p class="legal"><%= @game.legal.html_safe %></p>
       <% end %>
       <!--
       <%if @game.description.include?("Creation Kit and Steam Workshop")%>

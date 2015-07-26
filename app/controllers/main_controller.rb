@@ -3,6 +3,10 @@ require 'google/api_client'
 require 'trollop'
 
 class MainController < ApplicationController
+
+  DEVELOPER_KEY = ""
+  YOUTUBE_API_SERVICE_NAME = 'youtube'
+  YOUTUBE_API_VERSION = 'v3'
   
   #Precondition: name is the name of the game. MUST BE VALID
   #Postcondition: creates instance variables
@@ -95,10 +99,6 @@ class MainController < ApplicationController
     end
     return google_image_links
   end
-
-  DEVELOPER_KEY = 'AIzaSyBlPwT7wEP91jGmCl-IAaynE3SFEdCfkyU'
-  YOUTUBE_API_SERVICE_NAME = 'youtube'
-  YOUTUBE_API_VERSION = 'v3'
 
   def get_service
     client = Google::APIClient.new(
@@ -574,20 +574,26 @@ class MainController < ApplicationController
     input_name = params[:input_name]
 
     item = Dlc.find_by(name:input_name)
-    item_hash = {
-      name: item.name,
-      steamid: item.steamid,
-      description: item.description,
-      website: item.website,
-      releasedate: item.releasedate,
-      developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
-      multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
-      headerimg: item.headerimg,
-      legal: item.legal
-    }
+    if (item)
+      item_hash = {
+        name: item.name,
+        steamid: item.steamid,
+        description: item.description,
+        website: item.website,
+        releasedate: item.releasedate,
+        developer: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown",
+        multiple_developers: item.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1,
+        headerimg: item.headerimg,
+        legal: item.legal
+      }
 
-    respond_to do |format|
-      format.json {render :json => {:results => item_hash}}
+      respond_to do |format|
+        format.json {render :json => {:results => item_hash}}
+      end
+    else
+      respond_to do |format|
+        format.json {render :json => {:results => {}}}
+      end
     end
   end
 
