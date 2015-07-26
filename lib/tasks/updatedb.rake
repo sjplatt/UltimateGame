@@ -3,37 +3,42 @@ task :updatedb => :environment do
 end
 
 def update_steam_game_list()
-    #Base URL For Search
-    return_array = []
-    main_url = 'http://store.steampowered.com/search/?sort_by=Released_DESC#sort_by=Name_ASC&category1=998&page='
-    
-    #local variable we will modify
-    url = main_url
-    #what page of the search we are on
-    page_count = 1
-    url+=page_count.to_s
-    browser = Watir::Browser.new
-    browser.goto url
-    page = Nokogiri::HTML.parse(browser.html)
-    while page_count<225
-      #!page.at('p:contains("No results were returned for that query.")') && page_count<250
-      page.css(".search_result_row").each do |element|
-        id = element['href'].slice!(34..41)
-        id.gsub!(/[^0-9]/,'')
-        title = element.css(".title").text
-        if !Game.find_by(steamid:id)
-          Game.create(name:title,steamid:id)
-          return_array<<id
-        end
+  return_array = []
+  main_url = 'http://store.steampowered.com/search/?sort_by=Released_DESC#sort_by=Name_ASC&category1=998&page='
+
+  session = Capybara::Session.new(:webkit)
+  #local variable we will modify
+  url = main_url
+  #what page of the search we are on
+  page_count = 1
+  url+=page_count.to_s
+  
+  session.visit url
+  sleep(1)
+  page = Nokogiri::HTML.parse(session.html)
+  
+  while page_count< ENV['PAGE_COUNT'].to_i
+    #!page.at('p:contains("No results were returned for that query.")') && page_count<250
+    page.css(".search_result_row").each do |element|
+      id = element['href'].slice!(34..41)
+      id.gsub!(/[^0-9]/,'')
+      title = element.css(".title").text
+      if !Game.find_by(steamid:id)
+        Game.create(name:title,steamid:id)
+        return_array<<id
       end
-      url = main_url
-      page_count+=1
-      url+=page_count.to_s
-      sleep(0.5)
-      browser.goto url
-      page = Nokogiri::HTML.parse(browser.html) 
     end
-    return return_array
+    url = main_url
+    page_count+=1
+    url+=page_count.to_s
+    
+    sleep(0.5)
+    session.visit url
+    sleep(1)
+
+    page = Nokogiri::HTML.parse(session.html) 
+  end
+  return return_array
 end
 def update_steam_dlc(new_games)
     base_url = "http://store.steampowered.com/api/appdetails?appids="

@@ -16,6 +16,8 @@ gem 'google-api-client'
 gem 'trollop'
 gem 'aws-sdk-core'
 gem 'aws-sdk-resources'
+gem 'capybara'
+gem 'capybara-webkit'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
