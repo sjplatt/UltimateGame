@@ -3,10 +3,6 @@ require 'google/api_client'
 require 'trollop'
 
 class MainController < ApplicationController
-
-  DEVELOPER_KEY = ""
-  YOUTUBE_API_SERVICE_NAME = 'youtube'
-  YOUTUBE_API_VERSION = 'v3'
   
   #Precondition: name is the name of the game. MUST BE VALID
   #Postcondition: creates instance variables
