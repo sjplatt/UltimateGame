@@ -1,3 +1,4 @@
+require 'capybara/poltergeist'
 task :updatedb => :environment do
   update_database_final
 end
@@ -5,8 +6,8 @@ end
 def update_steam_game_list()
   return_array = []
   main_url = 'http://store.steampowered.com/search/?sort_by=Released_DESC#sort_by=Name_ASC&category1=998&page='
-
-  session = Capybara::Session.new(:webkit)
+  
+  session = Capybara::Session.new(:poltergeist)
   #local variable we will modify
   url = main_url
   #what page of the search we are on
@@ -17,7 +18,7 @@ def update_steam_game_list()
   sleep(1)
   page = Nokogiri::HTML.parse(session.html)
   
-  while page_count< ENV['PAGE_COUNT'].to_i
+  while page_count< 10#ENV['PAGE_COUNT'].to_i
     #!page.at('p:contains("No results were returned for that query.")') && page_count<250
     page.css(".search_result_row").each do |element|
       id = element['href'].slice!(34..41)
