@@ -1,4 +1,6 @@
 require 'capybara/poltergeist'
+require "#{Rails.root}/app/helpers/main_helper"
+include MainHelper
 task :updatedb => :environment do
   update_database_final
 end
