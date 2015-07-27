@@ -32,10 +32,10 @@ def update_steam_game_list()
       id = element['href'].slice!(34..41)
       id.gsub!(/[^0-9]/,'')
       title = element.css(".title").text
-      # if !Game.find_by(steamid:id)
-      #   Game.create(name:title,steamid:id)
-      #   return_array<<id
-      # end
+      if !Game.find_by(steamid:id)
+        Game.create(name:title,steamid:id)
+        return_array<<id
+      end
     end
     if !page.css(".search_result_row") || 
       page.css(".search_result_row").length == 0
