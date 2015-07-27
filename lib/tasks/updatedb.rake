@@ -18,7 +18,7 @@ def update_steam_game_list()
   sleep(1)
   page = Nokogiri::HTML.parse(session.html)
   
-  while page_count< 10#ENV['PAGE_COUNT'].to_i
+  while page_count< ENV['PAGE_COUNT'].to_i
     #!page.at('p:contains("No results were returned for that query.")') && page_count<250
     page.css(".search_result_row").each do |element|
       id = element['href'].slice!(34..41)
