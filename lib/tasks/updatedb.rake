@@ -37,6 +37,13 @@ def update_steam_game_list()
         return_array<<id
       end
     end
+    if !page.css(".search_result_row") || 
+      page.css(".search_result_row").length == 0
+      puts "ISSUE"
+      page_count-=1
+      sleep(3)
+      session = Capybara::Session.new(:poltergeist)
+    end
     url = main_url
     page_count+=1
     url+=page_count.to_s
