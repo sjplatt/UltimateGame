@@ -6,13 +6,15 @@ var search = function() {
     return function(results) {
       // console.log(results);
       return $.map(results, function(data) {
+        console.log(data);
         return {
-          name: data,
-          sanitized_name: data
+          name: data.name,
+          img: data.img,
+          is_dlc: is_dlc_param
+          /*sanitized_name: data
             .replace(/[^a-zA-Z0-9\s]/g, "")
             .replace(/\-/g, "")
-            .replace(/\s+/, " "),
-          is_dlc: is_dlc_param
+            .replace(/\s+/, " ")*/
         };
         // add whatever you want to display here
       });
@@ -22,7 +24,6 @@ var search = function() {
   var games_object = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.nonword,
     queryTokenizer: Bloodhound.tokenizers.nonword,
-    // limit: 8,
     remote: {
       url: '/games/autocomplete?query=%QUERY',
       filter: bloodhound_remote_filter(false)
@@ -41,11 +42,11 @@ var search = function() {
   var dlcs_promise = dlcs_object.initialize();
 
   games_promise
-    .done(function() { console.log('games searcher - success!'); })
-    .fail(function() { console.log('games searcher - error!'); });
+    .done(function() { console.log('Games search - load success'); })
+    .fail(function() { console.log('Games search - load error'); });
   dlcs_promise
-    .done(function() { console.log('dlcs searcher - success!'); })
-    .fail(function() { console.log('dlcs searcher - error!'); });
+    .done(function() { console.log('DLCs search - load success'); })
+    .fail(function() { console.log('DLCs search - load error'); });
 
   function get_search_url(name,is_dlc_param) {
     if (is_dlc_param) {
@@ -62,12 +63,16 @@ var search = function() {
 
   var typeahead_suggestion = function(is_dlc_param) {
     return function(data) {
-      return data.name
-      /*+ '<a href="'
-      + get_search_url(data.name,is_dlc_param)
-      + '">'*/
-      + '<span class="suggestion-link"></span>'
-      + '</a>';
+      if (data.img) {
+        return '<img class="suggestion-img" src="' + data.img + '" />'
+        + data.name +
+        '<span class="suggestion-link"></span>';
+      }
+      else {
+        return '<%= image_tag "steamlogo.jpg", class: "suggestion-img" %>'
+        + data.name +
+        '<span class="suggestion-link"></span>';
+      }
     }
   }
 

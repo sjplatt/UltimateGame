@@ -152,6 +152,7 @@ a:focus {
 }
 .tt-suggestion {
   position: relative;
+  height: 45px;
 }
 .suggestion-link {
   position: absolute; 
@@ -161,6 +162,10 @@ a:focus {
   left: 0;
   /*z-index: 1000000;*/
 }
+.suggestion-img {
+  height: 100%;
+  margin-right: 10px;
+}
 .empty-suggestions {
   margin: 3px 20px;
 }
@@ -169,6 +174,7 @@ a:focus {
   vertical-align: middle;
   width: 100%;
 }
+
 .header {
   height: 100px;
   margin-bottom: 10px;

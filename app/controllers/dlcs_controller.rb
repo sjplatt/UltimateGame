@@ -8,6 +8,12 @@ class DlcsController < ApplicationController
   end
 
   def autocomplete
-    render json: Dlc.search(params[:query], misspellings: {distance: 1}, highlight: false,partial: true, fields: [{name: :word_start}], limit: 10).map(&:name)
+    render json: Dlc.search(
+      params[:query],
+      misspellings: {distance: 1},
+      highlight: false,
+      partial: true,
+      fields: [{name: :word_start}],
+      limit: 10).map {|result| {name: result.name, img: result.headerimg}}
   end
 end
