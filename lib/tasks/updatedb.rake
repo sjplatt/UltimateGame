@@ -10,6 +10,12 @@ def update_steam_game_list()
   main_url = 'http://store.steampowered.com/search/?sort_by=Released_DESC#sort_by=Name_ASC&category1=998&page='
   
   session = Capybara::Session.new(:poltergeist)
+
+  options = {js_errors: false}
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, options)
+  end
+  
   #local variable we will modify
   url = main_url
   #what page of the search we are on
