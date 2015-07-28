@@ -313,6 +313,16 @@ def clean_hltb
         first_element.css('.text_yellow').each do |title|
           html_link = title['href']
         end
+        first_element.css('text_green').each do |title|
+          html_link = title['href']
+        end
+        first_element.css('.search_list_image').each do |title|
+          title.css('a').each do |image|
+            if image['href']
+              html_link = image['href']
+            end
+          end
+        end
         times = first_element.css('.search_list_tidbit')
         if times && times.size>0
           main_story = 0
