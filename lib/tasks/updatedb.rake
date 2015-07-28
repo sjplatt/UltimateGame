@@ -166,46 +166,47 @@ def how_long_to_beat_dlc(new_dlcs)
   base_url = "http://howlongtobeat.com/search_main.php?t=games&amp;page=1&amp;sorthead=popular&amp;sortd=Normal%2520Order&amp;plat=&amp;detail=0"
   uri = URI.parse(base_url)
   new_dlcs.each do |new_dlc_steamid|
-  begin
-    game = Dlc.find_by(steamid:new_dlc_steamid)
-    #response = Net::HTTP.post_form(uri, {"queryString" => game.name})
-    response = Net::HTTP.post_form(uri, {"queryString" => 
-      clean_string(game.name.to_s)})
-    page = Nokogiri::HTML.parse(response.body)
-    if page.css(".search_loading").css(".back_white").to_a == []
-      first_element = page.css('li')[0]
-      html_link = ""
-      first_element.css('.text_blue').each do |title|
-        html_link = title['href']
-      end
-      first_element.css('.text_yellow').each do |title|
-        html_link = title['href']
-      end
-      times = first_element.css('.gamelist_tidbit')
-      if times && times.size>0
-        main_story = 0
-        main_extra = 0
-        completion = 0
-        combined = 0
-        for i in (0..times.size-1) do
-          if i == 1
-            main_story = times[i].text.tr('^0-9', '').to_i
-          end 
-          if i == 3
-            main_extra = times[i].text.tr('^0-9', '').to_i
-          end
-          if i == 5
-            completion = times[i].text.tr('^0-9', '').to_i
-          end
-          if i ==7 
-            combined = times[i].text.tr('^0-9', '').to_i
-          end
+    begin
+      game = Dlc.find_by(steamid:new_dlc_steamid)
+      #response = Net::HTTP.post_form(uri, {"queryString" => game.name})
+      response = Net::HTTP.post_form(uri, {"queryString" => 
+        clean_string(game.name.to_s)})
+      page = Nokogiri::HTML.parse(response.body)
+      if page.css(".search_loading").css(".back_white").to_a == []
+        first_element = page.css('li')[0]
+        html_link = ""
+        first_element.css('.text_blue').each do |title|
+          html_link = title['href']
         end
-        Dlc.update(game.id,:hltb => html_link, 
-          :MainStory => main_story, :MainExtra => main_extra, 
-          :Completion => completion, :Combined => combined)
-      else
-        Dlc.update(game.id,:hltb => html_link)
+        first_element.css('.text_yellow').each do |title|
+          html_link = title['href']
+        end
+        times = first_element.css('.gamelist_tidbit')
+        if times && times.size>0
+          main_story = 0
+          main_extra = 0
+          completion = 0
+          combined = 0
+          for i in (0..times.size-1) do
+            if i == 1
+              main_story = times[i].text.tr('^0-9', '').to_i
+            end 
+            if i == 3
+              main_extra = times[i].text.tr('^0-9', '').to_i
+            end
+            if i == 5
+              completion = times[i].text.tr('^0-9', '').to_i
+            end
+            if i ==7 
+              combined = times[i].text.tr('^0-9', '').to_i
+            end
+          end
+          Dlc.update(game.id,:hltb => html_link, 
+            :MainStory => main_story, :MainExtra => main_extra, 
+            :Completion => completion, :Combined => combined)
+        else
+          Dlc.update(game.id,:hltb => html_link)
+        end
       end
     rescue
       puts "HLTBDC Error"
