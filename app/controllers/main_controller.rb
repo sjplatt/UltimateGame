@@ -79,10 +79,15 @@ class MainController < ApplicationController
   #Postcondition: returns array filled with google image links
   def google_image_info(name,start_time,first_call)
     google_image_links = []
-     begin
+    int count = 0
+    begin
       Google::Search::Image.new(:query => (name+" gameplay")).each do |image|
         if image.width > 700 
           google_image_links<< image.uri
+          count+=1
+        end
+        if count>15
+          break
         end
       end
     rescue
