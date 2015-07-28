@@ -540,7 +540,8 @@ class MainController < ApplicationController
 
   def set_new_releases
     s3 = Aws::S3::Client.new
-    resp = s3.get_object(bucket:'elasticbeanstalk-us-east-1-528053344435', key:'database_update')
+    resp = s3.get_object(bucket:ENV['NEW_GAME_BUCKET'], 
+      key:ENV['NEW_GAME_FILE'])
     @new_releases = YAML.load(resp.body.read).flatten
   end
 

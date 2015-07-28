@@ -233,7 +233,7 @@ def update_database_final
     set_subreddit_for_games(new_games)
     puts new_games.inspect
     s3 = Aws::S3::Client.new
-    bucket = Aws::S3::Resource.new(client: s3).bucket('elasticbeanstalk-us-east-1-528053344435')
-    object = bucket.object('database_update')
+    bucket = Aws::S3::Resource.new(client: s3).bucket(ENV['NEW_GAME_BUCKET'])
+    object = bucket.object(ENV['NEW_GAME_FILE'])
     object.put(body:new_games.inspect)
 end
