@@ -237,18 +237,18 @@ var ready = function() {
 
       $(".videos .reload-inline").click(function(e) {
         $(".videos").empty();
-        $(".search-results-container").hide();
+        //$(".search-results-container").hide();
         get_videos();
       });
     }).always(function() {
       adjust_footer_position();
 
       // Make the critic reviews visible and properly positioned
-      setTimeout(function() {
+      /*setTimeout(function() {
         $(".search-results-container")
         .css("display","block")
         .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
-      }, 1000);
+      }, 1000);*/
     });
   }
 
@@ -333,8 +333,7 @@ var ready = function() {
 
 
   function get_search_results() {
-    $(".search-results-container .content").css("padding-left","0");
-    $(".search-results-container .content").append('<div class="img-loading-overlay">\
+    $(".search-results-container").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
         Loading results...\
@@ -356,17 +355,17 @@ var ready = function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
+          outputHTML += '<div class="col-md-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
         }
       }
 
       $(".search-results-container .img-loading-overlay").remove();
-      $(".search-results-container ul").append(outputHTML);
+      $(".search-results-container").append(outputHTML);
       console.log("Finished loading search results");
     }).fail(function() {
-      $(".search-results-container .content").empty();
-      $(".search-results-container .content").css("padding-left","10px");
-      $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
+      $(".search-results-container")
+      .empty()
+      .append("Sorry, we couldn't fetch search results.");
     }).always(adjust_footer_position);
   }
 

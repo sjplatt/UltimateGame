@@ -553,18 +553,13 @@ a:focus {
 }
 
 
-
+.search-results {
+  margin-top: 40px;
+}
 .search-results-container {
-  display: none; /* it appears once youtube left sidebar results show up */
-  text-align: left;
+  overflow: auto; /* for automatic height expanding */
+  padding: 10px;
 }
-.search-results-container .content {
-  padding: 10px 10px 10px 0;
-}
-.search-results-container ul {
-  margin: 0;
-}
-
 
 
 .fancybox-type-iframe .fancybox-nav {
