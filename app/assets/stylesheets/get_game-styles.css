@@ -359,6 +359,9 @@ a:focus {
   padding: 0 10px;
   border-top: 1px solid rgba(221,221,221,0.2);
 }
+.pricing .subsection-inner .table {
+  margin-bottom: 10px;
+}
 .pricing .subsection-inner .empty {
   cursor: default;
 }
@@ -415,17 +418,24 @@ a:focus {
   margin-top: 40px;
 }
 .hltb-container {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 .hltb-container table {
-  margin-bottom: 10px;
+  margin: 5px 0 10px 0;
 }
 .hltb-container th {
   border-top: none !important;
 }
-.hltb-container * {
+.hltb-container td,
+.hltb-container tr {
   border-color: rgba(221,221,221,0.2) !important;
 }
+.hltb-container p {
+  text-align: center;
+}
+
 .detail-container {
   padding-right: 0px;
   padding-left: 10px;
@@ -436,6 +446,7 @@ a:focus {
 }
 .detail-container ul {
   padding-right: 10px;
+  margin: 10px 0;
 }
 .detail-container li {
   margin: .3em 0;
@@ -624,14 +635,17 @@ a:focus {
   padding: 10px;
   height: 170px; /* 150+10+10 */
 }
+.extra-info .game-entry .links {
+  padding-right: 0;
+}
 .extra-info .game-entry .headerimg {
   text-align: center;
 }
 .extra-info .game-entry .extra-img {
   height: 150px;
 }
-.extra-info .game-entry li {
-  margin: .2em 0;
+.extra-info .game-entry ul {
+  margin-top: 10px;
 }
 .extra-info .game-entry h4 {
   color: #fff;

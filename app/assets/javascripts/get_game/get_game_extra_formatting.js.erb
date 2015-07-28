@@ -241,7 +241,7 @@ var ready = function() {
         get_videos();
       });
     }).always(function() {
-      adjust_height();
+      adjust_footer_position();
 
       // Make the critic reviews visible and properly positioned
       setTimeout(function() {
@@ -325,7 +325,7 @@ var ready = function() {
     }).fail(function() {
       $(".reddit-container").empty();
       $(".reddit-container").append(failedHTML);
-    }).always(adjust_height);
+    }).always(adjust_footer_position);
   }
 
   get_reddit_info();
@@ -367,7 +367,7 @@ var ready = function() {
       $(".search-results-container .content").empty();
       $(".search-results-container .content").css("padding-left","10px");
       $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
-    }).always(adjust_height);
+    }).always(adjust_footer_position);
   }
 
   get_search_results();
@@ -376,22 +376,22 @@ var ready = function() {
 
   // Adjust footer position
 
-  function adjust_height() {
-    function bottom_position(elem) {
+  function adjust_footer_position() {
+    function bottom_offset(elem) {
       return elem.offset().top + elem[0].offsetHeight;
     }
 
     // Move footer below bottom-most element
-    var body_bottom = bottom_position($("body"));
-    var left_sidebar_bottom = bottom_position($(".search-results-container"));
-    var right_sidebar_bottom = bottom_position($(".right.sidebar"))
+    var body_bottom = bottom_offset($("body"));
+    var left_sidebar_bottom = bottom_offset($(".search-results-container"));
+    var right_sidebar_bottom = bottom_offset($(".right.sidebar"))
     var bottommost = Math.max(body_bottom, left_sidebar_bottom, right_sidebar_bottom);
 
     $(".footer").css("position","absolute");
     $(".footer").css("top",bottommost + "px");
   }
 
-  $("body").click(adjust_height);
+  $("body").click(adjust_footer_position);
 
 
   // COLLAPSIBLE CONTAINERS
@@ -446,8 +446,10 @@ var ready = function() {
 
   // MISCELLANEOUS
 
-  // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
-  $(".detail-container").css("height", $(".hltb-container").css("height"));
+  // Adjust height of boxes in hltb-detail (Game statistics) to match maximum
+  var game_statistics_height = Math.max($(".hltb-container").height(), $(".detail-container").height());
+  $(".hltb-container").css("height", game_statistics_height + "px");
+  $(".detail-container").css("height", game_statistics_height + "px");
 
   // Add "(none)" to package contents if there are none
   $(".price-list-pkg-contents .list-container").each(function(index, elem) {
