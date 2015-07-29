@@ -50,8 +50,6 @@
   <div class="col-md-3"></div>
 </div-->
 
-<div class="underlay"></div>
-
 
 
 <div class="row main-column game-name"><h3><%= @game.name %></h3></div>
@@ -97,7 +95,7 @@
     </div>
 
     <div class="recs-container">
-      <span class="recs-num"><%= @game.recommendations || "??" %></span>
+      <span class="recs-num"><%= @game.recommendations || "N/A" %></span>
       <div class="label">RECOMMENDATIONS</div>
     </div>
   </div>
@@ -181,9 +179,9 @@
             if hrs < 1 then
               (hrs*60).to_i.to_s + " min"
             else
-              hrs.to_i.to_s + " hr"
+              hrs.to_s.gsub(".0","").gsub(".5","½") + " hr"
             end
-            else "??" end %>
+            else "N/A" end %>
           </td>
 
           <td><%= if
@@ -192,7 +190,7 @@
             @lowest_current_arr != []
             then
             "$" + sprintf("%.2f", (@lowest_current_arr[0][:current_price].gsub("$","").to_f)/hrs)
-            else "??" end %>
+            else "N/A" end %>
           </td>
 
           <td><%= if
@@ -201,7 +199,7 @@
             @lowest_recorded_arr != []
             then
             "$" + sprintf("%.2f", (@lowest_recorded_arr[0][:lowest_recorded].gsub("$","").to_f)/hrs)
-            else "??" end %>
+            else "N/A" end %>
           </td>
         </tr>
         <% end %>
@@ -239,9 +237,9 @@
             if hrs < 1 then
               (hrs*60).to_i.to_s + " min"
             else
-              hrs.to_i.to_s + " hr"
+              hrs.to_s.gsub(".0","").gsub(".5","½") + " hr"
             end
-            else "??" end %>
+            else "N/A" end %>
           </td>
 
           <td><%= if
@@ -250,7 +248,7 @@
             @lowest_current_arr != []
             then
             "$" + sprintf("%.2f", (@lowest_current_arr[0][:current_price].gsub("$","").to_f)/hrs)
-            else "??" end %>
+            else "N/A" end %>
           </td>
 
           <td><%= if
@@ -259,7 +257,7 @@
             @lowest_recorded_arr != []
             then
             "$" + sprintf("%.2f", (@lowest_recorded_arr[0][:lowest_recorded].gsub("$","").to_f)/hrs)
-            else "??" end %>
+            else "N/A" end %>
           </td>
         </tr>
         <% end %>

@@ -32,13 +32,7 @@ body {
   color: hsl(163, 63%, 68%);
   margin-bottom: 10px;
 }
-.extra-info .btn a,
-.extra-info .btn a:hover,
-.extra-info .btn a:focus,
-.extra-info .btn a:active {
-  text-decoration: none;
-  color: #fff;
-}
+
 h3.divider {
   margin-top: 40px;
   border-bottom: 1px solid hsl(163, 63%, 48%);
@@ -77,7 +71,8 @@ h3.divider {
   margin-top: 10px;
 }
 .description h2,
-.description-popup h2 {
+.description-popup h2,
+.not-found h4 {
   color: hsl(163, 63%, 68%);
   font-size: 18px;
 }
@@ -119,6 +114,11 @@ h3.divider {
 .empty {
   color: #999;
   font-style: italic;
+}
+
+.fancybox-skin {
+  background-color: #373737 !important;
+  color: #fff !important;
 }
 
 
@@ -658,13 +658,6 @@ a:focus {
 
 
 
-.fancybox-skin {
-  background-color: #373737;
-  color: #fff;
-}
-
-
-
 .collapser,
 .reload-images,
 .reload-inline {
@@ -693,9 +686,21 @@ a:focus {
 
 
 .footer {
-  height: 100px;
+  height: 120px;
   margin-top: 60px;
   padding-top: 20px;
-  display: inline-flex;
+  display: flex;
   font-size: 11px;
+}
+.footer .suggestions {
+  text-align: right;
+  margin-bottom: 10px;
+}
+.footer .suggestions-popup {
+  display: none;
+}
+
+.suggestions-popup .dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
 }

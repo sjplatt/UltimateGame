@@ -355,7 +355,7 @@ var ready = function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<div class="col-md-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
+          outputHTML += '<div class="col-xs-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
         }
       }
 
@@ -393,7 +393,9 @@ var ready = function() {
   $("body").click(adjust_footer_position);
 
 
+
   // COLLAPSIBLE CONTAINERS
+
   var original_height = "300px";
 
   $(".collapsible")
@@ -440,6 +442,18 @@ var ready = function() {
   .css("height", "120px")
   .css("width", "120px")
   .css("margin", "0 0 0 -120px");
+
+
+
+  // FOOTER SUGGESTION BOX
+
+  $(".fancybox-suggestions").fancybox({
+    openEffect: "fade",
+    closeEffect: "fade",
+    minWidth: 600,
+    minHeight: 400,
+    autoWidth: true,
+  });
 
 
 
@@ -557,9 +571,9 @@ function get_extra_info(selected, input_name_text) {
     </div>\
     <div class="col-md-6 links">\
       <span class="title">' + output.name + '</span>\
-      <br><span class="btn btn-primary btn-sm">\
-        <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
-      </span>\
+      <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
+        <span class="btn btn-primary btn-sm">Read description</span>\
+      </a>\
       <ul>\
         <li>Released: ' + releasedate + '</li>\
         \
@@ -571,6 +585,7 @@ function get_extra_info(selected, input_name_text) {
           <a target="_blank" href="' + steam_link + '">View on Steam</a>\
         </li>\
       </ul>\
+      \
       <div class="description-popup" id="' + selected + '-description">' +
       output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
     </div>';

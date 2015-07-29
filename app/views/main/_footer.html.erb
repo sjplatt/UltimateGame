@@ -1,5 +1,30 @@
-<div class="col-md-12 footer">
+<div class="col-xs-12 footer">
   <div class="row main-column">
-    <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat,</a> <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal,</a> <a href="http://metacritic.com" target="_blank">Metacritic,</a> and <a href="http://store.steampowered.com" target="_blank">Steam</a> are not responsible for any statistics, prices, or other information displayed on this site, and such content may already be outdated at the time of visit. All information, copyrights, and trademarks are the sole property of their respective owners.
+
+    <% if @game %>
+    <div class="suggestions">
+      <a href="#suggestions" class="fancybox-button fancybox-suggestions">
+        <span class="btn btn-primary btn-sm">Suggestions/issues?</span>
+      </a>
+
+      <div class="suggestions-popup" id="suggestions">
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            Select an item to report <span class="caret"></span>
+          </button>
+
+          <ul class="dropdown-menu">
+            <% @associated_names.each do |item| %>
+            <li><a href="#"><%= item[0] %></a></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <% end %>
+
+    <div class="legal">
+      <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat,</a> <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal,</a> <a href="http://metacritic.com" target="_blank">Metacritic,</a> and <a href="http://store.steampowered.com" target="_blank">Steam</a> are not responsible for any statistics, prices, or other information displayed on this site, and such content may already be outdated at the time of visit. All information, copyrights, and trademarks are the sole property of their respective owners.
+    </div>
   </div>
 </div>
