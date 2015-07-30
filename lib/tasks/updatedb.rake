@@ -122,6 +122,13 @@ def how_long_to_beat(new_games)
       response = Net::HTTP.post_form(uri, {"queryString" => 
         clean_string(game.name.to_s)})
       page = Nokogiri::HTML.parse(response.body)
+      
+      if page && page.text.include?('No results')
+        response = Net::HTTP.post_form(uri, {"queryString" => 
+          game.name.to_s})
+        page = Nokogiri::HTML.parse(response.body)
+      end
+      
       if page.css(".search_loading").css(".back_white").to_a == []
         first_element = page.css('li')[0]
         html_link = ""
@@ -130,6 +137,16 @@ def how_long_to_beat(new_games)
         end
         first_element.css('.text_yellow').each do |title|
           html_link = title['href']
+        end
+        first_element.css('.text_green').each do |title|
+          html_link = title['href']
+        end
+        first_element.css('.search_list_image').each do |title|
+          title.css('a').each do |image|
+            if image['href']
+              html_link = image['href']
+            end
+          end
         end
         times = first_element.css('.search_list_tidbit')
         if times && times.size>0
@@ -202,6 +219,13 @@ def how_long_to_beat_dlc(new_dlcs)
       response = Net::HTTP.post_form(uri, {"queryString" => 
         clean_string(game.name.to_s)})
       page = Nokogiri::HTML.parse(response.body)
+      
+      if page && page.text.include?('No results')
+        response = Net::HTTP.post_form(uri, {"queryString" => 
+          game.name.to_s})
+        page = Nokogiri::HTML.parse(response.body)
+      end
+
       if page.css(".search_loading").css(".back_white").to_a == []
         first_element = page.css('li')[0]
         html_link = ""
@@ -210,6 +234,16 @@ def how_long_to_beat_dlc(new_dlcs)
         end
         first_element.css('.text_yellow').each do |title|
           html_link = title['href']
+        end
+        first_element.css('.text_green').each do |title|
+          html_link = title['href']
+        end
+        first_element.css('.search_list_image').each do |title|
+          title.css('a').each do |image|
+            if image['href']
+              html_link = image['href']
+            end
+          end
         end
         times = first_element.css('.search_list_tidbit')
         if times && times.size>0
@@ -304,6 +338,13 @@ def clean_hltb
       response = Net::HTTP.post_form(uri, {"queryString" => 
         clean_string(game.name.to_s)})
       page = Nokogiri::HTML.parse(response.body)
+      
+      if page && page.text.include?('No results')
+        response = Net::HTTP.post_form(uri, {"queryString" => 
+          game.name.to_s})
+        page = Nokogiri::HTML.parse(response.body)
+      end
+      
       if page.css(".search_loading").css(".back_white").to_a == []
         first_element = page.css('li')[0]
         html_link = ""
@@ -313,7 +354,7 @@ def clean_hltb
         first_element.css('.text_yellow').each do |title|
           html_link = title['href']
         end
-        first_element.css('text_green').each do |title|
+        first_element.css('.text_green').each do |title|
           html_link = title['href']
         end
         first_element.css('.search_list_image').each do |title|
@@ -389,6 +430,13 @@ def clean_hltb
       response = Net::HTTP.post_form(uri, {"queryString" => 
         clean_string(game.name.to_s)})
       page = Nokogiri::HTML.parse(response.body)
+      
+      if page && page.text.include?('No results')
+        response = Net::HTTP.post_form(uri, {"queryString" => 
+          game.name.to_s})
+        page = Nokogiri::HTML.parse(response.body)
+      end
+      
       if page.css(".search_loading").css(".back_white").to_a == []
         first_element = page.css('li')[0]
         html_link = ""
@@ -397,6 +445,16 @@ def clean_hltb
         end
         first_element.css('.text_yellow').each do |title|
           html_link = title['href']
+        end
+        first_element.css('.text_green').each do |title|
+          html_link = title['href']
+        end
+        first_element.css('.search_list_image').each do |title|
+          title.css('a').each do |image|
+            if image['href']
+              html_link = image['href']
+            end
+          end
         end
         times = first_element.css('.search_list_tidbit')
         if times && times.size>0
