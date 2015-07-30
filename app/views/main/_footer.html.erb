@@ -4,21 +4,23 @@
     <% if @game %>
     <div class="suggestions">
       <a href="#suggestions" class="fancybox-button fancybox-suggestions">
-        <span class="btn btn-primary btn-sm">Suggestions/issues?</span>
+        <span class="btn btn-primary btn-sm open-suggestions-popup">Suggestions/issues?</span>
       </a>
 
       <div class="suggestions-popup" id="suggestions">
-        <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-            Select an item to report <span class="caret"></span>
-          </button>
+        <select class="form-control">
+          <option value="">— Select one —</option>
+          <option value="suggestion">I have a suggestion</option>
+          <% @associated_names.each do |item| %>
+          <option value="<%= item[0] %>"><%= item[0] %></option>
+          <% end %>
+        </select>
 
-          <ul class="dropdown-menu">
-            <% @associated_names.each do |item| %>
-            <li><a href="#"><%= item[0] %></a></li>
-            <% end %>
-          </ul>
+        <div class="form-group">
+          <textarea class="form-control" rows="10" placeholder='Examples: "Clicking this item doesn&rsquo;t show any prices"; "I&rsquo;d like to see ..."'></textarea>
         </div>
+
+        <span class="btn btn-primary disabled submit-suggestion">Submit</span>
       </div>
     </div>
     <% end %>
