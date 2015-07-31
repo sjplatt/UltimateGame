@@ -6,7 +6,8 @@ body {
 
 /* Colors */
 
-.btn-primary {
+.btn-primary,
+.btn-primary.disabled {
   background-color: hsl(163, 63%, 43%);
   border-color: hsl(163, 63%, 41%);
 }
@@ -16,6 +17,9 @@ body {
 }
 .btn-primary:focus, .btn-primary:active {
   background-color: hsl(163, 63%, 31%);
+}
+.btn-primary.disabled {
+  opacity: 0.65;
 }
 .btn.has-icon img {
   height: 12px;
@@ -32,13 +36,7 @@ body {
   color: hsl(163, 63%, 68%);
   margin-bottom: 10px;
 }
-.extra-info .btn a,
-.extra-info .btn a:hover,
-.extra-info .btn a:focus,
-.extra-info .btn a:active {
-  text-decoration: none;
-  color: #fff;
-}
+
 h3.divider {
   margin-top: 40px;
   border-bottom: 1px solid hsl(163, 63%, 48%);
@@ -77,7 +75,8 @@ h3.divider {
   margin-top: 10px;
 }
 .description h2,
-.description-popup h2 {
+.description-popup h2,
+.not-found h4 {
   color: hsl(163, 63%, 68%);
   font-size: 18px;
 }
@@ -121,6 +120,11 @@ h3.divider {
   font-style: italic;
 }
 
+.fancybox-skin {
+  background-color: #373737 !important;
+  color: #fff !important;
+}
+
 
 
 a {
@@ -134,6 +138,20 @@ a:focus {
 }
 .header {
   background-color: hsl(163, 55%, 25%);
+}
+nav {
+  background-color: hsl(163, 68%, 20%) !important;
+  border-color: hsl(163, 70%, 16%) !important;
+}
+nav a {
+  color: hsla(163, 63%, 86%, 0.8) !important;
+}
+nav a:hover {
+  color: hsla(163, 63%, 86%, 0.6) !important;
+}
+nav .jump-to {
+  font-style: italic;
+  color: rgba(236,236,236,0.55);
 }
 .content, .footer {
   background-color: rgba(30,30,30,0.4);
@@ -152,6 +170,7 @@ a:focus {
 }
 .tt-suggestion {
   position: relative;
+  height: 45px;
 }
 .suggestion-link {
   position: absolute; 
@@ -161,6 +180,10 @@ a:focus {
   left: 0;
   /*z-index: 1000000;*/
 }
+.suggestion-img {
+  height: 100%;
+  margin-right: 10px;
+}
 .empty-suggestions {
   margin: 3px 20px;
 }
@@ -169,9 +192,11 @@ a:focus {
   vertical-align: middle;
   width: 100%;
 }
+
 .header {
   height: 100px;
-  margin-bottom: 10px;
+  z-index: 100000;
+  margin: 0;
   display: inline-flex;
 }
 .homepage-title {
@@ -185,6 +210,32 @@ a:focus {
   margin: 5px 20px;
   padding: 3px 0;
   border-bottom: 1px solid #ccc;
+}
+
+nav ul,
+nav li {
+  height: 40px;
+}
+nav a {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+nav .collapse {
+  padding: 0;
+}
+nav .jump-to {
+  padding: 10px 15px;
+}
+.navbar-nav {
+  width: 100%;
+  text-align: center;
+}
+.navbar-nav > li {
+  float: none;
+  display: inline-block;
+}
+nav a {
+  cursor: pointer;
 }
 
 
@@ -353,6 +404,13 @@ a:focus {
   padding: 0 10px;
   border-top: 1px solid rgba(221,221,221,0.2);
 }
+.pricing .subsection-inner .table {
+  margin-bottom: 10px;
+}
+.pricing .subsection-inner .empty {
+  cursor: default;
+}
+
 .pricing .price-list {
   vertical-align: top;
 }
@@ -405,17 +463,24 @@ a:focus {
   margin-top: 40px;
 }
 .hltb-container {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 .hltb-container table {
-  margin-bottom: 10px;
+  margin: 5px 0 10px 0;
 }
 .hltb-container th {
   border-top: none !important;
 }
-.hltb-container * {
+.hltb-container td,
+.hltb-container tr {
   border-color: rgba(221,221,221,0.2) !important;
 }
+.hltb-container p {
+  text-align: center;
+}
+
 .detail-container {
   padding-right: 0px;
   padding-left: 10px;
@@ -426,6 +491,7 @@ a:focus {
 }
 .detail-container ul {
   padding-right: 10px;
+  margin: 10px 0;
 }
 .detail-container li {
   margin: .3em 0;
@@ -532,18 +598,13 @@ a:focus {
 }
 
 
-
+.search-results {
+  margin-top: 40px;
+}
 .search-results-container {
-  display: none; /* it appears once youtube left sidebar results show up */
-  text-align: left;
+  overflow: auto; /* for automatic height expanding */
+  padding: 10px;
 }
-.search-results-container .content {
-  padding: 10px 10px 10px 0;
-}
-.search-results-container ul {
-  margin: 0;
-}
-
 
 
 .fancybox-type-iframe .fancybox-nav {
@@ -614,14 +675,17 @@ a:focus {
   padding: 10px;
   height: 170px; /* 150+10+10 */
 }
+.extra-info .game-entry .links {
+  padding-right: 0;
+}
 .extra-info .game-entry .headerimg {
   text-align: center;
 }
 .extra-info .game-entry .extra-img {
   height: 150px;
 }
-.extra-info .game-entry li {
-  margin: .2em 0;
+.extra-info .game-entry ul {
+  margin-top: 10px;
 }
 .extra-info .game-entry h4 {
   color: #fff;
@@ -635,13 +699,6 @@ a:focus {
 }
 .extra-info .unselected {
   display: none;
-}
-
-
-
-.fancybox-skin {
-  background-color: #373737;
-  color: #fff;
 }
 
 
@@ -674,10 +731,36 @@ a:focus {
 
 
 .footer {
-  height: 100px;
+  height: 120px;
   margin-top: 60px;
   padding-top: 20px;
-  display: inline-flex;
+  display: flex;
   font-size: 11px;
+}
+.footer .suggestions {
   text-align: right;
+  margin-bottom: 10px;
+}
+.footer .suggestions-popup {
+  display: none;
+}
+
+.suggestions-popup .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.suggestions-popup .form-group {
+  margin-top: 10px;
+}
+.suggestions-popup textarea {
+  height: 200px;
+  min-width: 100%;
+  max-width: 100%;
+}
+.suggestions-popup span {
+  float: right;
+}
+.suggestions-popup .thanks {
+  margin-top: 20px;
+  text-align: center;
 }

@@ -2,12 +2,16 @@ var ready = function() {
   console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
 
+  function convert_to_classname(str) {
+    return str.replace(/[^\w\d]/g,"-");
+  }
+
   // PRICES TABLE
 
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
   $(".pricing .game-entry").click(function(e) {
-    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
+    var selected_class = convert_to_classname($(e.target).text());
 
     // search for currently selected entries; deselect them
     $(".pricing .selected,\
@@ -35,7 +39,7 @@ var ready = function() {
 
   // (Show original game) button next to anything that isn't the original game
   $(".show-original").click(function(e) {
-    var original_class = game_name.replace(/[^\w\d]/g,"-").toLowerCase();
+    var original_class = convert_to_classname(game_name);
 
     $(".pricing .selected,\
       .extra-info .selected")
@@ -237,18 +241,18 @@ var ready = function() {
 
       $(".videos .reload-inline").click(function(e) {
         $(".videos").empty();
-        $(".search-results-container").hide();
+        //$(".search-results-container").hide();
         get_videos();
       });
     }).always(function() {
-      adjust_height();
+      adjust_footer_position();
 
       // Make the critic reviews visible and properly positioned
-      setTimeout(function() {
+      /*setTimeout(function() {
         $(".search-results-container")
         .css("display","block")
         .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
-      }, 1000);
+      }, 1000);*/
     });
   }
 
@@ -325,7 +329,7 @@ var ready = function() {
     }).fail(function() {
       $(".reddit-container").empty();
       $(".reddit-container").append(failedHTML);
-    }).always(adjust_height);
+    }).always(adjust_footer_position);
   }
 
   get_reddit_info();
@@ -333,8 +337,7 @@ var ready = function() {
 
 
   function get_search_results() {
-    $(".search-results-container .content").css("padding-left","0");
-    $(".search-results-container .content").append('<div class="img-loading-overlay">\
+    $(".search-results-container").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
         Loading results...\
@@ -356,18 +359,18 @@ var ready = function() {
         if (shortened.test(link)) {
           var text = link.match(shortened)[1];
 
-          outputHTML += '<li><a href="' + link + '" target="_blank">' + text + '</a></li>';
+          outputHTML += '<div class="col-xs-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
         }
       }
 
       $(".search-results-container .img-loading-overlay").remove();
-      $(".search-results-container ul").append(outputHTML);
+      $(".search-results-container").append(outputHTML);
       console.log("Finished loading search results");
     }).fail(function() {
-      $(".search-results-container .content").empty();
-      $(".search-results-container .content").css("padding-left","10px");
-      $(".search-results-container .content").append("Sorry, we couldn't fetch search results.");
-    }).always(adjust_height);
+      $(".search-results-container")
+      .empty()
+      .append("Sorry, we couldn't fetch search results.");
+    }).always(adjust_footer_position);
   }
 
   get_search_results();
@@ -376,25 +379,27 @@ var ready = function() {
 
   // Adjust footer position
 
-  function adjust_height() {
-    function bottom_position(elem) {
+  function adjust_footer_position() {
+    function bottom_offset(elem) {
       return elem.offset().top + elem[0].offsetHeight;
     }
 
     // Move footer below bottom-most element
-    var body_bottom = bottom_position($("body"));
-    var left_sidebar_bottom = bottom_position($(".search-results-container"));
-    var right_sidebar_bottom = bottom_position($(".right.sidebar"))
+    var body_bottom = bottom_offset($("body"));
+    var left_sidebar_bottom = bottom_offset($(".search-results-container"));
+    var right_sidebar_bottom = bottom_offset($(".right.sidebar"))
     var bottommost = Math.max(body_bottom, left_sidebar_bottom, right_sidebar_bottom);
 
     $(".footer").css("position","absolute");
     $(".footer").css("top",bottommost + "px");
   }
 
-  $("body").click(adjust_height);
+  $("body").click(adjust_footer_position);
+
 
 
   // COLLAPSIBLE CONTAINERS
+
   var original_height = "300px";
 
   $(".collapsible")
@@ -444,10 +449,66 @@ var ready = function() {
 
 
 
+  // FOOTER SUGGESTION BOX
+
+  $(".fancybox-suggestions").fancybox({
+    openEffect: "fade",
+    closeEffect: "fade",
+    minWidth: 600,
+    minHeight: 300,
+    autoWidth: true,
+  });
+
+  // Toggle availability of Submit button
+  // Make available when an option is selected and something is in textarea
+  function check_input_state() {
+    if ($(".suggestions-popup option:selected").val() == "" ||
+        $(".suggestions-popup textarea").val() == "")
+      $(".suggestions-popup .submit-suggestion").addClass("disabled");
+    else
+      $(".suggestions-popup .submit-suggestion").removeClass("disabled");
+  }
+
+  $(".open-suggestions-popup").click(check_input_state);
+  $(".suggestions-popup select").on("change", check_input_state);
+  $(".suggestions-popup textarea").keyup(check_input_state);
+
+  // Suggestion submission
+  $(".suggestions-popup .submit-suggestion").click(function() {
+    var selection = $(".suggestions-popup option:selected").val();
+    var input = $(".suggestions-popup textarea").val();
+
+    var thanksHTML = '<div class="thanks">Thanks for your feedback!</div>';
+
+    $(".suggestions-popup")
+    .empty()
+    .append(thanksHTML);
+
+    console.log(selection);
+    console.log(input);
+  });
+
+
+
+  // NAVBAR SCROLLING
+
+  $("a").click(function(e) {
+    var goto_id = $(e.target).data("goto-id");
+    var offset = $(goto_id).offset().top - 10;
+    
+    $("html,body").animate({
+      scrollTop: offset
+    }, offset*0.4);
+  });
+
+
+
   // MISCELLANEOUS
 
-  // Adjust height of detail info in hltb-detail (Game statistics) to match hltb table
-  $(".detail-container").css("height", $(".hltb-container").css("height"));
+  // Adjust height of boxes in hltb-detail (Game statistics) to match maximum
+  var game_statistics_height = Math.max($(".hltb-container").height(), $(".detail-container").height());
+  $(".hltb-container").css("height", game_statistics_height + "px");
+  $(".detail-container").css("height", game_statistics_height + "px");
 
   // Add "(none)" to package contents if there are none
   $(".price-list-pkg-contents .list-container").each(function(index, elem) {
@@ -465,7 +526,7 @@ var ready = function() {
   var pkg_height = 350;
   var dlc_height = 500;
 
-  $(".unlisted .table-container").each(function(index, elem) {
+  $(".table-container").each(function(index, elem) {
     $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
   });
 
@@ -556,9 +617,9 @@ function get_extra_info(selected, input_name_text) {
     </div>\
     <div class="col-md-6 links">\
       <span class="title">' + output.name + '</span>\
-      <br><span class="btn btn-primary btn-sm">\
-        <a href="#' + selected + '-description" class="fancybox-text">Read description</a>\
-      </span>\
+      <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
+        <span class="btn btn-primary btn-sm">Read description</span>\
+      </a>\
       <ul>\
         <li>Released: ' + releasedate + '</li>\
         \
@@ -570,6 +631,7 @@ function get_extra_info(selected, input_name_text) {
           <a target="_blank" href="' + steam_link + '">View on Steam</a>\
         </li>\
       </ul>\
+      \
       <div class="description-popup" id="' + selected + '-description">' +
       output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
     </div>';
