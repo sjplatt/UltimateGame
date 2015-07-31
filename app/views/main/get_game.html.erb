@@ -305,11 +305,11 @@
 
 
 <div class="row main-column extra-info" id="dlc-info">
-  <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+  <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
     <div class="game-entry
     unselected
     content
-    <%= name.gsub(/[^\w\d]/,"-").downcase %>">
+    <%= name.gsub(/[^\w\d]/,"-") %>">
       <!-- info added here via ajax -->
     </div>
   <% end %>
@@ -341,10 +341,10 @@
 
             <div class="subsection-inner">
               <table class="table">
-                <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
                   <tr><td class="game-entry
                   unselected
-                  <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></td></tr>
+                  <%= name.gsub(/[^\w\d]/,"-") %>"><%= name %></td></tr>
                 <% end.empty? %>
                   <tr><td class="empty">(none found)</td></tr>
                 <% end %>
@@ -360,11 +360,11 @@
 
             <div class="subsection-inner">
               <table class="table">
-                <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"").downcase}.map do |name,data| %>
+                <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
                   <tr><td class="game-entry
                   pkg
                   unselected
-                  <%= name.gsub(/[^\w\d]/,"-").downcase %>"><%= name %></td></tr>
+                  <%= name.gsub(/[^\w\d]/,"-") %>"><%= name %></td></tr>
                 <% end.empty? %>
                   <tr><td class="empty">(none found)</td></tr>
                 <% end %>
@@ -378,7 +378,7 @@
           <% @associated_names.each do |name,data| %>
             <div class="price-list-inner
             unselected
-            <%= name.gsub(/[^\w\d]/,"-").downcase %>
+            <%= name.gsub(/[^\w\d]/,"-") %>
             <%= if data[:is_dlc] then "dlc"
               elsif data[:is_pkg] then "pkg" end%>
             <%= "unlisted" if !data[:is_dlc] && !data[:is_pkg] %>">
@@ -420,7 +420,7 @@
           <% @associated_names.select{|_,data| data[:is_pkg]}.map do |name,data| %>
             <div class="price-list-pkg-contents
             unselected
-            <%= name.gsub(/[^\w\d]/,"-").downcase %>">
+            <%= name.gsub(/[^\w\d]/,"-") %>">
               <div class="pkg-contents-heading">
                 <span class="title">Contents:</span>
               </div>
@@ -574,7 +574,7 @@ $(document).ready(function() {
   function html_decode(str) {
     return (typeof str === "undefined") ? "" : $("<div/>").html(str).text();
   }
-  var redirected_by = html_decode("<%= @searched_name %>").replace(/[^\w\d]/g,"-").toLowerCase();
+  var redirected_by = html_decode("<%= @searched_name %>").replace(/[^\w\d]/g,"-");
   $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
   
   // Check if user searched for the game itself

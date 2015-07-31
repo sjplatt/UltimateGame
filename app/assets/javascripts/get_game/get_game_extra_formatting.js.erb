@@ -7,7 +7,7 @@ var ready = function() {
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
   $(".pricing .game-entry").click(function(e) {
-    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-").toLowerCase();
+    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
 
     // search for currently selected entries; deselect them
     $(".pricing .selected,\
@@ -35,7 +35,7 @@ var ready = function() {
 
   // (Show original game) button next to anything that isn't the original game
   $(".show-original").click(function(e) {
-    var original_class = game_name.replace(/[^\w\d]/g,"-").toLowerCase();
+    var original_class = game_name.replace(/[^\w\d]/g,"-");
 
     $(".pricing .selected,\
       .extra-info .selected")
