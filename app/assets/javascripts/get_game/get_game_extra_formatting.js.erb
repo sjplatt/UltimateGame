@@ -2,12 +2,16 @@ var ready = function() {
   console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
 
+  function convert_to_classname(str) {
+    return str.replace(/[^\w\d]/g,"-");
+  }
+
   // PRICES TABLE
 
   // when clicking a game entry, make its corresponding price appear
   // (and package contents if applicable)
   $(".pricing .game-entry").click(function(e) {
-    var selected_class = $(e.target).text().replace(/[^\w\d]/g,"-");
+    var selected_class = convert_to_classname($(e.target).text());
 
     // search for currently selected entries; deselect them
     $(".pricing .selected,\
@@ -35,7 +39,7 @@ var ready = function() {
 
   // (Show original game) button next to anything that isn't the original game
   $(".show-original").click(function(e) {
-    var original_class = game_name.replace(/[^\w\d]/g,"-");
+    var original_class = convert_to_classname(game_name);
 
     $(".pricing .selected,\
       .extra-info .selected")
@@ -486,6 +490,19 @@ var ready = function() {
 
 
 
+  // NAVBAR SCROLLING
+
+  $("a").click(function(e) {
+    var goto_id = $(e.target).data("goto-id");
+    var offset = $(goto_id).offset().top - 10;
+    
+    $("html,body").animate({
+      scrollTop: offset
+    }, offset*0.4);
+  });
+
+
+
   // MISCELLANEOUS
 
   // Adjust height of boxes in hltb-detail (Game statistics) to match maximum
@@ -509,7 +526,7 @@ var ready = function() {
   var pkg_height = 350;
   var dlc_height = 500;
 
-  $(".unlisted .table-container").each(function(index, elem) {
+  $(".table-container").each(function(index, elem) {
     $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
   });
 
