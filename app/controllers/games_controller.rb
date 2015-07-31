@@ -8,6 +8,13 @@ class GamesController < ApplicationController
   end
 
   def autocomplete
-    render json: Game.search(params[:query], misspellings: {distance: 1}, highlight: false,partial: true, fields: [{name: :word_start}], limit: 10).map(&:name)
+    render json: Game.search(
+      params[:query],
+      misspellings: {distance: 1},
+      highlight: false,
+      partial: true,
+      fields: [{name: :word_start}],
+      limit: 10).map {|result| {name: result.name, img: result.headerimg}}
+      #map(&:name)
   end
 end
