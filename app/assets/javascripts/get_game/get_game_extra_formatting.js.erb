@@ -95,7 +95,7 @@ var ready = function() {
       }
 
         $("#horiz_container img").error(function() {
-          this.parent().remove();
+          $(this).parent().parent().remove();
         })
 
       //$("#horiz_container").append(outputHTML);
