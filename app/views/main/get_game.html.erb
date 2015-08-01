@@ -408,12 +408,15 @@
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
+                  <thead>
                   <tr>
                     <th>Vendor</th>
                     <th>Price</th>
                     <th style="width:80px">Lowest recorded</th>
                   </tr>
+                  </thead>
 
+                  <tbody>
                   <% @prices[@game.name].each do |entry| %>
                     <tr>
                       <td><a href="<%= entry[:store_url] %>" target="_blank"><%= entry[:store] %></a></td>
@@ -421,6 +424,7 @@
                       <td><%= entry[:lowest_recorded] %></td>
                     </tr>
                   <% end %>
+                  </tbody>
 
                 <% end %>
                 <!-- this is just the default display,
@@ -593,8 +597,8 @@ $(document).ready(function() {
   }
   var redirected_by = convert_to_classname(html_decode("<%= @searched_name %>"));
   // convert_to_classname is defined in get_game_extra_formatting
-  console.log(redirected_by);
-  console.log(convert_to_classname("<%= @game.name %>"));
+  //console.log(redirected_by);
+  //console.log(convert_to_classname("<%= @game.name %>"));
 
   // maincontroller handles exact matches
   // Here, handle close-enough pkg name matches
@@ -602,7 +606,7 @@ $(document).ready(function() {
   // If there is a close match in pkgs, then
   // load its prices and delete the unlisted (exact) one with the same-ish name
   $("." + redirected_by).each(function(index, elem) {
-    console.log($(elem));
+    //console.log($(elem));
     var pkg_name = $(elem).children(".price-list-heading").text();
     // if this is null, then it's not a price listing, so we don't need to consider it
 
@@ -611,7 +615,8 @@ $(document).ready(function() {
         $(elem).remove();
       }
       else {
-        console.log(pkg_name);
+        // this may cause some duplication, so there is a check at the beginning of
+        // get_prices that doesn't allow loading when something is already there
         get_prices(redirected_by,
           pkg_name
           .replace(/^(\s*)/g,"")
