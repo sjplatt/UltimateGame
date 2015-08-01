@@ -9,11 +9,20 @@
 
       <div class="suggestions-popup" id="suggestions">
         <select class="form-control">
+
           <option value="">— Select one —</option>
           <option value="suggestion">I have a suggestion</option>
+
           <% @associated_names.each do |item| %>
           <option value="<%= item[0] %>"><%= item[0] %></option>
+
+          <% if item[0].eql?(@game.name) %>
+          <option value="<%= item[0] %>_HLTB"><%= item[0] %> HowLongToBeat section</option>
+          <option value="<%= item[0] %>_REDDIT"><%= item[0] %> Reddit discussion section</option>
           <% end %>
+          
+          <% end %>
+
         </select>
 
         <div class="form-group">

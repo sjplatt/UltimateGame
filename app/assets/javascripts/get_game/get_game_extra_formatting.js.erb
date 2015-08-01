@@ -94,6 +94,10 @@ var ready = function() {
         </a></li>');
       }
 
+        $("#horiz_container img").error(function() {
+          this.parent().remove();
+        })
+
       //$("#horiz_container").append(outputHTML);
 
       // important: if using thumbs, note application.js where
@@ -139,7 +143,7 @@ var ready = function() {
           get_images();
         });
 
-        console.log("Image load error");
+        console.log("Failed to load any images");
       }
     }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
@@ -623,10 +627,10 @@ function get_extra_info(selected, input_name_text) {
       var steam_link = "http://store.steampowered.com";      
 
     var outputHTML =
-    '<div class="col-md-6 headerimg">\
+    '<div class="col-xs-6 headerimg">\
       <img class="extra-img" src="' + output.headerimg + '" />\
     </div>\
-    <div class="col-md-6 links">\
+    <div class="col-xs-6 links">\
       <span class="title">' + output.name + '</span>\
       <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
         <span class="btn btn-primary btn-sm">Read description</span>\
