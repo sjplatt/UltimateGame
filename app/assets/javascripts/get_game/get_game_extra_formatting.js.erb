@@ -1,10 +1,10 @@
+function convert_to_classname(str) {
+  return str.replace(/[^\w\d]/g,"").toLowerCase();
+}
+
 var ready = function() {
   console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
-
-  function convert_to_classname(str) {
-    return str.replace(/[^\w\d]/g,"-");
-  }
 
   // PRICES TABLE
 
@@ -492,10 +492,10 @@ var ready = function() {
 
   // NAVBAR SCROLLING
 
-  $("a").click(function(e) {
+  $("nav a").click(function(e) {
     var goto_id = $(e.target).data("goto-id");
     var offset = $(goto_id).offset().top - 10;
-    
+
     $("html,body").animate({
       scrollTop: offset
     }, offset*0.4);
@@ -527,7 +527,10 @@ var ready = function() {
   var dlc_height = 500;
 
   $(".table-container").each(function(index, elem) {
-    $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    if ($(elem).parent().hasClass("dlc") || $(elem).parent().hasClass("unlisted"))
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    else
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
   });
 
   $(".game-entry, .show-original").click(function() {
