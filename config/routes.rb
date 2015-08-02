@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post '/ajax/get_extra_info' => 'main#get_extra_info_ajax'
   post '/ajax/get_reddit' => 'main#get_reddit_ajax'
   post '/ajax/get_search_results' => 'main#get_search_results_ajax'
+  post '/ajax/send_suggestion' => 'main#send_suggestion'
 
   resources :games, only: :index do
     collection do

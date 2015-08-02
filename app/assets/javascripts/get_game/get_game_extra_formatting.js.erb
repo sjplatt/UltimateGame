@@ -341,6 +341,14 @@ var ready = function() {
 
 
   function get_search_results() {
+    var failedHTML =
+    '<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        Sorry, we couldn\'t fetch critic reviews at this time.\
+        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+      </div>\
+    </div>';
+
     $(".search-results-container").append('<div class="img-loading-overlay">\
       <div class="img-loading-overlay-inner">\
         <%= image_tag "fancybox_loading.gif" %>\
@@ -373,7 +381,12 @@ var ready = function() {
     }).fail(function() {
       $(".search-results-container")
       .empty()
-      .append("Sorry, we couldn't fetch search results.");
+      .append(failedHTML);
+
+      $(".search-results-container .reload-inline").click(function(e) {
+        $(".search-results-container").empty();
+        get_search_results();
+      });
     }).always(adjust_footer_position);
   }
 
@@ -480,7 +493,7 @@ var ready = function() {
   // Suggestion submission
   $(".suggestions-popup .submit-suggestion").click(function() {
     var selection = $(".suggestions-popup option:selected").val();
-    var input = $(".suggestions-popup textarea").val();
+    var content = $(".suggestions-popup textarea").val();
 
     var thanksHTML = '<div class="thanks">Thanks for your feedback!</div>';
 
@@ -488,8 +501,10 @@ var ready = function() {
     .empty()
     .append(thanksHTML);
 
-    console.log(selection);
-    console.log(input);
+    $.post(
+    "/ajax/send_suggestion",
+    {selection: selection,
+      content: content});
   });
 
 
