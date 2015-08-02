@@ -324,7 +324,7 @@
     <div class="game-entry
     unselected
     content
-    <%= name.gsub(/[^\w\d]/,"-") %>">
+    <%= name.gsub(/[^\w\d]/,"").downcase %>">
       <!-- info added here via ajax -->
     </div>
   <% end %>
@@ -359,7 +359,7 @@
                 <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
                   <tr><td class="game-entry
                   unselected
-                  <%= name.gsub(/[^\w\d]/,"-") %>"><%= name %></td></tr>
+                  <%= name.gsub(/[^\w\d]/,"").downcase %>"><%= name %></td></tr>
                 <% end.empty? %>
                   <tr><td class="empty">(none found)</td></tr>
                 <% end %>
@@ -379,7 +379,7 @@
                   <tr><td class="game-entry
                   pkg
                   unselected
-                  <%= name.gsub(/[^\w\d]/,"-") %>"><%= name %></td></tr>
+                  <%= name.gsub(/[^\w\d]/,"").downcase %>"><%= name %></td></tr>
                 <% end.empty? %>
                   <tr><td class="empty">(none found)</td></tr>
                 <% end %>
@@ -393,12 +393,12 @@
           <% @associated_names.each do |name,data| %>
             <div class="price-list-inner
             unselected
-            <%= name.gsub(/[^\w\d]/,"-") %>
+            <%= name.gsub(/[^\w\d]/,"").downcase %>
             <%= if data[:is_dlc] then "dlc"
               elsif data[:is_pkg] then "pkg" end%>
             <%= "unlisted" if !data[:is_dlc] && !data[:is_pkg] %>">
               <div class="price-list-heading">
-                <% if !name.eql?(@game.name) %>
+                <% if !name.gsub(/[^\w\d]/,"").downcase.eql?(@game.name.gsub(/[^\w\d]/,"").downcase) %>
                   <a class="show-original"><span class="btn btn-primary btn-xs has-icon"><%= image_tag "left-arrow.png" %></a>
                 <% end %>
                 <span class="title"><%= name %></span>
@@ -408,12 +408,15 @@
               <table class="table">
                 <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
 
+                  <thead>
                   <tr>
                     <th>Vendor</th>
                     <th>Price</th>
                     <th style="width:80px">Lowest recorded</th>
                   </tr>
+                  </thead>
 
+                  <tbody>
                   <% @prices[@game.name].each do |entry| %>
                     <tr>
                       <td><a href="<%= entry[:store_url] %>" target="_blank"><%= entry[:store] %></a></td>
@@ -421,6 +424,7 @@
                       <td><%= entry[:lowest_recorded] %></td>
                     </tr>
                   <% end %>
+                  </tbody>
 
                 <% end %>
                 <!-- this is just the default display,
@@ -435,7 +439,7 @@
           <% @associated_names.select{|_,data| data[:is_pkg]}.map do |name,data| %>
             <div class="price-list-pkg-contents
             unselected
-            <%= name.gsub(/[^\w\d]/,"-") %>">
+            <%= name.gsub(/[^\w\d]/,"").downcase %>">
               <div class="pkg-contents-heading">
                 <span class="title">Contents:</span>
               </div>
@@ -566,7 +570,7 @@
 <div class="row main-column reddit" id="reddit-discussion">
   <div class="section-heading">
     <span class="left title">Reddit discussion</span>
-    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>">
+    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>" target="_blank">
       <span class="btn btn-primary btn-sm has-icon">/r/<%= @game.subreddit %> <%= image_tag "new-window.png" %></span>
     </a>
   </div>
@@ -591,17 +595,52 @@ $(document).ready(function() {
   function html_decode(str) {
     return (typeof str === "undefined") ? "" : $("<div/>").html(str).text();
   }
-  var redirected_by = html_decode("<%= @searched_name %>").replace(/[^\w\d]/g,"-");
-  $("." + redirected_by).removeClass("unselected").addClass("selected").addClass("ajax-loaded");
+  var redirected_by = convert_to_classname(html_decode("<%= @searched_name %>"));
+  // convert_to_classname is defined in get_game_extra_formatting
+  //console.log(redirected_by);
+  //console.log(convert_to_classname("<%= @game.name %>"));
+
+  // maincontroller handles exact matches
+  // Here, handle close-enough pkg name matches
+
+  // If there is a close match in pkgs, then
+  // load its prices and delete the unlisted (exact) one with the same-ish name
+  $("." + redirected_by).each(function(index, elem) {
+    //console.log($(elem));
+    var pkg_name = $(elem).children(".price-list-heading").text();
+    // if this is null, then it's not a price listing, so we don't need to consider it
+
+    if (redirected_by == convert_to_classname(pkg_name)) {
+      if ($(elem).siblings(".pkg." + redirected_by).length && $(elem).hasClass("unlisted")) {
+        $(elem).remove();
+      }
+      else {
+        // this may cause some duplication, so there is a check at the beginning of
+        // get_prices that doesn't allow loading when something is already there
+        get_prices(redirected_by,
+          pkg_name
+          .replace(/^(\s*)/g,"")
+          .replace(/(\s*)$/g,""));
+      }
+    }
+  });
+
+  $("." + redirected_by)
+  .removeClass("unselected")
+  .addClass("selected")
+  .addClass("ajax-loaded");
   
-  // Check if user searched for the game itself
-  // If so, don't load prices again, this was done in maincontroller's get_game
-  if ("<%= @searched_name.downcase %>" != "<%= @game.name.downcase %>")
+  // Check if user searched for the game itself or something was very close
+  // (If so, don't load prices again, this was done in maincontroller's get_game)
+  // If not, this means the user searched for a DLC
+  if (redirected_by != convert_to_classname("<%= @game.name %>")) {
     get_prices(redirected_by, "<%= @searched_name %>");
+  }
   
   // This throws a harmless 500 Internal Server error if called on a non-dlc
-  if ("<%= @is_dlc %>" == "true")
+  if ("<%= @is_dlc %>" == "true") {
     get_extra_info(redirected_by, "<%= @searched_name %>");
+  }
 });
 </script>
 <% end %>

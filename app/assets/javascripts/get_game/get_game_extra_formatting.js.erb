@@ -1,10 +1,10 @@
+function convert_to_classname(str) {
+  return str.replace(/[^\w\d]/g,"").toLowerCase();
+}
+
 var ready = function() {
   console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
-
-  function convert_to_classname(str) {
-    return str.replace(/[^\w\d]/g,"-");
-  }
 
   // PRICES TABLE
 
@@ -94,6 +94,10 @@ var ready = function() {
         </a></li>');
       }
 
+        $("#horiz_container img").error(function() {
+          $(this).parent().parent().remove();
+        })
+
       //$("#horiz_container").append(outputHTML);
 
       // important: if using thumbs, note application.js where
@@ -139,7 +143,7 @@ var ready = function() {
           get_images();
         });
 
-        console.log("Image load error");
+        console.log("Failed to load any images");
       }
     }).fail(function() {
       $("#horiz_container_outer .img-loading-overlay").remove();
@@ -492,10 +496,10 @@ var ready = function() {
 
   // NAVBAR SCROLLING
 
-  $("a").click(function(e) {
+  $("nav a").click(function(e) {
     var goto_id = $(e.target).data("goto-id");
     var offset = $(goto_id).offset().top - 10;
-    
+
     $("html,body").animate({
       scrollTop: offset
     }, offset*0.4);
@@ -527,7 +531,10 @@ var ready = function() {
   var dlc_height = 500;
 
   $(".table-container").each(function(index, elem) {
-    $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    if ($(elem).parent().hasClass("dlc") || $(elem).parent().hasClass("unlisted"))
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    else
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
   });
 
   $(".game-entry, .show-original").click(function() {
@@ -552,6 +559,9 @@ $(window).load(ready);
 
 
 function get_prices(selected, input_name_text) {
+  // Only load prices if the container is empty
+  if (!$.trim($(".price-list-inner." + selected + " .table-container table").text())) {
+  
   $(".price-list-inner." + selected + " .table-container").append('<div class="img-loading-overlay">\
     <%= image_tag "fancybox_loading.gif" %>\
     Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
@@ -586,6 +596,11 @@ function get_prices(selected, input_name_text) {
     $(".price-list-inner." + selected + " .img-loading-overlay").remove();
     $(".price-list-inner." + selected + " table").append(outputHTML);
   });
+
+  }
+  else {
+    console.log("Already loaded prices");
+  }
 }
 
 
@@ -612,10 +627,10 @@ function get_extra_info(selected, input_name_text) {
       var steam_link = "http://store.steampowered.com";      
 
     var outputHTML =
-    '<div class="col-md-6 headerimg">\
+    '<div class="col-xs-6 headerimg">\
       <img class="extra-img" src="' + output.headerimg + '" />\
     </div>\
-    <div class="col-md-6 links">\
+    <div class="col-xs-6 links">\
       <span class="title">' + output.name + '</span>\
       <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
         <span class="btn btn-primary btn-sm">Read description</span>\
