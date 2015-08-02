@@ -1,0 +1,191 @@
+function render_prices(game_name) {
+  // when clicking a game entry, make its corresponding price appear
+  // (and package contents if applicable)
+  $(".pricing .game-entry").click(function(e) {
+    var selected_class = convert_to_classname($(e.target).text());
+
+    // search for currently selected entries; deselect them
+    $(".pricing .selected,\
+      .extra-info .selected")
+    .removeClass("selected").addClass("unselected");
+
+    // search for classes matching the current selection; select them
+    $(e.target).removeClass("unselected").addClass("selected");
+    $(".pricing ." + selected_class + ",\
+      .extra-info ." + selected_class)
+    .removeClass("unselected").addClass("selected");
+
+    // send the ajax request using the game name (ITAD URL can only be found with Ruby)
+    //if ($(".price-list ." + selected_class + ".ajax-loaded").length)
+      // console.log("Already loaded " + selected_class);
+    if (!$(".price-list-inner." + selected_class + ".ajax-loaded").length) {
+      $(".price-list-inner." + selected_class).addClass("ajax-loaded");
+      get_prices(selected_class, $(e.target).text());
+      if (!$(e.target).hasClass("pkg"))
+        get_extra_info(selected_class, $(e.target).text());
+    }
+  });
+
+
+
+  // (Show original game) button next to anything that isn't the original game
+  $(".show-original").click(function(e) {
+    var original_class = convert_to_classname(game_name);
+
+    $(".pricing .selected,\
+      .extra-info .selected")
+    .removeClass("selected").addClass("unselected");
+    
+    $(".pricing ." + original_class + ",\
+      .extra-info ." + original_class)
+    .removeClass("unselected").addClass("selected");
+  });
+
+
+
+  $(".reload-prices").click(function(e) {
+    // placeholder for possible reload price functionality
+  })
+
+
+
+  // Miscellaneous formatting
+
+  // Add "(none)" to package contents if there are none
+  $(".price-list-pkg-contents .list-container").each(function(index, elem) {
+    if ($(elem).children("ul").text().replace(/\s*/,"") == "")
+      $(elem).prepend('<tr><td class="empty" style="padding-left:10px;">(none)</td></tr>');
+  });
+
+  // Adjust height of prices display to account for unknown height of selected game name
+  // It only works when they are in display, so we trigger the resize on click
+  var pkg_height = 350;
+  var dlc_height = 500;
+
+  $(".table-container").each(function(index, elem) {
+    if ($(elem).parent().hasClass("dlc") || $(elem).parent().hasClass("unlisted"))
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    else
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+  });
+
+  $(".game-entry, .show-original").click(function() {
+    $(".dlc .table-container, .unlisted .table-container").each(function(index, elem) {
+      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    });
+    $(".pkg .table-container").each(function(index, elem) {
+      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
+    });
+  });
+}
+
+
+
+// Makes the ajax call for prices 
+
+function get_prices(selected, input_name_text) {
+  // Only load prices if the container is empty
+  if (!$.trim($(".price-list-inner." + selected + " .table-container table").text())) {
+  
+  $(".price-list-inner." + selected + " .table-container").append('<div class="img-loading-overlay">\
+    <%= image_tag "fancybox_loading.gif" %>\
+    Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
+  </div>');*/
+
+  // ajax request: format the table based on hash received from data.results
+  $.post("/ajax/get_prices", // get_prices.json
+  {input_name: input_name_text},
+  function(data) {
+    var output = data.results;
+    // console.log(output);
+
+    if (output.length == 0) {
+      var outputHTML = '<tr><td class="empty">(none found)</td></tr>';
+    }
+    else {
+      var outputHTML = '<tr>\
+        <th>Vendor</th>\
+        <th>Price</th>\
+        <th style="width:80px">Lowest recorded</th>\
+      </tr>';
+
+      for (var i = 0; i < output.length; i++) {
+        outputHTML += '<tr>\
+          <td><a target="_blank" href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
+          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
+          <td>' + output[i].lowest_recorded + '</td>\
+        </tr>'
+      }
+    }
+
+    $(".price-list-inner." + selected + " .img-loading-overlay").remove();
+    $(".price-list-inner." + selected + " table").append(outputHTML);
+  });
+
+  }
+  else {
+    console.log("Already loaded prices");
+  }
+}
+
+
+
+// Makes the ajax call for DLC info
+
+function get_extra_info(selected, input_name_text) {
+  $(".extra-info ." + selected).append('<div class="img-loading-overlay">\
+    <div class="img-loading-overlay-inner">\
+      <%= image_tag "fancybox_loading.gif" %>\
+      Loading information...\
+    </div>\
+  </div>');
+
+  $.post("/ajax/get_extra_info",
+  {input_name: input_name_text},
+  function(data) {
+    var output = data.results;
+    //console.log(output);
+
+    var releasedate = output.releasedate || "Unknown";
+    var website = output.website || "";
+    if (output.steamid)
+      var steam_link = "http://store.steampowered.com/app/" + output.steamid;
+    else
+      var steam_link = "http://store.steampowered.com";      
+
+    var outputHTML =
+    '<div class="col-xs-6 headerimg">\
+      <img class="extra-img" src="' + output.headerimg + '" />\
+    </div>\
+    <div class="col-xs-6 links">\
+      <span class="title">' + output.name + '</span>\
+      <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
+        <span class="btn btn-primary btn-sm">Read description</span>\
+      </a>\
+      <ul>\
+        <li>Released: ' + releasedate + '</li>\
+        \
+        <li>Website:\
+          <a target="_blank" href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
+        </li>\
+        \
+        <li>\
+          <a target="_blank" href="' + steam_link + '">View on Steam</a>\
+        </li>\
+      </ul>\
+      \
+      <div class="description-popup" id="' + selected + '-description">' +
+      output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
+    </div>';
+
+    $(".extra-info ." + selected + " .img-loading-overlay").remove();
+    $(".extra-info ." + selected).append(outputHTML);
+
+    $(".fancybox-text").fancybox({
+      openEffect: "fade",
+      closeEffect: "fade",
+      maxWidth: 600,
+      autoWidth: false
+    });
+  }).fail();
+}

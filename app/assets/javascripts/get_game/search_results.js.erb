@@ -1,0 +1,53 @@
+function render_search_results(game_name) { 
+  function get_search_results() {
+    var failedHTML =
+    '<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        Sorry, we couldn\'t fetch critic reviews at this time.\
+        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+      </div>\
+    </div>';
+
+    $(".search-results-container").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading results...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_search_results",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var link = output[i];
+        var shortened = new RegExp(/http:\/\/www.([^\/]*)\//);
+
+        if (shortened.test(link)) {
+          var text = link.match(shortened)[1];
+
+          outputHTML += '<div class="col-xs-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
+        }
+      }
+
+      $(".search-results-container .img-loading-overlay").remove();
+      $(".search-results-container").append(outputHTML);
+      console.log("Finished loading search results");
+    }).fail(function() {
+      $(".search-results-container")
+      .empty()
+      .append(failedHTML);
+
+      $(".search-results-container .reload-inline").click(function(e) {
+        $(".search-results-container").empty();
+        get_search_results();
+      });
+    }).always(adjust_footer_position);
+  }
+
+  get_search_results();
+}

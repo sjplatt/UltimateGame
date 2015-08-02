@@ -1,0 +1,514 @@
+<div class="row main-column game-name"><h3><%= @game.name %></h3></div>
+
+
+
+<div class="row main-column vital-data">
+
+  <div class="img-container">
+    <img class="gamepage-img" src="<%= @game.headerimg %>" />
+  </div>
+
+  <div class="info-container">
+
+    <div class="center">
+      <div class="score-container">
+        <input type="text" value="<%= @game.metascore || 0 %>" class="dial"
+        data-fgColor="<%=
+        if !@game.metascore then "rgba(255,255,255,0.2)"
+        elsif @game.metascore >= 75 then "hsl(100,60%,50%)"
+        elsif @game.metascore >= 50 then "hsl(45,80%,60%)"
+        elsif @game.metascore > 0 then "hsl(0,90%,55%)"
+        elsif @game.metascore == 0 then "rgba(255,255,255,0.2)"
+        end %>">
+      </div><!--
+      --><div class="score-container">
+        <input type="text" value="<%=
+        if @misc_info[:steam_percentage] then @misc_info[:steam_percentage].to_i
+        else 0 end %>" class="dial"
+        data-fgColor="<%=
+        if !@misc_info[:steam_percentage] then "rgba(255,255,255,0.2)"
+        elsif @misc_info[:steam_percentage].to_i >= 75 then "hsl(100,60%,50%)"
+        elsif @misc_info[:steam_percentage].to_i >= 50 then "hsl(45,80%,60%)"
+        elsif @misc_info[:steam_percentage].to_i > 0 then "hsl(0,90%,55%)"
+        elsif @misc_info[:steam_percentage].to_i == 0 then "rgba(255,255,255,0.2)"
+        end %>">
+      </div>
+    </div>
+
+    <div class="score-labels">
+      <div class="label">METASCORE</div><!--
+      --><div class="label">STEAM %POSITIVE</div>
+    </div>
+
+    <div class="recs-container">
+      <span class="recs-num"><%= @game.recommendations || "N/A" %></span>
+      <div class="label">RECOMMENDATIONS</div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div class="row main-column pics">
+  <ul id="horiz_container_outer">
+    <li id="horiz_container_inner">
+      <ul id="horiz_container">
+        <!-- images are added here via ajax -->
+      </ul>
+    </li>
+  </ul>
+
+  <div id="scrollbar">
+    <a id="left_scroll" class="mouseover_left" href="#"></a>
+    <div id="track">
+      <div id="dragBar"></div>
+    </div>
+    <a id="right_scroll" class="mouseover_right" href="#"></a>
+  </div>
+
+  <span class="reload-images btn btn-primary"><%= image_tag "refresh.png" %></span>
+</div>
+
+
+
+<div class="row main-column hltb-detail" id="game-statistics">
+  
+
+
+  <div class="videos left sidebar">
+    <!-- videos are added here via ajax -->
+  </div>
+
+  <div class="videos right sidebar">
+    <!-- videos are added here via ajax -->
+  </div>
+
+
+
+  <div class="section-heading">
+    <span class="left title">Game statistics</span>
+    <a class="right" href="http://howlongtobeat.com/<%= @game.hltb %>" target="_blank">
+      <span class="btn btn-primary btn-sm has-icon">View on HowLongToBeat <%= image_tag "new-window.png" %></span>
+    </a>
+  </div>
+
+  <div class="col-xs-8 hltb-container content">
+    <% if !@game.hltb %>
+      <p>We couldn't find gameplay information on <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat.</a></p>
+    <% elsif @game.Combined == -1 %>
+    <!-- Abnormal case: Game only has Co-op and Vs. times -->
+      <table class="table">
+
+        <tr>
+          <th></th>
+          <th>Time to beat</th>
+
+          <th>
+            Price/hr (lowest discounted<%=
+            if @lowest_current_arr && @lowest_current_arr != [] then
+              ", " + @lowest_current_arr[0][:current_price]
+            end %>)
+          </th>
+
+          <th>Price/hr (lowest recorded<%=
+            if @lowest_recorded_arr && @lowest_recorded_arr != [] then
+              ", " + @lowest_recorded_arr[0][:lowest_recorded]
+            end %>)</th>
+        </tr>
+
+        <% {"Co-Op" => @game.MainStory || 0,
+            "Versus" => @game.MainExtra || 0}.each do |title, hrs| %>
+        <tr>
+          <td><%= title %>:</td>
+          <td><%= if hrs != 0 then
+            if hrs < 1 then
+              (hrs*60).to_i.to_s + " min"
+            else
+              hrs.to_s.gsub(".0","").gsub(".5","½") + " hr"
+            end
+            else "N/A" end %>
+          </td>
+
+          <td><%= if
+            hrs != 0 &&
+            @lowest_current_arr &&
+            @lowest_current_arr != []
+            then
+            "$" + sprintf("%.2f", (@lowest_current_arr[0][:current_price].gsub("$","").to_f)/hrs)
+            else "N/A" end %>
+          </td>
+
+          <td><%= if
+            hrs != 0 &&
+            @lowest_recorded_arr &&
+            @lowest_recorded_arr != []
+            then
+            "$" + sprintf("%.2f", (@lowest_recorded_arr[0][:lowest_recorded].gsub("$","").to_f)/hrs)
+            else "N/A" end %>
+          </td>
+        </tr>
+        <% end %>
+
+      </table>
+
+    <% else %>
+    <!-- Normal case -->
+      <table class="table">
+
+        <tr>
+          <th></th>
+          <th>Time to beat</th>
+
+          <th>
+            Price/hr (lowest discounted<%=
+            if @lowest_current_arr && @lowest_current_arr != [] then
+              ", " + @lowest_current_arr[0][:current_price]
+            end %>)
+          </th>
+
+          <th>Price/hr (lowest recorded<%=
+            if @lowest_recorded_arr && @lowest_recorded_arr != [] then
+              ", " + @lowest_recorded_arr[0][:lowest_recorded]
+            end %>)</th>
+        </tr>
+
+        <% {"Main Story" => @game.MainStory || 0,
+            "Main + Extras" => @game.MainExtra || 0,
+            "Completionist" => @game.Completion || 0,
+            "Combined" => @game.Combined || 0}.each do |title, hrs| %>
+        <tr>
+          <td style="width:120px"><%= title %>:</td>
+          <td><%= if hrs != 0 then
+            if hrs < 1 then
+              (hrs*60).to_i.to_s + " min"
+            else
+              hrs.to_s.gsub(".0","").gsub(".5","½") + " hr"
+            end
+            else "N/A" end %>
+          </td>
+
+          <td><%= if
+            hrs != 0 &&
+            @lowest_current_arr &&
+            @lowest_current_arr != []
+            then
+            "$" + sprintf("%.2f", (@lowest_current_arr[0][:current_price].gsub("$","").to_f)/hrs)
+            else "N/A" end %>
+          </td>
+
+          <td><%= if
+            hrs != 0 &&
+            @lowest_recorded_arr &&
+            @lowest_recorded_arr != []
+            then
+            "$" + sprintf("%.2f", (@lowest_recorded_arr[0][:lowest_recorded].gsub("$","").to_f)/hrs)
+            else "N/A" end %>
+          </td>
+        </tr>
+        <% end %>
+
+      </table>
+    <% end %>
+  </div>
+
+
+
+  <div class="col-xs-4 detail-container content">
+    <ul>
+      <li>Released: <%= @game.releasedate || "Unknown" %></li>
+      
+      <li>
+      Developer<%= "s" if @game.developer && @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').length > 1 %>:
+      <%= @game.developer.gsub(/(\[\"|\"\])/, '').split('", "').join(', ') || "Unknown" %>
+      </li>
+      
+      <li>Website:
+      <% if @game.website %>
+        <a href="<%= @game.website %>" target="_blank"><%= @game.website.sub(/https?:\/\/(www\.)?/,"").sub(/\.com\/$/,".com") %></a>
+      <% end %>
+      </li>
+      
+      <li>
+      <% if @game.steamid %>
+        <a href="http://store.steampowered.com/app/<%= @game.steamid %>" target="_blank">View on Steam</a>
+      <% else %>
+        <a href="http://store.steampowered.com" target="_blank">View on Steam</a>
+      <% end %>
+      </li>
+
+      <li>
+      <% if @game.metaurl %>
+        <a href="<%= @game.metaurl %>" target="_blank">View on Metacritic</a>
+      <% else %>
+        <a href="http://metacritic.com" target="_blank">View on Metacritic</a>
+      <% end %>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+<div class="row main-column extra-info" id="dlc-info">
+  <% @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
+    <div class="game-entry
+    unselected
+    content
+    <%= name.gsub(/[^\w\d]/,"").downcase %>">
+      <!-- info added here via ajax -->
+    </div>
+  <% end %>
+</div>
+
+
+
+<div class="row main-column pricing" id="prices">
+  <% if !@game.itad %>
+    We couldn't find any deals on <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal.</a>
+  <% else %>
+    
+    <div class="section-heading">
+      <span class="left title">Price information</span>
+      <a class="right" href="http://isthereanydeal.com/#/page:game/info?plain=<%= @game.itad %>" target="_blank">
+        <span class="btn btn-primary btn-sm has-icon">View on IsThereAnyDeal <%= image_tag "new-window.png" %></span>
+      </a>
+    </div>
+
+    <table>
+      <tr>
+        <td class="col-xs-6 dlc-pkg-select">
+
+          <div class="subsection content dlcs">
+
+            <div class="subsection-heading">
+              <span class="title">DLCs for this game</span>
+            </div>
+
+            <div class="subsection-inner">
+              <table class="table">
+                <% if @associated_names.select{|_,data| data[:is_dlc]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
+                  <tr><td class="game-entry
+                  unselected
+                  <%= name.gsub(/[^\w\d]/,"").downcase %>"><%= name %></td></tr>
+                <% end.empty? %>
+                  <tr><td class="empty">(none found)</td></tr>
+                <% end %>
+              </table>
+            </div>
+          </div>
+
+          <div class="subsection content pkgs">
+
+            <div class="subsection-heading">
+              <span class="title">Packages for this game</span>
+            </div>
+
+            <div class="subsection-inner">
+              <table class="table">
+                <% if @associated_names.select{|_,data| data[:is_pkg]}.sort_by{|name,_| name.gsub(/[^\w\d]/,"")}.map do |name,data| %>
+                  <tr><td class="game-entry
+                  pkg
+                  unselected
+                  <%= name.gsub(/[^\w\d]/,"").downcase %>"><%= name %></td></tr>
+                <% end.empty? %>
+                  <tr><td class="empty">(none found)</td></tr>
+                <% end %>
+              </table>
+            </div>
+          </div>
+
+        </td>
+
+        <td class="col-xs-6 price-list content">
+          <% @associated_names.each do |name,data| %>
+            <div class="price-list-inner
+            unselected
+            <%= name.gsub(/[^\w\d]/,"").downcase %>
+            <%= if data[:is_dlc] then "dlc"
+              elsif data[:is_pkg] then "pkg" end%>
+            <%= "unlisted" if !data[:is_dlc] && !data[:is_pkg] %>">
+              <div class="price-list-heading">
+                <% if !name.gsub(/[^\w\d]/,"").downcase.eql?(@game.name.gsub(/[^\w\d]/,"").downcase) %>
+                  <a class="show-original"><span class="btn btn-primary btn-xs has-icon"><%= image_tag "left-arrow.png" %></a>
+                <% end %>
+                <span class="title"><%= name %></span>
+              </div>
+
+              <div class="table-container">
+              <table class="table">
+                <% if name.eql?(@game.name) && @prices && @prices[@game.name] %>
+
+                  <thead>
+                  <tr>
+                    <th>Vendor</th>
+                    <th>Price</th>
+                    <th style="width:80px">Lowest recorded</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @prices[@game.name].each do |entry| %>
+                    <tr>
+                      <td><a href="<%= entry[:store_url] %>" target="_blank"><%= entry[:store] %></a></td>
+                      <td><%= entry[:current_price] %> (<%= entry[:price_cut]%>)</td>
+                      <td><%= entry[:lowest_recorded] %></td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+
+                <% end %>
+                <!-- this is just the default display,
+                else this data is appended to the appropriate element by jquery/ajax -->
+
+              </table>
+              </div>
+
+            </div>
+          <% end %>
+
+          <% @associated_names.select{|_,data| data[:is_pkg]}.map do |name,data| %>
+            <div class="price-list-pkg-contents
+            unselected
+            <%= name.gsub(/[^\w\d]/,"").downcase %>">
+              <div class="pkg-contents-heading">
+                <span class="title">Contents:</span>
+              </div>
+
+              <div class="list-container">
+              <ul>
+              <% if Package.find_by(name: name).apps %>
+              <% Package.find_by(name: name).apps.split(",").each do |item_id| %>
+                
+                <% if Game.find_by(steamid: item_id) && Game.find_by(steamid: item_id).name.eql?(@game.name) %>
+                  <li><%= Game.find_by(steamid: item_id).name %></li>
+
+                <% elsif Dlc.find_by(steamid: item_id) && Dlc.find_by(steamid: item_id).name.eql?(@game.name) %>
+                  <li><%= Dlc.find_by(steamid: item_id).name %></li>
+
+                <% end %>
+
+                <% if Game.find_by(steamid: item_id) && !Game.find_by(steamid: item_id).name.eql?(@game.name)%>
+                  <li><%= Game.find_by(steamid: item_id).name %></li>
+                
+                <% elsif Dlc.find_by(steamid: item_id) && !Dlc.find_by(steamid: item_id).name.eql?(@game.name)%>
+                  <li><%= Dlc.find_by(steamid: item_id).name %></li>
+                
+                <% end %>
+
+              <% end %>
+              <% end %>
+              </ul>
+              </div>
+
+            </div>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+
+  <% end %>
+</div>
+
+
+
+<div class="row main-column search-results" id="critic-reviews">
+  <div class="section-heading">
+    <span class="title">Critic reviews</span>
+  </div>
+
+  <div class="search-results-container content">
+    <!-- items are added here via ajax -->
+  </div>
+</div>
+
+
+
+<div class="row main-column description" id="description">
+  <div class="section-heading">
+    <span class="title">Game description</span>
+  </div>
+
+  <div class="description-container content collapsible">
+    <% if @game.description %>
+      <%= @game.description.html_safe %>
+      <br>
+      <br>
+      <h1></h1>
+      <% if @game.legal && @game.legal != "" %>
+        <p class="legal"><%= @game.legal.html_safe %></p>
+      <% end %>
+      <!--
+      <%if @game.description.include?("Creation Kit and Steam Workshop")%>
+        <%=("<h1>About the Game</h1>" + 
+          @game.description.split('About the Game')[1..-1]
+          .join("")).html_safe%>
+      <%else%>
+          <%=("<h1>About the Game</h1>" + @game.description).html_safe%>
+      <%end%>
+      -->
+    <% else %>
+      <%= @game.description %>
+      <% if @game.legal && @game.legal != "" %>
+        <p class="legal"><%= @game.legal.html_safe %></p>
+      <% end %>
+    <% end %>  
+  </div>
+
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
+</div>
+
+
+
+<div class="row main-column sys-reqs" id="system-requirements">
+  <div class="section-heading">
+    <span class="title">System requirements</span>
+  </div>
+
+  <div class="reqs-container content collapsible">
+    <% if @game.minreq && @game.recreq %>
+      <div class="col-xs-6">
+        <%= @game.minreq.html_safe %>
+      </div>
+      <div class="col-xs-6">
+        <%= @game.recreq.html_safe %>
+      </div>
+
+    <% elsif @game.minreq %>
+      <div class="col-xs-12">
+        <%= @game.minreq.html_safe %>
+      </div>
+
+    <% elsif @game.recreq %>
+      <div class="col-xs-12">
+        <%= @game.recreq.html_safe %>
+      </div>
+
+    <% else %>
+      <div class="col-xs-12">
+        <p class="empty">(none found)</p>
+      </div>
+
+    <% end %>
+  </div>
+
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
+</div>
+
+
+
+<% if @game.subreddit %>
+<div class="row main-column reddit" id="reddit-discussion">
+  <div class="section-heading">
+    <span class="left title">Reddit discussion</span>
+    <a class="right" href="http://reddit.com/r/<%= @game.subreddit %>" target="_blank">
+      <span class="btn btn-primary btn-sm has-icon">/r/<%= @game.subreddit %> <%= image_tag "new-window.png" %></span>
+    </a>
+  </div>
+  <div class="reddit-container content collapsible">
+    <!-- items are added here via ajax -->
+  </div>
+
+  <span class="collapser btn btn-primary btn-sm"><%= image_tag "expand.png" %></span>
+</div>
+<% end %>

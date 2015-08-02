@@ -1,0 +1,103 @@
+function render_images(game_name) {
+  /*$(".pics-container-outer").mousewheel(function(e, delta) {
+    this.scrollLeft -= (delta*40);
+    e.preventDefault();
+  });*/
+  
+  function get_images() {
+    var failedHTML = '<div class="img-loading-overlay">\
+          <div class="img-loading-overlay-inner">\
+            Sorry, image loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+          </div>\
+        </div>'
+
+    $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading images...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_images",
+    {input_name: game_name},
+    function(data) {
+      var images = data.results;
+      // console.log(images);
+
+      //var outputHTML = "";
+      for (var i = 0; i < images.length; i++) {
+        $("#horiz_container").append('<li><a href="' + images[i] + '"\
+          class="fancybox"\
+          rel="game-images"\
+          title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
+          <img src="' + images[i] + '" alt="">\
+        </a></li>');
+      }
+
+        $("#horiz_container img").error(function() {
+          $(this).parent().parent().remove();
+        })
+
+      //$("#horiz_container").append(outputHTML);
+
+      // important: if using thumbs, note application.js where
+      // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
+      $(".fancybox").fancybox({
+        prevEffect: 'elastic',
+        nextEffect: 'elastic'
+      });
+
+      // Success code
+
+      // make sure everything is loaded before trying to set width
+      var total_width = 0;
+      $("#horiz_container").imagesLoaded(function() {
+        $("#horiz_container_outer .img-loading-overlay").remove();
+
+        $("#horiz_container li").each(function(index, elem) {
+          total_width += parseInt($(this).outerWidth(true), 10);
+
+          $(elem).children("a").css("visibility","visible");
+        });
+        // console.log(total_width);
+
+        $("#dragBar").css("display","block");
+        $(".reload-images").css("display","block");
+
+        $("#horiz_container").css("width",(total_width+13)+"px"); // +10 for 5px padding on each side
+        $("#horiz_container_outer").horizontalScroll();
+      });
+
+      console.log("Finished loading images");
+
+      // Fail code
+      if (!$("#horiz_container li").length) {
+        $("#dragBar").hide();
+
+        $("#horiz_container_outer").prepend(failedHTML);
+
+        $(".pics .reload-inline").click(function(e) { // .reload-images is not visible at this point
+          $(".reload-images").hide();
+          $("#horiz_container").empty();
+          $("#horiz_container_outer .img-loading-overlay").remove();
+          get_images();
+        });
+
+        console.log("Failed to load any images");
+      }
+    }).fail(function() {
+      $("#horiz_container_outer .img-loading-overlay").remove();
+      $("#horiz_container_outer").prepend(failedHTML);
+    });
+  }
+
+  $(".reload-images").click(function(e) {
+    $(".reload-images").hide();
+    $("#dragBar").hide();
+    $("#horiz_container").empty();
+    $("#horiz_container_outer .img-loading-overlay").remove();
+    get_images();
+  });
+
+  get_images();
+}
