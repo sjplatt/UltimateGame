@@ -8,11 +8,10 @@ include RedditInfo
 class MainController < ApplicationController
 
   #Precondition: input_name is the name of the game/DLC/package
-  #Precondition: associated_with is the name of the game whose page shows input_name's data
   #Precondition: input_is_DLC is true if game is dlc
   #Precondition: input_is_pkg is true if game is a package
   #Postcondition: @associated_names (created if nonexistent) contains an entry with this data
-  def add_associated_name(associated_with, input_name, input_is_DLC, input_is_pkg)
+  def add_associated_name(input_name, input_is_DLC, input_is_pkg)
     if !@associated_names
       @associated_names = {}
     end
@@ -194,14 +193,14 @@ class MainController < ApplicationController
       puts "ERROR: Could not find corresponding game " + params[:query]
     else
       # Populate @associated_names to get all DLCs/packages associated with @game
-      add_associated_name(@game.name, @game.name, false, false)
+      add_associated_name(@game.name, false, false)
       Dlc.where(game_id:@game.id).each do |dlc|
         if (!dlc.name.downcase.eql?(@game.name.downcase))
-          add_associated_name(@game.name, dlc.name, true, false)
+          add_associated_name( dlc.name, true, false)
         end
       end
       Package.where(game_id:@game.id).each do |pkg|
-        add_associated_name(@game.name, pkg.name, false, true)
+        add_associated_name(pkg.name, false, true)
       end
 
       # Get misc info and prices for @game only
