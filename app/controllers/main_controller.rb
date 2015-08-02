@@ -611,6 +611,21 @@ class MainController < ApplicationController
     end
   end
 
+  # POST '/ajax/send_suggestion'
+  # Precondition: selection parameter is the type of suggestion sent (name of the game, or HLTB, or reddit, etc)
+  # Precondition: content parameter is the suggestion message entered by user
+  # Postcondition:
+  def send_suggestion
+    selection = params[:selection]
+    content = params[:content]
+    puts selection
+    puts content
+
+    respond_to do |format|
+      format.json {render :nothing => true}
+    end
+  end
+
   def index
     get_frontpage_deals
     get_more_frontpage_info

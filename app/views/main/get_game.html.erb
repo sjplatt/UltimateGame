@@ -1,5 +1,6 @@
 <% if @game %>
 <%= javascript_include_tag "get_game/get_game_extra_formatting" %>
+<% @subtitle = " - #{@game.name}" %>
 <% end %>
 
 <!-- preload ajax images -->
