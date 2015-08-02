@@ -147,9 +147,18 @@ class MainController < ApplicationController
     content = params[:content]
     name = params[:name]
 
-    puts selection
-    puts content
-    puts name
+    s3 = Aws::S3::Client.new
+    resp = s3.get_object(bucket:ENV['NEW_GAME_BUCKET'], 
+      key:ENV['SUGGESTIONS_FILE'])
+
+    body = resp.body.read
+    if body.split(',').size<2000
+      body = body + "," + name + ": " + selection + ": " + content
+    end
+
+    bucket = Aws::S3::Resource.new(client: s3).bucket(ENV['NEW_GAME_BUCKET'])
+    object = bucket.object(ENV['SUGGESTIONS_FILE'])
+    object.put(body:body.inspect)
 
     respond_to do |format|
       format.json {render :nothing => true}
