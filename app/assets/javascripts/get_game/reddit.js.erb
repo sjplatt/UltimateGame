@@ -42,11 +42,15 @@ function render_reddit(game_name) {
           source_text = "(" + output[i].link.match(is_external)[2] + ")";
         }
 
-        outputHTML += '<div>\
+        /*outputHTML += '<div>\
           <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
           <a class="source" target="_blank" href="' + source_url + '">' + source_text + '</a>\
           <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
-        </div>';
+        </div>';*/
+        outputHTML += '<div>\
+          <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
+          <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
+        </div>'
       }
 
       $(".reddit-container .img-loading-overlay").remove();
