@@ -5,6 +5,9 @@ require 'json'
 task :updatedb => :environment do
   update_database_final
 end
+task :updateitad => :environment do
+  add_itad
+end
 
 def update_database_final
   new_games = update_steam_game_list()
@@ -378,9 +381,7 @@ def add_itad
   end
   Package.all.each do |package|
     if !package.itad && package.itad != ""
-      if !package.itad && package.itad != ""
-        Package.update(package.id,:itad => encode_itad_plain(package.name))
-      end
+      Package.update(package.id,:itad => encode_itad_plain(package.name))
     end
   end
 end
