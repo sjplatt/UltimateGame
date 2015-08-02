@@ -151,7 +151,7 @@ nav a:hover {
 }
 nav .jump-to {
   font-style: italic;
-  color: rgba(236,236,236,0.55);
+  color: rgba(236,236,236,0.45);
 }
 .content, .footer {
   background-color: rgba(30,30,30,0.4);

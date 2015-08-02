@@ -9,11 +9,20 @@
 
       <div class="suggestions-popup" id="suggestions">
         <select class="form-control">
+
           <option value="">— Select one —</option>
           <option value="suggestion">I have a suggestion</option>
+
           <% @associated_names.each do |item| %>
           <option value="<%= item[0] %>"><%= item[0] %></option>
+
+          <% if item[0].eql?(@game.name) %>
+          <option value="<%= item[0] %>_HLTB"><%= item[0] %> HowLongToBeat section</option>
+          <option value="<%= item[0] %>_REDDIT"><%= item[0] %> Reddit discussion section</option>
           <% end %>
+          
+          <% end %>
+
         </select>
 
         <div class="form-group">
@@ -26,7 +35,7 @@
     <% end %>
 
     <div class="legal">
-      <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat,</a> <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal,</a> <a href="http://metacritic.com" target="_blank">Metacritic,</a> and <a href="http://store.steampowered.com" target="_blank">Steam</a> are not responsible for any statistics, prices, or other information displayed on this site, and such content may already be outdated at the time of visit. All information, copyrights, and trademarks are the sole property of their respective owners.
+      <a href="http://howlongtobeat.com" target="_blank">HowLongToBeat,</a> <a href="http://isthereanydeal.com" target="_blank">IsThereAnyDeal,</a> <a href="http://metacritic.com" target="_blank">Metacritic,</a> and <a href="http://store.steampowered.com" target="_blank">Steam</a> are not responsible for any statistics, prices, or other information displayed on this site. As we do not own the information, we are not responsible for its accuracy, and such content may already be outdated at the time of visit. All information, copyrights, and trademarks are the sole property of their respective owners.
     </div>
   </div>
 </div>
