@@ -503,7 +503,8 @@ var ready = function() {
 
     $.post(
     "/ajax/send_suggestion",
-    {selection: selection,
+    {name:game_name,
+      selection: selection,
       content: content});
   });
 

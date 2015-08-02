@@ -1,4 +1,3 @@
-require 'fuzzystringmatch'
 require 'google/api_client'
 require 'trollop'
 require 'yaml'
@@ -168,12 +167,10 @@ class MainController < ApplicationController
   end
 
   #Precondition: MUST CALL get_frontpage_deals first
-  #Postcondition: Merges with @large_capsules. Creates @new_releases
-  #and removes duplicates from get_frontpage_deals
+  #Postcondition: Merges with @large_capsules.
   def get_more_frontpage_info()
     specials = []
     top_sellers = []
-    @new_releases = []
     base_url = "http://store.steampowered.com/api/featuredcategories/"
     uri = URI(base_url)
     #get the body of the text
@@ -196,20 +193,11 @@ class MainController < ApplicationController
           end
         end
       end
-      if has_new_releases?(hash)
-        release = get_new_releases(hash)
-        release.each do |cap|
-          if has_id?(cap)
-            @new_releases << get_id(cap)
-          end
-        end
-      end
     else
       puts "ERROR: PLEASE RELOAD WEBSITE"
     end
     @large_capsules = 
     (@large_capsules | specials | top_sellers).uniq
-    #remove_duplicate_frontpage_info
   end
 
   #Postcondition: creates instance variable @large_capsules which contains
@@ -232,65 +220,6 @@ class MainController < ApplicationController
       end
     else
       puts "ERROR: PLEASE RELOAD WEBSITE"
-    end
-  end
-
-  #Precondition: name is the search term
-  #Postcondition: @top_ids is a list of STEAMIDS in order of 
-  #closest match
-  def fuzzy_string_analysis_initial(name)
-    name = clean_string_stronger(name)
-    puts name
-    @top_ids = []
-    top_scores = []
-    jarow = FuzzyStringMatch::JaroWinkler.create(:pure)
-    Game.all.each do |game|
-      if clean_string_stronger(game.name.downcase).include?(name.downcase)
-        @top_ids << game.steamid
-        top_scores<<jarow.getDistance(name,game.name)+0.5
-      end
-    end
-    Dlc.all.each do |dlc|
-      if clean_string_stronger(dlc.name.downcase).include?(name.downcase)
-        @top_ids << dlc.steamid
-        top_scores<<jarow.getDistance(name,dlc.name)
-      end
-    end
-    top_scores,@top_ids = top_scores.zip(@top_ids).sort_by(&:last).transpose
-  end
-
-  #NOTES:s
-  #ORDER TO UPDATE DATABASE
-  #1) update_steam_game_list() to get new games. WILL OPEN BROWSER
-  #2) fail = update_steam_dlc()
-  #3) update_steam_dlc_failures(fail) will try to fix failures
-  #4) how_long_to_beat()
-  #5) how_long_to_beat_dlc()
-  #6) set_subreddit_for_games
-  def update_db()
-    #update_steam_game_list
-    fail = update_steam_dlc
-    update_steam_dlc_failures(fail)
-    how_long_to_beat
-    how_long_to_beat_dlc
-    set_subreddit_for_games
-  end
-
-  def get_timestamp()
-    base_url = "http://isthereanydeal.com/#/page:game/info?plain=bogus"
-    page = Nokogiri::HTML.parse(open(base_url))
-    page.css('script').each do |script|
-      if script.text.include?("lazy.params.file")
-        split = script.text.split("lazy.params.file")
-        if split.size>1
-          data = split[1]
-          semi_split = data.split(";")
-          if semi_split.size>1
-            return semi_split[0].gsub(/[\s\"=]/,"")
-            break
-          end
-        end
-      end
     end
   end
 
@@ -618,8 +547,11 @@ class MainController < ApplicationController
   def send_suggestion
     selection = params[:selection]
     content = params[:content]
+    name = params[:name]
+
     puts selection
     puts content
+    puts name
 
     respond_to do |format|
       format.json {render :nothing => true}
@@ -629,7 +561,8 @@ class MainController < ApplicationController
   def index
     get_frontpage_deals
     get_more_frontpage_info
-    set_new_releases
+    #set_new_releases
+    @new_releases=[]
   end
 
   # GET '/get_game'
