@@ -1,0 +1,75 @@
+function render_reddit(game_name) {
+  function get_reddit_info() {
+    var failedHTML =
+    '<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        Sorry, we couldn\'t fetch Reddit activity at this time.\
+        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+        <a href="http://www.reddit.com/search?q=' + game_name + '" target="_blank">\
+          <span class="btn btn-primary btn-sm has-icon">Search on Reddit <%= image_tag "new-window.png" %></span>\
+        </a>\
+      </div>\
+    </div>';
+
+    $(".reddit-container").css("padding-right","10px");
+    $(".reddit-container").append('<div class="img-loading-overlay">\
+      <div class="img-loading-overlay-inner">\
+        <%= image_tag "fancybox_loading.gif" %>\
+        Loading Reddit posts...\
+      </div>\
+    </div>');
+
+    $.post("/ajax/get_reddit",
+    {input_name: game_name},
+    function(data) {
+      output = data.results;
+      //console.log(output);
+
+      var outputHTML = "";
+
+      for (var i = 0; i < output.length; i++) {
+        var source_url = "";
+        var source_text = "";
+        var is_reddit_internal = new RegExp(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//);
+        var is_external = new RegExp(/https?:\/\/(www\.)?([^\/]*)\//);
+
+        if (is_reddit_internal.test(output[i].link)) {
+          source_url = "http://www.reddit.com/r/" + output[i].link.match(is_reddit_internal)[1];
+          source_text = "(self." + output[i].link.match(is_reddit_internal)[1] + ")";
+        }
+        else if (is_external.test(output[i].link)) {
+          source_url = "http://www.reddit.com/domain/" + output[i].link.match(is_external)[2];
+          source_text = "(" + output[i].link.match(is_external)[2] + ")";
+        }
+
+        outputHTML += '<div>\
+          <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
+          <a class="source" target="_blank" href="' + source_url + '">' + source_text + '</a>\
+          <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
+        </div>';
+      }
+
+      $(".reddit-container .img-loading-overlay").remove();
+
+      if (outputHTML != "") {
+        $(".reddit-container").append(outputHTML);
+        $(".reddit .collapser").css("display","block");
+        $(".reddit-container").css("padding-right","30px");
+      }
+      else {
+        $(".reddit-container").append(failedHTML);
+        $(".reddit-container .reload-inline").click(function(e) {
+          $(".reddit-container").empty();
+          get_reddit_info();
+        })
+      }
+
+      console.log("Finished loading reddit");
+    }).fail(function() {
+      $(".reddit-container").empty();
+      $(".reddit-container").append(failedHTML);
+    }).always(adjust_footer_position);
+  }
+
+  get_reddit_info();
+}

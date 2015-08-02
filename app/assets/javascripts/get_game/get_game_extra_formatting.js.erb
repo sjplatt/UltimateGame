@@ -6,412 +6,23 @@ var ready = function() {
   console.log("Game page loaded");
   var game_name = $(".game-name").text().replace(/\n/g,"");
 
-  // PRICES TABLE
+  // PRICES VIEW (prices.js.erb)
+  render_prices(game_name);
 
-  // when clicking a game entry, make its corresponding price appear
-  // (and package contents if applicable)
-  $(".pricing .game-entry").click(function(e) {
-    var selected_class = convert_to_classname($(e.target).text());
+  // IMAGES VIEW (images.js.erb)
+  render_images(game_name);
 
-    // search for currently selected entries; deselect them
-    $(".pricing .selected,\
-      .extra-info .selected")
-    .removeClass("selected").addClass("unselected");
+  // VIDEOS VIEW (videos.js.erb)
+  render_videos(game_name);
 
-    // search for classes matching the current selection; select them
-    $(e.target).removeClass("unselected").addClass("selected");
-    $(".pricing ." + selected_class + ",\
-      .extra-info ." + selected_class)
-    .removeClass("unselected").addClass("selected");
+  // REDDIT VIEW (reddit.js.erb)
+  render_reddit(game_name);
 
-    // send the ajax request using the game name (ITAD URL can only be found with Ruby)
-    //if ($(".price-list ." + selected_class + ".ajax-loaded").length)
-      // console.log("Already loaded " + selected_class);
-    if (!$(".price-list-inner." + selected_class + ".ajax-loaded").length) {
-      $(".price-list-inner." + selected_class).addClass("ajax-loaded");
-      get_prices(selected_class, $(e.target).text());
-      if (!$(e.target).hasClass("pkg"))
-        get_extra_info(selected_class, $(e.target).text());
-    }
-  });
+  // SEARCH RESULTS (search_results.js.erb)
+  render_search_results(game_name);
 
-
-
-  // (Show original game) button next to anything that isn't the original game
-  $(".show-original").click(function(e) {
-    var original_class = convert_to_classname(game_name);
-
-    $(".pricing .selected,\
-      .extra-info .selected")
-    .removeClass("selected").addClass("unselected");
-    
-    $(".pricing ." + original_class + ",\
-      .extra-info ." + original_class)
-    .removeClass("unselected").addClass("selected");
-  });
-
-
-
-  $(".reload-prices").click(function(e) {
-    // placeholder for possible reload price functionality
-  })
-
-
-
-  // IMAGES VIEW
-  /*$(".pics-container-outer").mousewheel(function(e, delta) {
-    this.scrollLeft -= (delta*40);
-    e.preventDefault();
-  });*/
-  
-  function get_images() {
-    var failedHTML = '<div class="img-loading-overlay">\
-          <div class="img-loading-overlay-inner">\
-            Sorry, image loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
-          </div>\
-        </div>'
-
-    $("#horiz_container_outer").prepend('<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        <%= image_tag "fancybox_loading.gif" %>\
-        Loading images...\
-      </div>\
-    </div>');
-
-    $.post("/ajax/get_images",
-    {input_name: game_name},
-    function(data) {
-      var images = data.results;
-      // console.log(images);
-
-      //var outputHTML = "";
-      for (var i = 0; i < images.length; i++) {
-        $("#horiz_container").append('<li><a href="' + images[i] + '"\
-          class="fancybox"\
-          rel="game-images"\
-          title="<a href=&quot;' + images[i] + '&quot;>View full resolution</a>">\
-          <img src="' + images[i] + '" alt="">\
-        </a></li>');
-      }
-
-        $("#horiz_container img").error(function() {
-          $(this).parent().parent().remove();
-        })
-
-      //$("#horiz_container").append(outputHTML);
-
-      // important: if using thumbs, note application.js where
-      // =require jquery.fancybox.pack.js comes before =require jquery.fancybox-thumb.js
-      $(".fancybox").fancybox({
-        prevEffect: 'elastic',
-        nextEffect: 'elastic'
-      });
-
-      // Success code
-
-      // make sure everything is loaded before trying to set width
-      var total_width = 0;
-      $("#horiz_container").imagesLoaded(function() {
-        $("#horiz_container_outer .img-loading-overlay").remove();
-
-        $("#horiz_container li").each(function(index, elem) {
-          total_width += parseInt($(this).outerWidth(true), 10);
-
-          $(elem).children("a").css("visibility","visible");
-        });
-        // console.log(total_width);
-
-        $("#dragBar").css("display","block");
-        $(".reload-images").css("display","block");
-
-        $("#horiz_container").css("width",(total_width+13)+"px"); // +10 for 5px padding on each side
-        $("#horiz_container_outer").horizontalScroll();
-      });
-
-      console.log("Finished loading images");
-
-      // Fail code
-      if (!$("#horiz_container li").length) {
-        $("#dragBar").hide();
-
-        $("#horiz_container_outer").prepend(failedHTML);
-
-        $(".pics .reload-inline").click(function(e) { // .reload-images is not visible at this point
-          $(".reload-images").hide();
-          $("#horiz_container").empty();
-          $("#horiz_container_outer .img-loading-overlay").remove();
-          get_images();
-        });
-
-        console.log("Failed to load any images");
-      }
-    }).fail(function() {
-      $("#horiz_container_outer .img-loading-overlay").remove();
-      $("#horiz_container_outer").prepend(failedHTML);
-    });
-  }
-
-  $(".reload-images").click(function(e) {
-    $(".reload-images").hide();
-    $("#dragBar").hide();
-    $("#horiz_container").empty();
-    $("#horiz_container_outer .img-loading-overlay").remove();
-    get_images();
-  });
-
-  get_images();
-
-
-
-  function get_videos() {
-    $(".videos.left.sidebar").append(
-      '<div class="loading-container content">\
-      <div class="img-loading-overlay">\
-        <div class="img-loading-overlay-inner">\
-          <%= image_tag "fancybox_loading.gif" %>\
-          Loading videos...\
-        </div>\
-      </div>\
-      </div>');
-
-    $.post(
-    "/ajax/get_videos",
-    {input_name: game_name},
-    function(data) {
-      //console.log(data);
-
-      $(".videos.left.sidebar").append(
-        '<div class="section-heading">\
-          <span class="title">YouTube reviews</span>\
-        </div>\
-        <div class="content video-container"></div>');
-      $(".videos.right.sidebar").append(
-        '<div class="section-heading">\
-          <span class="title">YouTube gameplay</span>\
-        </div>\
-        <div class="content video-container"></div>');
-
-      function get_sidebar_html(link,name,image_link) {
-        return '<a class="fancybox-media"\
-          rel="reviews"\
-          href="' + link + '">\
-          <div class="video">'
-             + name + '<br>\
-            <div class="video-img-container">\
-              <img class="video-img" src="' + image_link + '" />\
-            </div>\
-          </div>\
-        </a>';
-      }
-
-      for (var i = 0; i < data.reviews.names.length; i++) {
-        $(".videos.left.sidebar .video-container").append(
-          get_sidebar_html(data.reviews.links[i], data.reviews.names[i], data.reviews.image_links[i]));
-      }
-
-      for (var i = 0; i < data.gameplay.names.length; i++) {
-        $(".videos.right.sidebar .video-container").append(
-          get_sidebar_html(data.gameplay.links[i], data.gameplay.names[i], data.gameplay.image_links[i]));
-      }
-
-      if (data.reviews.names.length == 0)
-        $(".videos.left.sidebar .video-container").append('<span class="empty">(none found)</span>');
-      if (data.gameplay.names.length == 0)
-        $(".videos.right.sidebar .video-container").append('<span class="empty">(none found)</span>');
-
-      $(".fancybox-media").fancybox({
-        prevEffect: "none",
-        nextEffect: "none",
-        mouseWheel: false,
-        padding: 0,
-        margin: [20, 60, 20, 60],
-        helpers: {
-          media: {}
-        }
-      });
-
-      $(".videos .img-loading-overlay").parent().remove();
-      console.log("Finished loading videos");
-    }).fail(function() {
-      $(".videos").empty();
-      $(".videos.left.sidebar").prepend(
-      '<div class="loading-container content">\
-      <div class="img-loading-overlay">\
-        <div class="img-loading-overlay-inner">\
-          Sorry, video loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
-        </div>\
-      </div>\
-      </div>');
-
-      $(".videos .reload-inline").click(function(e) {
-        $(".videos").empty();
-        //$(".search-results-container").hide();
-        get_videos();
-      });
-    }).always(function() {
-      adjust_footer_position();
-
-      // Make the critic reviews visible and properly positioned
-      /*setTimeout(function() {
-        $(".search-results-container")
-        .css("display","block")
-        .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
-      }, 1000);*/
-    });
-  }
-
-  get_videos();
-
-
-
-  function get_reddit_info() {
-    var failedHTML =
-    '<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        Sorry, we couldn\'t fetch Reddit activity at this time.\
-        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
-        <a href="http://www.reddit.com/search?q=' + game_name + '" target="_blank">\
-          <span class="btn btn-primary btn-sm has-icon">Search on Reddit <%= image_tag "new-window.png" %></span>\
-        </a>\
-      </div>\
-    </div>';
-
-    $(".reddit-container").css("padding-right","10px");
-    $(".reddit-container").append('<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        <%= image_tag "fancybox_loading.gif" %>\
-        Loading Reddit posts...\
-      </div>\
-    </div>');
-
-    $.post("/ajax/get_reddit",
-    {input_name: game_name},
-    function(data) {
-      output = data.results;
-      //console.log(output);
-
-      var outputHTML = "";
-
-      for (var i = 0; i < output.length; i++) {
-        var source_url = "";
-        var source_text = "";
-        var is_reddit_internal = new RegExp(/https?:\/\/www\.reddit\.com\/r\/([^\/]*)\//);
-        var is_external = new RegExp(/https?:\/\/(www\.)?([^\/]*)\//);
-
-        if (is_reddit_internal.test(output[i].link)) {
-          source_url = "http://www.reddit.com/r/" + output[i].link.match(is_reddit_internal)[1];
-          source_text = "(self." + output[i].link.match(is_reddit_internal)[1] + ")";
-        }
-        else if (is_external.test(output[i].link)) {
-          source_url = "http://www.reddit.com/domain/" + output[i].link.match(is_external)[2];
-          source_text = "(" + output[i].link.match(is_external)[2] + ")";
-        }
-
-        outputHTML += '<div>\
-          <a class="reddit-entry" target="_blank" href="' + output[i].link + '">' + output[i].name + '</a>\
-          <a class="source" target="_blank" href="' + source_url + '">' + source_text + '</a>\
-          <a class="comments" target="_blank" href="' + output[i].comments + '">(comments)</a>\
-        </div>';
-      }
-
-      $(".reddit-container .img-loading-overlay").remove();
-
-      if (outputHTML != "") {
-        $(".reddit-container").append(outputHTML);
-        $(".reddit .collapser").css("display","block");
-        $(".reddit-container").css("padding-right","30px");
-      }
-      else {
-        $(".reddit-container").append(failedHTML);
-        $(".reddit-container .reload-inline").click(function(e) {
-          $(".reddit-container").empty();
-          get_reddit_info();
-        })
-      }
-
-      console.log("Finished loading reddit");
-    }).fail(function() {
-      $(".reddit-container").empty();
-      $(".reddit-container").append(failedHTML);
-    }).always(adjust_footer_position);
-  }
-
-  get_reddit_info();
-
-
-
-  function get_search_results() {
-    var failedHTML =
-    '<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        Sorry, we couldn\'t fetch critic reviews at this time.\
-        <br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
-      </div>\
-    </div>';
-
-    $(".search-results-container").append('<div class="img-loading-overlay">\
-      <div class="img-loading-overlay-inner">\
-        <%= image_tag "fancybox_loading.gif" %>\
-        Loading results...\
-      </div>\
-    </div>');
-
-    $.post("/ajax/get_search_results",
-    {input_name: game_name},
-    function(data) {
-      output = data.results;
-      //console.log(output);
-
-      var outputHTML = "";
-
-      for (var i = 0; i < output.length; i++) {
-        var link = output[i];
-        var shortened = new RegExp(/http:\/\/www.([^\/]*)\//);
-
-        if (shortened.test(link)) {
-          var text = link.match(shortened)[1];
-
-          outputHTML += '<div class="col-xs-4"><a href="' + link + '" target="_blank">' + text + '</a></div>';
-        }
-      }
-
-      $(".search-results-container .img-loading-overlay").remove();
-      $(".search-results-container").append(outputHTML);
-      console.log("Finished loading search results");
-    }).fail(function() {
-      $(".search-results-container")
-      .empty()
-      .append(failedHTML);
-
-      $(".search-results-container .reload-inline").click(function(e) {
-        $(".search-results-container").empty();
-        get_search_results();
-      });
-    }).always(adjust_footer_position);
-  }
-
-  get_search_results();
-
-
-
-  // Adjust footer position
-
-  function adjust_footer_position() {
-    function bottom_offset(elem) {
-      return elem.offset().top + elem[0].offsetHeight;
-    }
-
-    // Move footer below bottom-most element
-    var body_bottom = bottom_offset($("body"));
-    var left_sidebar_bottom = bottom_offset($(".search-results-container"));
-    var right_sidebar_bottom = bottom_offset($(".right.sidebar"))
-    var bottommost = Math.max(body_bottom, left_sidebar_bottom, right_sidebar_bottom);
-
-    $(".footer").css("position","absolute");
-    $(".footer").css("top",bottommost + "px");
-  }
-
-  $("body").click(adjust_footer_position);
+  // FOOTER (footer.js.erb)
+  render_footer(game_name);
 
 
 
@@ -466,50 +77,6 @@ var ready = function() {
 
 
 
-  // FOOTER SUGGESTION BOX
-
-  $(".fancybox-suggestions").fancybox({
-    openEffect: "fade",
-    closeEffect: "fade",
-    minWidth: 600,
-    minHeight: 300,
-    autoWidth: true,
-  });
-
-  // Toggle availability of Submit button
-  // Make available when an option is selected and something is in textarea
-  function check_input_state() {
-    if ($(".suggestions-popup option:selected").val() == "" ||
-        $(".suggestions-popup textarea").val() == "")
-      $(".suggestions-popup .submit-suggestion").addClass("disabled");
-    else
-      $(".suggestions-popup .submit-suggestion").removeClass("disabled");
-  }
-
-  $(".open-suggestions-popup").click(check_input_state);
-  $(".suggestions-popup select").on("change", check_input_state);
-  $(".suggestions-popup textarea").keyup(check_input_state);
-
-  // Suggestion submission
-  $(".suggestions-popup .submit-suggestion").click(function() {
-    var selection = $(".suggestions-popup option:selected").val();
-    var content = $(".suggestions-popup textarea").val();
-
-    var thanksHTML = '<div class="thanks">Thanks for your feedback!</div>';
-
-    $(".suggestions-popup")
-    .empty()
-    .append(thanksHTML);
-
-    $.post(
-    "/ajax/send_suggestion",
-    {name: game_name,
-      selection: selection,
-      content: content});
-  });
-
-
-
   // NAVBAR SCROLLING
 
   $("nav a").click(function(e) {
@@ -525,41 +92,17 @@ var ready = function() {
 
   // MISCELLANEOUS
 
+  // Adjust footer position whenever possible
+  $("body").click(adjust_footer_position);
+
   // Adjust height of boxes in hltb-detail (Game statistics) to match maximum
   var game_statistics_height = Math.max($(".hltb-container").height(), $(".detail-container").height());
   $(".hltb-container").css("height", game_statistics_height + "px");
   $(".detail-container").css("height", game_statistics_height + "px");
 
-  // Add "(none)" to package contents if there are none
-  $(".price-list-pkg-contents .list-container").each(function(index, elem) {
-    if ($(elem).children("ul").text().replace(/\s*/,"") == "")
-      $(elem).prepend('<tr><td class="empty" style="padding-left:10px;">(none)</td></tr>');
-  });
-
   // Wrap img tags in description with img-container so images can be centered
   $(".description-container img").each(function(index, elem) {
     $(elem).wrap('<div class="img-container"></div>');
-  });
-
-  // Adjust height of prices display to account for unknown height of selected game name
-  // It only works when they are in display, so we trigger the resize on click
-  var pkg_height = 350;
-  var dlc_height = 500;
-
-  $(".table-container").each(function(index, elem) {
-    if ($(elem).parent().hasClass("dlc") || $(elem).parent().hasClass("unlisted"))
-      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
-    else
-      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
-  });
-
-  $(".game-entry, .show-original").click(function() {
-    $(".dlc .table-container, .unlisted .table-container").each(function(index, elem) {
-      $(elem).css("height", dlc_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
-    });
-    $(".pkg .table-container").each(function(index, elem) {
-      $(elem).css("height", pkg_height - $(elem).siblings(".price-list-heading").outerHeight() + "px");
-    });
   });
 };
 
@@ -570,111 +113,19 @@ $(window).load(ready);
 
 
 
-/* END OF FUNCTION THAT WILL BE CALLED ON PAGE LOAD */
+// Adjust footer position (called after most ajax requests)
 
-
-
-function get_prices(selected, input_name_text) {
-  // Only load prices if the container is empty
-  if (!$.trim($(".price-list-inner." + selected + " .table-container table").text())) {
-  
-  $(".price-list-inner." + selected + " .table-container").append('<div class="img-loading-overlay">\
-    <%= image_tag "fancybox_loading.gif" %>\
-    Loading prices...<br>');/*(Taking too long? <a class="reload-prices">Reload this view</a>)\
-  </div>');*/
-
-  // ajax request: format the table based on hash received from data.results
-  $.post("/ajax/get_prices", // get_prices.json
-  {input_name: input_name_text},
-  function(data) {
-    var output = data.results;
-    // console.log(output);
-
-    if (output.length == 0) {
-      var outputHTML = '<tr><td class="empty">(none found)</td></tr>';
-    }
-    else {
-      var outputHTML = '<tr>\
-        <th>Vendor</th>\
-        <th>Price</th>\
-        <th style="width:80px">Lowest recorded</th>\
-      </tr>';
-
-      for (var i = 0; i < output.length; i++) {
-        outputHTML += '<tr>\
-          <td><a target="_blank" href="' + output[i].store_url + '">' + output[i].store + '</a></td>\
-          <td>' + output[i].current_price + ' (' + output[i].price_cut + ')</td>\
-          <td>' + output[i].lowest_recorded + '</td>\
-        </tr>'
-      }
-    }
-
-    $(".price-list-inner." + selected + " .img-loading-overlay").remove();
-    $(".price-list-inner." + selected + " table").append(outputHTML);
-  });
-
+function adjust_footer_position() {
+  function bottom_offset(elem) {
+    return elem.offset().top + elem[0].offsetHeight;
   }
-  else {
-    console.log("Already loaded prices");
-  }
-}
 
+  // Move footer below bottom-most element
+  var body_bottom = bottom_offset($("body"));
+  var left_sidebar_bottom = bottom_offset($(".search-results-container"));
+  var right_sidebar_bottom = bottom_offset($(".right.sidebar"))
+  var bottommost = Math.max(body_bottom, left_sidebar_bottom, right_sidebar_bottom);
 
-
-function get_extra_info(selected, input_name_text) {
-  $(".extra-info ." + selected).append('<div class="img-loading-overlay">\
-    <div class="img-loading-overlay-inner">\
-      <%= image_tag "fancybox_loading.gif" %>\
-      Loading information...\
-    </div>\
-  </div>');
-
-  $.post("/ajax/get_extra_info",
-  {input_name: input_name_text},
-  function(data) {
-    var output = data.results;
-    //console.log(output);
-
-    var releasedate = output.releasedate || "Unknown";
-    var website = output.website || "";
-    if (output.steamid)
-      var steam_link = "http://store.steampowered.com/app/" + output.steamid;
-    else
-      var steam_link = "http://store.steampowered.com";      
-
-    var outputHTML =
-    '<div class="col-xs-6 headerimg">\
-      <img class="extra-img" src="' + output.headerimg + '" />\
-    </div>\
-    <div class="col-xs-6 links">\
-      <span class="title">' + output.name + '</span>\
-      <br><a href="#' + selected + '-description" class="fancybox-button fancybox-text">\
-        <span class="btn btn-primary btn-sm">Read description</span>\
-      </a>\
-      <ul>\
-        <li>Released: ' + releasedate + '</li>\
-        \
-        <li>Website:\
-          <a target="_blank" href="' + website + '">' + website.replace("http://","").replace(/\.com\/$/,".com") + '</a>\
-        </li>\
-        \
-        <li>\
-          <a target="_blank" href="' + steam_link + '">View on Steam</a>\
-        </li>\
-      </ul>\
-      \
-      <div class="description-popup" id="' + selected + '-description">' +
-      output.description + '<br><br><h1></h1><p class="legal">' + output.legal + '</p></div>\
-    </div>';
-
-    $(".extra-info ." + selected + " .img-loading-overlay").remove();
-    $(".extra-info ." + selected).append(outputHTML);
-
-    $(".fancybox-text").fancybox({
-      openEffect: "fade",
-      closeEffect: "fade",
-      maxWidth: 600,
-      autoWidth: false
-    });
-  }).fail();
+  $(".footer").css("position","absolute");
+  $(".footer").css("top",bottommost + "px");
 }

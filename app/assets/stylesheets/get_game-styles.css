@@ -78,6 +78,7 @@ h3.divider {
 .description-popup h2,
 .not-found h4 {
   color: hsl(163, 63%, 68%);
+  margin-top: 40px;
   font-size: 18px;
 }
 .description h3,
@@ -139,6 +140,17 @@ a:focus {
 .header {
   background-color: hsl(163, 55%, 25%);
 }
+.header .homepage-link a {
+  color: #fff;
+}
+.header .homepage-link a:hover {
+  color: rgba(255,255,255,0.85);
+}
+.header .homepage-link a:hover,
+.header .homepage-link a:focus,
+.header .homepage-link a:active {
+  text-decoration: none;
+}
 nav {
   background-color: hsl(163, 68%, 20%) !important;
   border-color: hsl(163, 70%, 16%) !important;
@@ -199,7 +211,7 @@ nav .jump-to {
   margin: 0;
   display: inline-flex;
 }
-.homepage-title {
+.homepage-link {
   padding: 5px;
   margin: auto;
 }
@@ -443,6 +455,7 @@ nav a {
 .pricing .price-list .price-list-pkg-contents .list-container {
   height: 110px; /* actual height 90+40=130 */
   padding-top: 10px;
+  padding-right: 10px;
   overflow-y: auto;
 }
 
