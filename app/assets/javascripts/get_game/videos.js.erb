@@ -1,0 +1,100 @@
+function render_videos(game_name) {  
+  function get_videos() {
+    $(".videos.left.sidebar").append(
+      '<div class="loading-container content">\
+      <div class="img-loading-overlay">\
+        <div class="img-loading-overlay-inner">\
+          <%= image_tag "fancybox_loading.gif" %>\
+          Loading videos...\
+        </div>\
+      </div>\
+      </div>');
+
+    $.post(
+    "/ajax/get_videos",
+    {input_name: game_name},
+    function(data) {
+      //console.log(data);
+
+      $(".videos.left.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube reviews</span>\
+        </div>\
+        <div class="content video-container"></div>');
+      $(".videos.right.sidebar").append(
+        '<div class="section-heading">\
+          <span class="title">YouTube gameplay</span>\
+        </div>\
+        <div class="content video-container"></div>');
+
+      function get_sidebar_html(link,name,image_link) {
+        return '<a class="fancybox-media"\
+          rel="reviews"\
+          href="' + link + '">\
+          <div class="video">'
+             + name + '<br>\
+            <div class="video-img-container">\
+              <img class="video-img" src="' + image_link + '" />\
+            </div>\
+          </div>\
+        </a>';
+      }
+
+      for (var i = 0; i < data.reviews.names.length; i++) {
+        $(".videos.left.sidebar .video-container").append(
+          get_sidebar_html(data.reviews.links[i], data.reviews.names[i], data.reviews.image_links[i]));
+      }
+
+      for (var i = 0; i < data.gameplay.names.length; i++) {
+        $(".videos.right.sidebar .video-container").append(
+          get_sidebar_html(data.gameplay.links[i], data.gameplay.names[i], data.gameplay.image_links[i]));
+      }
+
+      if (data.reviews.names.length == 0)
+        $(".videos.left.sidebar .video-container").append('<span class="empty">(none found)</span>');
+      if (data.gameplay.names.length == 0)
+        $(".videos.right.sidebar .video-container").append('<span class="empty">(none found)</span>');
+
+      $(".fancybox-media").fancybox({
+        prevEffect: "none",
+        nextEffect: "none",
+        mouseWheel: false,
+        padding: 0,
+        margin: [20, 60, 20, 60],
+        helpers: {
+          media: {}
+        }
+      });
+
+      $(".videos .img-loading-overlay").parent().remove();
+      console.log("Finished loading videos");
+    }).fail(function() {
+      $(".videos").empty();
+      $(".videos.left.sidebar").prepend(
+      '<div class="loading-container content">\
+      <div class="img-loading-overlay">\
+        <div class="img-loading-overlay-inner">\
+          Sorry, video loading failed.<br><span class="reload-inline btn btn-primary"><%= image_tag "refresh.png" %></span>\
+        </div>\
+      </div>\
+      </div>');
+
+      $(".videos .reload-inline").click(function(e) {
+        $(".videos").empty();
+        //$(".search-results-container").hide();
+        get_videos();
+      });
+    }).always(function() {
+      adjust_footer_position();
+
+      // Make the critic reviews visible and properly positioned
+      /*setTimeout(function() {
+        $(".search-results-container")
+        .css("display","block")
+        .css("margin-top",$(".videos.left.sidebar").height() + 40 + "px");
+      }, 1000);*/
+    });
+  }
+
+  get_videos();
+}
