@@ -153,8 +153,9 @@ class MainController < ApplicationController
 
     body = resp.body.read
     if body.split(',').size<2000
-      body = body + "," + name.inspect + 
-        ": " + selection.inspect + ": " + content.inspect
+      body = body + "," + name.gsub!(/[^a-zA-Z0-9\s]/,'') + ": " + 
+        selection.gsub!(/[^a-zA-Z0-9\s]/,'') + ": " 
+          + content.gsub!(/[^a-zA-Z0-9\s]/,'')
     end
 
     bucket = Aws::S3::Resource.new(client: s3).bucket(ENV['NEW_GAME_BUCKET'])
