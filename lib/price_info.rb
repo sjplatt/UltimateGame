@@ -110,7 +110,7 @@ module PriceInfo
       puts "[CRITICAL] Could not find either the input_name or the itad url (must be exact!)"
     else
       #puts input_name
-      detailed_deals_url = "http://isthereanydeal.com/ajax/game/info?plain=#{itad_plain}"
+      detailed_deals_url = "https://isthereanydeal.com/ajax/game/info?plain=#{itad_plain}"
       puts detailed_deals_url
       begin
         detailed_deals = Nokogiri::HTML(open(detailed_deals_url))
