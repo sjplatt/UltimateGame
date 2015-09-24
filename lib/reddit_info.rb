@@ -9,7 +9,7 @@ module RedditInfo
     @post_names = []
     @post_links = []
     @comment_links = []
-    base_url = "http://www.reddit.com/r/"
+    base_url = "https://www.reddit.com/r/"
     game = Game.find_by(name:name)
     base_url += game.subreddit + "/top?sort=top&t=month"
 
